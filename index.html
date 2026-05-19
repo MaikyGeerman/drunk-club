@@ -1,1 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drunk Club of 100 — Season 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --bg2: #141414;
+    --bg3: #1a1a1a;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --gold: #e8c84a;
+    --gold2: #f5d96e;
+    --silver: #9ba3b0;
+    --bronze: #c4855a;
+    --text: #f0ece4;
+    --muted: #6b6760;
+    --accent: #e8c84a;
+    --green: #4caf7d;
+    --bar-max: 200px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .6;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+
+  /* header */
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border2);
+    margin-bottom: 40px;
+  }
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 10vw, 96px);
+    line-height: .92;
+    letter-spacing: .01em;
+    color: var(--text);
+  }
+  h1 span { color: var(--gold); }
+  .header-meta {
+    margin-top: 20px;
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .meta-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .meta-val.gold { color: var(--gold); }
+
+  /* controls */
+  .controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  input[type=text] {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 10px 14px 10px 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color .15s;
+  }
+  input[type=text]::placeholder { color: var(--muted); }
+  input[type=text]:focus { border-color: var(--gold); }
+
+  select {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+  }
+  select:focus { border-color: var(--gold); }
+
+  .filter-btns {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .filter-btn {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active { background: var(--gold); border-color: var(--gold); color: #0d0d0d; font-weight: 500; }
+
+  /* table */
+  .table-wrap {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  thead {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border2);
+  }
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+  }
+  th:hover { color: var(--text); }
+  th.sorted { color: var(--gold); }
+  th.right, td.right { text-align: right; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg2); }
+
+  td { padding: 13px 16px; vertical-align: middle; }
+
+  .rank {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    width: 44px;
+  }
+  .rank-1 { color: var(--gold); font-weight: 500; }
+  .rank-2 { color: var(--silver); }
+  .rank-3 { color: var(--bronze); }
+
+  .name-cell { font-weight: 500; font-size: 14px; }
+  .beer-pill {
+    display: inline-block;
+    background: rgba(232,200,74,.08);
+    border: 1px solid rgba(232,200,74,.2);
+    border-radius: 100px;
+    padding: 2px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold2);
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .lg-tag {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .balance-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .balance-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    min-width: 32px;
+    text-align: right;
+  }
+  .balance-num.top { color: var(--gold); }
+  .bar-track {
+    width: 80px;
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--green);
+    transition: width .4s ease;
+  }
+  .bar-fill.top { background: var(--gold); }
+  .bar-fill.zero { background: var(--muted); opacity: .3; }
+
+  /* loading / error */
+  .state-msg {
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .state-msg .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* count bar */
+  .table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--bg3);
+  }
+
+  /* last updated */
+  .updated {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 16px;
+    text-align: right;
+  }
+  .updated span { color: var(--green); }
+
+  /* responsive */
+  @media (max-width: 600px) {
+    .bar-track { display: none; }
+    .lg-tag { display: none; }
+    th.hide-mobile, td.hide-mobile { display: none; }
+  }
+
+  /* fade-in rows */
+  @keyframes fadeRow { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  tbody tr { animation: fadeRow .25s ease both; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <p class="header-eyebrow">🍺 Season 4 · Live standings</p>
+    <h1>Drunk Club<br><span>of 100</span></h1>
+    <div class="header-meta">
+      <div class="meta-item">
+        <span class="meta-label">Members</span>
+        <span class="meta-val" id="stat-members">—</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Total chugs</span>
+        <span class="meta-val gold" id="stat-total">—</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Active</span>
+        <span class="meta-val" id="stat-active">—</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Season ends</span>
+        <span class="meta-val">31 OCT</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search" placeholder="Search name or beer…" oninput="render()">
+    </div>
+    <select id="sort-sel" onchange="render()">
+      <option value="bal_desc">Balance ↓</option>
+      <option value="bal_asc">Balance ↑</option>
+      <option value="name_asc">Name A–Z</option>
+      <option value="beer_asc">Beer name A–Z</option>
+      <option value="lg_asc">Local group</option>
+    </select>
+    <div class="filter-btns">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">All</button>
+      <button class="filter-btn" data-filter="active" onclick="setFilter(this)">Active</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th class="hide-mobile">Beer name</th>
+          <th class="hide-mobile">LG</th>
+          <th class="right">Balance</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="5" class="state-msg"><span class="spinner"></span> Loading live data…</td></tr>
+      </tbody>
+    </table>
+    <div class="table-footer">
+      <span id="count-label">—</span>
+      <span id="last-updated">—</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = '1G7nWsbdvE2H7qAecd3KqpokufElzLHNu318bZFEV-lk';
+const GVZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+
+let allData = [];
+let filterMode = 'all';
+
+async function loadData() {
+  try {
+    const res = await fetch(GVZ_URL);
+    if (!res.ok) throw new Error('fetch failed');
+    const text = await res.text();
+    const rows = parseCSV(text);
+    // columns: Rank, Name, Beer Name, LG, Count, Last Chug, ...
+    const header = rows[0].map(h => h.toLowerCase().trim());
+    const nameIdx = header.findIndex(h => h.includes('name') && !h.includes('beer'));
+    const beerIdx = header.findIndex(h => h.includes('beer'));
+    const lgIdx   = header.findIndex(h => h === 'lg');
+    const countIdx= header.findIndex(h => h === 'count');
+
+    allData = rows.slice(1)
+      .map(r => ({
+        name: clean(r[nameIdx] || ''),
+        beer: clean(r[beerIdx] || ''),
+        lg:   clean(r[lgIdx]   || ''),
+        bal:  parseInt(r[countIdx]) || 0,
+      }))
+      .filter(r => r.name && r.beer); // only rows with a beer name
+
+    updateStats();
+    render();
+    document.getElementById('last-updated').innerHTML =
+      'Updated <span>' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + '</span>';
+  } catch(e) {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="5" class="state-msg">⚠ Could not load sheet. Make sure it is published to web.</td></tr>`;
+  }
+}
+
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.split('\n');
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const row = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { row.push(cur); cur = ''; }
+      else { cur += c; }
+    }
+    row.push(cur);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function clean(s) { return s.replace(/^"|"$/g, '').trim(); }
+
+function updateStats() {
+  const total = allData.reduce((s, r) => s + r.bal, 0);
+  const active = allData.filter(r => r.bal > 0).length;
+  document.getElementById('stat-members').textContent = allData.length;
+  document.getElementById('stat-total').textContent   = total.toLocaleString();
+  document.getElementById('stat-active').textContent  = active;
+}
+
+function render() {
+  const q    = document.getElementById('search').value.toLowerCase();
+  const sort = document.getElementById('sort-sel').value;
+
+  let data = allData.filter(r => {
+    if (filterMode === 'active' && r.bal === 0) return false;
+    if (q && !r.name.toLowerCase().includes(q) && !r.beer.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  data = [...data].sort((a, b) => {
+    if (sort === 'bal_desc') return b.bal - a.bal;
+    if (sort === 'bal_asc')  return a.bal - b.bal;
+    if (sort === 'name_asc') return a.name.localeCompare(b.name);
+    if (sort === 'beer_asc') return a.beer.localeCompare(b.beer);
+    if (sort === 'lg_asc')   return a.lg.localeCompare(b.lg);
+    return 0;
+  });
+
+  const maxBal = Math.max(...allData.map(r => r.bal), 1);
+  const tbody  = document.getElementById('tbody');
+
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="state-msg">No results found.</td></tr>';
+    document.getElementById('count-label').textContent = '0 accounts';
+    return;
+  }
+
+  tbody.innerHTML = data.map((r, i) => {
+    const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
+    const isTop = r.bal >= maxBal * 0.5;
+    const barPct = Math.round((r.bal / maxBal) * 100);
+    const barClass = r.bal === 0 ? 'zero' : isTop ? 'top' : '';
+    const numClass = isTop ? 'top' : '';
+    const delay = Math.min(i * 18, 300);
+    return `<tr style="animation-delay:${delay}ms">
+      <td class="rank ${rankClass}">${i + 1}</td>
+      <td class="name-cell">${esc(r.name)}</td>
+      <td class="hide-mobile"><span class="beer-pill" title="${esc(r.beer)}">${esc(r.beer)}</span></td>
+      <td class="lg-tag hide-mobile">${esc(r.lg)}</td>
+      <td>
+        <div class="balance-cell">
+          <div class="bar-track"><div class="bar-fill ${barClass}" style="width:${barPct}%"></div></div>
+          <span class="balance-num ${numClass}">${r.bal}</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('count-label').textContent =
+    data.length + ' account' + (data.length !== 1 ? 's' : '');
+}
+
+function setFilter(btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterMode = btn.dataset.filter;
+  render();
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+loadData();
+</script>
+</body>
+</html>
