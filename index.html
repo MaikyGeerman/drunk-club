@@ -15,10 +15,55 @@
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
   body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6;}
-  .container{max-width:900px;margin:0 auto;padding:0 20px;position:relative;z-index:1;}
+
+  /* ── LOGIN SCREEN ── */
+  #login-screen {
+    position:fixed;inset:0;z-index:100;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--bg);
+  }
+  .login-box {
+    width:100%;max-width:420px;padding:20px;
+  }
+  .login-logo {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(48px,12vw,72px);line-height:.9;margin-bottom:8px;
+  }
+  .login-logo span{color:var(--gold);}
+  .login-sub {
+    font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:40px;
+  }
+  .login-field{margin-bottom:16px;}
+  .login-field label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+  .login-field input{width:100%;padding:12px 16px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .15s;}
+  .login-field input:focus{border-color:var(--gold);}
+  .login-field input::placeholder{color:var(--muted);}
+  .login-btn{width:100%;margin-top:8px;padding:14px;background:var(--gold);border:none;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#0d0d0d;font-weight:500;cursor:pointer;transition:opacity .15s;}
+  .login-btn:hover{opacity:.88;}
+  .login-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .login-error{margin-top:12px;font-family:'DM Mono',monospace;font-size:12px;color:var(--red);text-align:center;min-height:18px;}
+  .login-hint{margin-top:20px;font-size:12px;color:var(--muted);text-align:center;line-height:1.6;}
+  .login-hint strong{color:var(--text);}
+
+  /* ── APP ── */
+  #app{display:none;position:relative;z-index:1;}
+  .container{max-width:900px;margin:0 auto;padding:0 20px;}
+
+  /* topbar */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 0 0;}
+  .topbar-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);letter-spacing:.02em;}
+  .topbar-logo span{color:var(--gold);}
+  .topbar-right{display:flex;align-items:center;gap:12px;}
+  .user-pill{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:100px;padding:6px 14px 6px 8px;cursor:pointer;transition:border-color .15s;}
+  .user-pill:hover{border-color:var(--gold);}
+  .user-avatar{width:28px;height:28px;border-radius:50%;background:rgba(232,200,74,.15);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);font-weight:500;}
+  .user-name{font-family:'DM Mono',monospace;font-size:12px;color:var(--text);}
+  .logout-btn{background:none;border:1px solid var(--border2);border-radius:6px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;}
+  .logout-btn:hover{color:var(--red);border-color:var(--red);}
 
   /* header */
-  header{padding:60px 0 0;}
+  header{padding:32px 0 0;}
   .eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
   h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,10vw,96px);line-height:.92;color:var(--text);}
   h1 span{color:var(--gold);}
@@ -36,26 +81,25 @@
   .tab-pane{display:none;padding-top:36px;}
   .tab-pane.active{display:block;}
 
-  /* shared controls */
+  /* controls */
   .controls{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
   .search-wrap{flex:1;min-width:200px;position:relative;}
   .search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
-  input[type=text],input[type=number],textarea,select{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;}
-  input[type=text]:focus,input[type=number]:focus,textarea:focus,select:focus{border-color:var(--gold);}
-  input[type=text]::placeholder,textarea::placeholder{color:var(--muted);}
-  .search-wrap input[type=text]{width:100%;padding:10px 14px 10px 40px;}
+  input[type=text],input[type=number],input[type=password],textarea,select{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;}
+  input[type=text]:focus,input[type=number]:focus,input[type=password]:focus,textarea:focus,select:focus{border-color:var(--gold);}
+  input::placeholder,textarea::placeholder{color:var(--muted);}
+  .search-wrap input{width:100%;padding:10px 14px 10px 40px;}
   select{padding:10px 14px;cursor:pointer;}
   .filter-btns{display:flex;gap:6px;align-items:center;}
   .filter-btn{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:10px 16px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;}
   .filter-btn:hover{color:var(--text);}
   .filter-btn.active{background:var(--gold);border-color:var(--gold);color:#0d0d0d;font-weight:500;}
 
-  /* leaderboard table */
+  /* table */
   .table-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;}
   table{width:100%;border-collapse:collapse;font-size:14px;}
   thead{background:var(--bg3);border-bottom:1px solid var(--border2);}
-  th{padding:12px 16px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;white-space:nowrap;user-select:none;}
-  th:hover{color:var(--text);}
+  th{padding:12px 16px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap;user-select:none;}
   tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
   tbody tr:last-child{border-bottom:none;}
   tbody tr:hover{background:var(--bg2);}
@@ -78,16 +122,30 @@
   @keyframes fadeRow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
   tbody tr{animation:fadeRow .25s ease both;}
 
-  /* friendmarket */
+  /* ── PROFILE ── */
+  .profile-card{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:28px;max-width:480px;}
+  .profile-avatar{width:64px;height:64px;border-radius:50%;background:rgba(232,200,74,.12);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:22px;color:var(--gold);font-weight:500;margin-bottom:16px;border:1px solid rgba(232,200,74,.2);}
+  .profile-name{font-size:20px;font-weight:500;margin-bottom:4px;}
+  .profile-beer{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);margin-bottom:20px;}
+  .profile-divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+  .profile-section-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+  .profile-field{margin-bottom:14px;}
+  .profile-field label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .profile-field input{width:100%;padding:10px 14px;}
+  .profile-save-btn{background:var(--gold);border:none;border-radius:6px;padding:10px 22px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#0d0d0d;font-weight:500;cursor:pointer;transition:opacity .15s;}
+  .profile-save-btn:hover{opacity:.85;}
+  .profile-msg{margin-top:10px;font-family:'DM Mono',monospace;font-size:12px;min-height:18px;}
+  .profile-msg.ok{color:var(--green);}
+  .profile-msg.err{color:var(--red);}
+
+  /* ── FRIENDMARKET ── */
   .fm-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:32px;}
   .fm-stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;}
   .fm-stat-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
   .fm-stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;}
   .fm-stat-val.gold{color:var(--gold);}.fm-stat-val.green{color:var(--green);}
-
   .section-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
   .section-title::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);}
-
   .market-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:20px;margin-bottom:16px;transition:border-color .15s;}
   .market-card:hover{border-color:rgba(255,255,255,0.2);}
   .market-card.resolved{opacity:.6;border-style:dashed;}
@@ -106,32 +164,27 @@
   .market-prob-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
   .prob-bar{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin:0 0 14px;overflow:hidden;}
   .prob-bar-fill{height:100%;border-radius:2px;background:var(--green);transition:width .5s ease;}
-
   .bet-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .bet-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text);}
   .bet-btn-label{font-size:13px;letter-spacing:.06em;}
   .bet-btn-price{font-size:18px;}
   .bet-btn.yes:hover,.bet-btn.yes.selected{border-color:var(--green);background:rgba(76,175,125,.1);color:var(--green);}
   .bet-btn.no:hover,.bet-btn.no.selected{border-color:var(--red);background:rgba(224,85,85,.1);color:var(--red);}
-
   .bet-form{margin-top:12px;padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);display:none;}
   .bet-form.open{display:block;}
   .bet-form-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .bet-form label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;}
-  .bet-form input[type=text]{flex:1;min-width:120px;padding:8px 12px;}
+  .bet-form .bet-user{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);padding:8px 0;}
   .bet-form input[type=number]{width:100px;padding:8px 12px;}
   .confirm-btn{background:var(--green);border:none;border-radius:6px;padding:8px 18px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#0d0d0d;font-weight:500;cursor:pointer;transition:opacity .15s;white-space:nowrap;}
   .confirm-btn:hover{opacity:.85;}
   .cancel-btn{background:none;border:1px solid var(--border2);border-radius:6px;padding:8px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;}
   .cancel-btn:hover{color:var(--text);}
-
   .winner-badge{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;padding:4px 12px;border-radius:100px;}
   .winner-yes{background:rgba(76,175,125,.15);color:var(--green);border:1px solid rgba(76,175,125,.3);}
   .winner-no{background:rgba(224,85,85,.15);color:var(--red);border:1px solid rgba(224,85,85,.3);}
-
   .resolve-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);cursor:pointer;transition:all .15s;}
   .resolve-btn:hover{border-color:var(--gold);color:var(--gold);}
-
   .create-toggle{background:none;border:1px dashed var(--border2);border-radius:10px;width:100%;padding:16px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
   .create-toggle:hover{border-color:var(--gold);color:var(--gold);}
   .create-form{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:22px;margin-top:10px;display:none;}
@@ -140,28 +193,59 @@
   .form-row label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
   .form-row input[type=text],.form-row select,.form-row textarea{width:100%;padding:10px 14px;}
   .form-actions{display:flex;gap:10px;margin-top:6px;}
-
-  .admin-gate{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-  .admin-gate label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;}
-  .admin-gate input{flex:1;min-width:160px;padding:8px 12px;}
-  .admin-gate button{background:var(--gold);border:none;border-radius:6px;padding:8px 18px;font-family:'DM Mono',monospace;font-size:11px;color:#0d0d0d;font-weight:500;cursor:pointer;}
-  .admin-badge{background:rgba(232,200,74,.12);border:1px solid rgba(232,200,74,.3);border-radius:100px;padding:4px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);}
-
   .fm-lb-table{width:100%;border-collapse:collapse;font-size:14px;}
   .fm-lb-table th{padding:10px 14px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border2);}
   .fm-lb-table td{padding:12px 14px;border-bottom:1px solid var(--border);}
   .fm-lb-table tr:last-child td{border-bottom:none;}
   .fm-lb-table tr:hover td{background:var(--bg2);}
 
+  /* my bets */
+  .mybets-empty{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);padding:40px 0;text-align:center;}
+
   @media(max-width:600px){
     .bar-track{display:none;}.lg-tag{display:none;}
     th.hide-mobile,td.hide-mobile{display:none;}
     .market-right{display:none;}
+    .topbar-logo{font-size:18px;}
   }
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Drunk Club<br><span>of 100</span></div>
+    <div class="login-sub">🍺 Season 4 · Members only</div>
+
+    <div class="login-field">
+      <label>Beer name</label>
+      <input type="text" id="login-user" placeholder="e.g. Beerflow" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>Password (phone number)</label>
+      <input type="password" id="login-pass" placeholder="Your phone number" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign in</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-hint">First time? Your password is your <strong>phone number</strong> as listed in the sheet.<br>You can change it after logging in.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ APP ═══════════════════════════ -->
+<div id="app">
 <div class="container">
+
+  <div class="topbar">
+    <div class="topbar-logo">DC<span>100</span></div>
+    <div class="topbar-right">
+      <div class="user-pill" onclick="switchTab('profile', document.querySelector('[data-tab=profile]'))">
+        <div class="user-avatar" id="topbar-avatar">?</div>
+        <span class="user-name" id="topbar-name">—</span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
 
   <header>
     <p class="eyebrow">🍺 Season 4 · Live</p>
@@ -175,9 +259,10 @@
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('leaderboard',this)">🏆 Leaderboard</button>
-    <button class="tab-btn" onclick="switchTab('market',this)">📈 FriendMarket</button>
-    <button class="tab-btn" onclick="switchTab('mybets',this)">🎯 My Bets</button>
+    <button class="tab-btn active" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">🏆 Leaderboard</button>
+    <button class="tab-btn" data-tab="market"      onclick="switchTab('market',this)">📈 FriendMarket</button>
+    <button class="tab-btn" data-tab="mybets"      onclick="switchTab('mybets',this)">🎯 My Bets</button>
+    <button class="tab-btn" data-tab="profile"     onclick="switchTab('profile',this)">👤 Profile</button>
   </div>
 
   <!-- LEADERBOARD -->
@@ -195,8 +280,8 @@
         <option value="lg_asc">Local group</option>
       </select>
       <div class="filter-btns">
-        <button class="filter-btn active" data-filter="all" onclick="setLbFilter(this)">All</button>
-        <button class="filter-btn" data-filter="active" onclick="setLbFilter(this)">Active</button>
+        <button class="filter-btn active" data-filter="all"    onclick="setLbFilter(this)">All</button>
+        <button class="filter-btn"        data-filter="active" onclick="setLbFilter(this)">Active</button>
       </div>
     </div>
     <div class="table-wrap">
@@ -215,13 +300,6 @@
 
   <!-- FRIENDMARKET -->
   <div id="tab-market" class="tab-pane">
-    <div class="admin-gate" id="admin-gate">
-      <label>Admin pin:</label>
-      <input type="text" id="admin-pin-input" placeholder="Enter pin to unlock admin features…">
-      <button onclick="checkAdmin()">Unlock</button>
-      <span id="admin-status"></span>
-    </div>
-
     <div class="fm-stats">
       <div class="fm-stat"><div class="fm-stat-label">Open markets</div><div class="fm-stat-val gold" id="fm-open">—</div></div>
       <div class="fm-stat"><div class="fm-stat-label">Total volume</div><div class="fm-stat-val green" id="fm-volume">—</div></div>
@@ -244,7 +322,7 @@
         </div>
         <div class="form-actions">
           <button class="confirm-btn" onclick="createMarket()">Create market</button>
-          <button class="cancel-btn" onclick="toggleCreate()">Cancel</button>
+          <button class="cancel-btn"  onclick="toggleCreate()">Cancel</button>
         </div>
       </div>
     </div>
@@ -253,7 +331,7 @@
     <div id="markets-list"><div class="state-msg"><span class="spinner"></span> Loading markets…</div></div>
 
     <div style="margin-top:40px">
-      <div class="section-title" style="--dot:var(--muted)">Resolved markets</div>
+      <div class="section-title">Resolved markets</div>
       <div id="resolved-list"></div>
     </div>
 
@@ -270,78 +348,189 @@
 
   <!-- MY BETS -->
   <div id="tab-mybets" class="tab-pane">
-    <div class="admin-gate">
-      <label>Your name:</label>
-      <input type="text" id="mybets-name" placeholder="Enter your name to see your bets…" oninput="renderMyBets()">
-    </div>
-    <div id="mybets-list"><div class="state-msg" style="padding:40px">Enter your name above to see your bets.</div></div>
+    <div id="mybets-list"><div class="mybets-empty">Loading your bets…</div></div>
   </div>
 
-</div>
+  <!-- PROFILE -->
+  <div id="tab-profile" class="tab-pane">
+    <div class="profile-card">
+      <div class="profile-avatar" id="profile-avatar">?</div>
+      <div class="profile-name"  id="profile-name">—</div>
+      <div class="profile-beer"  id="profile-beer">—</div>
+
+      <hr class="profile-divider">
+      <div class="profile-section-title">Change password</div>
+
+      <div class="profile-field">
+        <label>Current password</label>
+        <input type="password" id="pw-old" placeholder="Current password">
+      </div>
+      <div class="profile-field">
+        <label>New password</label>
+        <input type="password" id="pw-new" placeholder="New password">
+      </div>
+      <div class="profile-field">
+        <label>Confirm new password</label>
+        <input type="password" id="pw-confirm" placeholder="Repeat new password">
+      </div>
+      <button class="profile-save-btn" onclick="changePassword()">Save new password</button>
+      <div class="profile-msg" id="profile-msg"></div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+</div><!-- /app -->
 
 <script>
 const SHEET_ID  = '1G7nWsbdvE2H7qAecd3KqpokufElzLHNu318bZFEV-lk';
 const GVZ_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
-const API_URL   = 'https://script.google.com/macros/s/AKfycbyG6-6KW6AyynmRC26oCLT_ka8FPhsPPf92bkqJ6wg-XVYT_EVE46mmY-UoZt1o138/exec';
-const ADMIN_PIN = 'dc100admin'; // change this to whatever pin you want
+const API_URL   = 'https://script.google.com/macros/s/AKfycbz3tWRT-SnzeRRpb-8pveUELh5g4NSVQBQ5W7YBW-FGQEYvPS4nDFSveNZZE7rI9A/exec';
+const ADMIN_PIN = 'dc100admin'; // change to your preferred admin pin
 
-let lbData = [], lbFilter = 'all';
-let markets = [], bets = [], isAdmin = false;
+let session   = null; // { name, beer, isAdmin }
+let lbData    = [], lbFilter = 'all';
+let markets   = [], bets = [];
 let activeBet = {};
 
-// ── TABS ──
+// ══════════════════════════════
+//  AUTH
+// ══════════════════════════════
+async function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value.trim();
+  const btn  = document.getElementById('login-btn');
+  const err  = document.getElementById('login-error');
+  if (!user || !pass) { err.textContent = 'Enter your beer name and password.'; return; }
+
+  // check admin pin shortcut
+  if (pass === ADMIN_PIN) {
+    session = { name: user, beer: user, isAdmin: true };
+    startApp();
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+  err.textContent = '';
+
+  try {
+    const res  = await fetch(API_URL, { method:'POST', body: JSON.stringify({ action:'login', username: user, password: pass }) });
+    const data = await res.json();
+    if (data.ok) {
+      session = { name: data.name, beer: data.beer, isAdmin: false };
+      startApp();
+    } else {
+      err.textContent = data.error || 'Login failed.';
+    }
+  } catch(e) {
+    err.textContent = 'Could not reach server. Try again.';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Sign in';
+}
+
+function startApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  // topbar
+  const initials = (session.beer||'?').substring(0,2).toUpperCase();
+  document.getElementById('topbar-avatar').textContent = initials;
+  document.getElementById('topbar-name').textContent   = session.beer;
+
+  // profile tab
+  document.getElementById('profile-avatar').textContent = initials;
+  document.getElementById('profile-name').textContent   = session.name;
+  document.getElementById('profile-beer').textContent   = '🍺 ' + session.beer;
+
+  // show admin create button if admin
+  if (session.isAdmin) document.getElementById('create-wrap').style.display = 'block';
+
+  loadLeaderboard();
+  loadMarketData();
+}
+
+function doLogout() {
+  session = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-pass').value  = '';
+  document.getElementById('login-error').textContent = '';
+}
+
+async function changePassword() {
+  const oldPw   = document.getElementById('pw-old').value.trim();
+  const newPw   = document.getElementById('pw-new').value.trim();
+  const confirm = document.getElementById('pw-confirm').value.trim();
+  const msg     = document.getElementById('profile-msg');
+
+  if (!oldPw || !newPw || !confirm) { showMsg('Fill in all fields.', 'err'); return; }
+  if (newPw !== confirm)             { showMsg('New passwords do not match.', 'err'); return; }
+  if (newPw.length < 4)              { showMsg('Password must be at least 4 characters.', 'err'); return; }
+
+  try {
+    const res  = await fetch(API_URL, { method:'POST', body: JSON.stringify({ action:'changePassword', beer: session.beer, oldPw, newPw }) });
+    const data = await res.json();
+    if (data.ok) {
+      showMsg('Password changed!', 'ok');
+      document.getElementById('pw-old').value     = '';
+      document.getElementById('pw-new').value     = '';
+      document.getElementById('pw-confirm').value = '';
+    } else {
+      showMsg(data.error || 'Failed to change password.', 'err');
+    }
+  } catch(e) { showMsg('Could not reach server.', 'err'); }
+}
+
+function showMsg(text, type) {
+  const el = document.getElementById('profile-msg');
+  el.textContent = text;
+  el.className   = 'profile-msg ' + type;
+}
+
+// ══════════════════════════════
+//  TABS
+// ══════════════════════════════
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b  => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   if (name === 'market' || name === 'mybets') loadMarketData();
 }
 
-// ── ADMIN ──
-function checkAdmin() {
-  const pin = document.getElementById('admin-pin-input').value.trim();
-  if (pin === ADMIN_PIN) {
-    isAdmin = true;
-    document.getElementById('admin-status').innerHTML = '<span class="admin-badge">✓ Admin unlocked</span>';
-    document.getElementById('admin-pin-input').disabled = true;
-    document.getElementById('create-wrap').style.display = 'block';
-    renderMarkets();
-  } else {
-    document.getElementById('admin-status').innerHTML = '<span style="color:var(--red);font-family:DM Mono,monospace;font-size:12px">Wrong pin</span>';
-  }
-}
-
-// ── LEADERBOARD ──
+// ══════════════════════════════
+//  LEADERBOARD
+// ══════════════════════════════
 async function loadLeaderboard() {
   try {
-    const res = await fetch(GVZ_URL);
+    const res  = await fetch(GVZ_URL);
     const text = await res.text();
     const rows = parseCSV(text);
-    const hdr = rows[0].map(h => h.toLowerCase().trim());
-    const ni = hdr.findIndex(h => h.includes('name') && !h.includes('beer'));
-    const bi = hdr.findIndex(h => h.includes('beer'));
-    const li = hdr.findIndex(h => h === 'lg');
-    const ci = hdr.findIndex(h => h === 'count');
+    const hdr  = rows[0].map(h => h.toLowerCase().trim());
+    const ni   = hdr.findIndex(h => h.includes('name') && !h.includes('beer'));
+    const bi   = hdr.findIndex(h => h.includes('beer'));
+    const li   = hdr.findIndex(h => h === 'lg');
+    const ci   = hdr.findIndex(h => h === 'count');
     lbData = rows.slice(1)
       .map(r => ({ name: clean(r[ni]||''), beer: clean(r[bi]||''), lg: clean(r[li]||''), bal: parseInt(r[ci])||0 }))
       .filter(r => r.name && r.beer);
-    const total = lbData.reduce((s,r)=>s+r.bal,0);
-    const active = lbData.filter(r=>r.bal>0).length;
+    const total  = lbData.reduce((s,r) => s+r.bal, 0);
+    const active = lbData.filter(r => r.bal>0).length;
     document.getElementById('stat-members').textContent = lbData.length;
-    document.getElementById('stat-total').textContent = total.toLocaleString();
-    document.getElementById('stat-active').textContent = active;
+    document.getElementById('stat-total').textContent   = total.toLocaleString();
+    document.getElementById('stat-active').textContent  = active;
     renderLeaderboard();
     document.getElementById('lb-updated').innerHTML = 'Updated <span style="color:var(--green)">' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) + '</span>';
   } catch(e) {
-    document.getElementById('lb-tbody').innerHTML = '<tr><td colspan="5" class="state-msg">⚠ Could not load sheet. Make sure it is published to web.</td></tr>';
+    document.getElementById('lb-tbody').innerHTML = '<tr><td colspan="5" class="state-msg">⚠ Could not load sheet.</td></tr>';
   }
 }
 
 function renderLeaderboard() {
-  const q = document.getElementById('lb-search').value.toLowerCase();
+  const q    = document.getElementById('lb-search').value.toLowerCase();
   const sort = document.getElementById('lb-sort').value;
-  let data = lbData.filter(r => {
+  let data   = lbData.filter(r => {
     if (lbFilter==='active' && r.bal===0) return false;
     if (q && !r.name.toLowerCase().includes(q) && !r.beer.toLowerCase().includes(q)) return false;
     return true;
@@ -356,13 +545,14 @@ function renderLeaderboard() {
   });
   const maxBal = Math.max(...lbData.map(r=>r.bal), 1);
   document.getElementById('lb-tbody').innerHTML = data.map((r,i) => {
-    const rc = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+    const rc  = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
     const top = r.bal >= maxBal*.5;
     const pct = Math.round(r.bal/maxBal*100);
     const bc  = r.bal===0?'zero':top?'top':'';
-    return `<tr style="animation-delay:${Math.min(i*18,300)}ms">
+    const isMe = session && r.beer.toLowerCase() === session.beer.toLowerCase();
+    return `<tr style="animation-delay:${Math.min(i*18,300)}ms${isMe?';background:rgba(232,200,74,.04)':''}">
       <td class="rank ${rc}">${i+1}</td>
-      <td class="name-cell">${esc(r.name)}</td>
+      <td class="name-cell">${esc(r.name)}${isMe?' <span style="font-family:DM Mono,monospace;font-size:10px;color:var(--gold);margin-left:6px">you</span>':''}</td>
       <td class="hide-mobile"><span class="beer-pill" title="${esc(r.beer)}">${esc(r.beer)}</span></td>
       <td class="lg-tag hide-mobile">${esc(r.lg)}</td>
       <td><div class="balance-cell"><div class="bar-track"><div class="bar-fill ${bc}" style="width:${pct}%"></div></div><span class="balance-num ${top?'top':''}">${r.bal}</span></div></td>
@@ -372,16 +562,18 @@ function renderLeaderboard() {
 }
 
 function setLbFilter(btn) {
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   lbFilter = btn.dataset.filter;
   renderLeaderboard();
 }
 
-// ── MARKET DATA ──
+// ══════════════════════════════
+//  MARKET DATA
+// ══════════════════════════════
 async function loadMarketData() {
   try {
-    const res = await fetch(API_URL);
+    const res  = await fetch(API_URL);
     const data = await res.json();
     markets = data.markets || [];
     bets    = data.bets    || [];
@@ -390,14 +582,14 @@ async function loadMarketData() {
     renderFMLB();
     renderMyBets();
   } catch(e) {
-    document.getElementById('markets-list').innerHTML = '<div class="state-msg">⚠ Could not load market data. Check the Apps Script deployment.</div>';
+    document.getElementById('markets-list').innerHTML = '<div class="state-msg">⚠ Could not load market data.</div>';
   }
 }
 
 function renderFMStats() {
-  const open     = markets.filter(m=>m.status==='open').length;
-  const resolved = markets.filter(m=>m.status==='resolved').length;
-  const volume   = bets.reduce((s,b)=>s+(parseInt(b.amount)||0),0);
+  const open     = markets.filter(m => m.status==='open').length;
+  const resolved = markets.filter(m => m.status==='resolved').length;
+  const volume   = bets.reduce((s,b) => s+(parseInt(b.amount)||0), 0);
   document.getElementById('fm-open').textContent     = open;
   document.getElementById('fm-volume').textContent   = volume.toLocaleString();
   document.getElementById('fm-bets').textContent     = bets.length;
@@ -405,59 +597,57 @@ function renderFMStats() {
 }
 
 function getProb(m) {
-  const y = parseFloat(m.yesPool)||0;
-  const n = parseFloat(m.noPool)||0;
-  const t = y+n;
-  return t===0 ? 50 : Math.round(y/t*100);
+  const y = parseFloat(m.yesPool)||0, n = parseFloat(m.noPool)||0;
+  return (y+n)===0 ? 50 : Math.round(y/(y+n)*100);
 }
-
 function catClass(c) { return 'cat-'+(c||'other'); }
 function catEmoji(c) { return {chug:'🍺',social:'💬',food:'🍔',sleep:'😴'}[c]||'•'; }
 
 function renderMarkets() {
-  const open     = markets.filter(m=>m.status==='open');
-  const resolved = markets.filter(m=>m.status==='resolved');
-  document.getElementById('markets-list').innerHTML = open.length
-    ? open.map(m=>marketCard(m)).join('')
-    : '<div class="state-msg" style="padding:30px">No open markets yet. Admins can create one above.</div>';
+  const open     = markets.filter(m => m.status==='open');
+  const resolved = markets.filter(m => m.status==='resolved');
+  document.getElementById('markets-list').innerHTML  = open.length
+    ? open.map(m => marketCard(m)).join('')
+    : '<div class="state-msg" style="padding:30px">No open markets yet.</div>';
   document.getElementById('resolved-list').innerHTML = resolved.length
-    ? resolved.map(m=>marketCard(m)).join('')
+    ? resolved.map(m => marketCard(m)).join('')
     : '<div style="color:var(--muted);font-size:13px;font-family:DM Mono,monospace;padding:10px 0">None yet.</div>';
 }
 
 function marketCard(m) {
   const prob     = getProb(m);
-  const y        = parseFloat(m.yesPool)||0;
-  const n        = parseFloat(m.noPool)||0;
-  const total    = y+n;
-  const mBets    = bets.filter(b=>b.marketId===m.id).length;
+  const total    = (parseFloat(m.yesPool)||0) + (parseFloat(m.noPool)||0);
+  const mBets    = bets.filter(b => b.marketId===m.id).length;
   const resolved = m.status==='resolved';
+  const myBet    = bets.find(b => b.marketId===m.id && session && (b.user||'').toLowerCase()===session.beer.toLowerCase());
+
   const winnerBadge = resolved
     ? `<span class="winner-badge winner-${m.winner}" style="margin-left:8px">${m.winner.toUpperCase()} won</span>` : '';
-  const resolveRow = (isAdmin && !resolved)
+  const resolveRow = (session && session.isAdmin && !resolved)
     ? `<div style="display:flex;gap:8px;margin-top:12px">
         <button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','yes')">Resolve YES ✓</button>
         <button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','no')">Resolve NO ✗</button>
        </div>` : '';
+  const myBetBadge = myBet
+    ? `<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);margin-left:8px">you bet ${myBet.side.toUpperCase()}</span>` : '';
+
   const betSection = !resolved ? `
     <div class="bet-btns">
-      <button class="bet-btn yes" onclick="selectBet('${esc(m.id)}','yes',this)">
-        <span class="bet-btn-label">YES</span>
-        <span class="bet-btn-price">${prob}¢</span>
+      <button class="bet-btn yes${myBet&&myBet.side==='yes'?' selected':''}" onclick="selectBet('${esc(m.id)}','yes',this)">
+        <span class="bet-btn-label">YES</span><span class="bet-btn-price">${prob}¢</span>
       </button>
-      <button class="bet-btn no" onclick="selectBet('${esc(m.id)}','no',this)">
-        <span class="bet-btn-label">NO</span>
-        <span class="bet-btn-price">${100-prob}¢</span>
+      <button class="bet-btn no${myBet&&myBet.side==='no'?' selected':''}" onclick="selectBet('${esc(m.id)}','no',this)">
+        <span class="bet-btn-label">NO</span><span class="bet-btn-price">${100-prob}¢</span>
       </button>
     </div>
     <div class="bet-form" id="betform-${esc(m.id)}">
       <div class="bet-form-row">
-        <label>Your name</label>
-        <input type="text" id="betname-${esc(m.id)}" placeholder="Name…">
+        <label>Betting as</label>
+        <span class="bet-user">${esc(session ? session.beer : '')}</span>
         <label>$DEGEN</label>
         <input type="number" id="betamt-${esc(m.id)}" value="50" min="1">
         <button class="confirm-btn" onclick="placeBet('${esc(m.id)}')">Bet</button>
-        <button class="cancel-btn" onclick="cancelBet('${esc(m.id)}')">×</button>
+        <button class="cancel-btn"  onclick="cancelBet('${esc(m.id)}')">×</button>
       </div>
     </div>` : '';
 
@@ -466,7 +656,7 @@ function marketCard(m) {
     <div class="market-header">
       <div>
         <div class="market-question">${esc(m.question)}</div>
-        <div class="market-meta">${mBets} bet${mBets!==1?'s':''} · ${total.toLocaleString()} $DEGEN${winnerBadge}</div>
+        <div class="market-meta">${mBets} bet${mBets!==1?'s':''} · ${total.toLocaleString()} $DEGEN${winnerBadge}${myBetBadge}</div>
       </div>
       ${!resolved?`<div class="market-right">
         <div class="market-prob${prob<40?' low':''}">${prob}%</div>
@@ -480,10 +670,10 @@ function marketCard(m) {
 }
 
 function selectBet(mid, side, btn) {
-  const form = document.getElementById('betform-'+mid);
-  const card = document.getElementById('mc-'+mid);
+  const form    = document.getElementById('betform-'+mid);
+  const card    = document.getElementById('mc-'+mid);
   const already = activeBet.mid===mid && activeBet.side===side && form.classList.contains('open');
-  card.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
+  card.querySelectorAll('.bet-btn').forEach(b => b.classList.remove('selected'));
   if (already) { form.classList.remove('open'); activeBet={}; }
   else { btn.classList.add('selected'); form.classList.add('open'); activeBet={mid,side}; }
 }
@@ -492,18 +682,17 @@ function cancelBet(mid) {
   const form = document.getElementById('betform-'+mid);
   if (form) form.classList.remove('open');
   const card = document.getElementById('mc-'+mid);
-  if (card) card.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
+  if (card) card.querySelectorAll('.bet-btn').forEach(b => b.classList.remove('selected'));
   activeBet = {};
 }
 
 async function placeBet(mid) {
-  const name = document.getElementById('betname-'+mid).value.trim();
   const amt  = parseInt(document.getElementById('betamt-'+mid).value);
-  if (!name) { alert('Enter your name!'); return; }
   if (!amt || amt<1) { alert('Enter a valid amount!'); return; }
   const side = activeBet.side;
+  const user = session.beer;
   try {
-    await fetch(API_URL, { method:'POST', body: JSON.stringify({ action:'placeBet', marketId:mid, user:name, side, amount:amt }) });
+    await fetch(API_URL, { method:'POST', body: JSON.stringify({ action:'placeBet', marketId:mid, user, side, amount:amt }) });
     cancelBet(mid);
     await loadMarketData();
   } catch(e) { alert('Could not place bet. Try again.'); }
@@ -526,9 +715,9 @@ async function createMarket() {
   const q   = document.getElementById('new-q').value.trim();
   const cat = document.getElementById('new-cat').value;
   if (!q) { alert('Enter a question!'); return; }
-  const id = 'mkt_' + Date.now();
+  const id  = 'mkt_' + Date.now();
   try {
-    await fetch(API_URL, { method:'POST', body: JSON.stringify({ action:'createMarket', id, question:q, category:cat, createdBy:'Admin' }) });
+    await fetch(API_URL, { method:'POST', body: JSON.stringify({ action:'createMarket', id, question:q, category:cat, createdBy: session.beer }) });
     toggleCreate();
     await loadMarketData();
   } catch(e) { alert('Could not create market. Try again.'); }
@@ -541,7 +730,7 @@ function renderFMLB() {
     totals[b.user].bets++;
     totals[b.user].vol += parseInt(b.amount)||0;
   });
-  const sorted = Object.entries(totals).sort((a,b)=>b[1].vol-a[1].vol);
+  const sorted = Object.entries(totals).sort((a,b) => b[1].vol-a[1].vol);
   document.getElementById('fm-lb-body').innerHTML = sorted.length
     ? sorted.map(([name,d],i) => `<tr>
         <td class="rank ${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}">${i+1}</td>
@@ -553,18 +742,17 @@ function renderFMLB() {
 }
 
 function renderMyBets() {
-  const name = (document.getElementById('mybets-name')?.value||'').trim().toLowerCase();
-  if (!name) return;
-  const myBets = bets.filter(b=>(b.user||'').toLowerCase()===name);
+  if (!session) return;
+  const myBets = bets.filter(b => (b.user||'').toLowerCase() === session.beer.toLowerCase());
   if (!myBets.length) {
-    document.getElementById('mybets-list').innerHTML = '<div class="state-msg" style="padding:30px">No bets found for that name.</div>';
+    document.getElementById('mybets-list').innerHTML = '<div class="mybets-empty">You haven\'t placed any bets yet.<br>Head to the FriendMarket tab to get started!</div>';
     return;
   }
   document.getElementById('mybets-list').innerHTML = myBets.map(b => {
-    const m = markets.find(x=>x.id===b.marketId);
+    const m = markets.find(x => x.id===b.marketId);
     if (!m) return '';
     const resolved = m.status==='resolved';
-    const won  = resolved && m.winner===b.side;
+    const won      = resolved && m.winner===b.side;
     const statusBadge = resolved
       ? `<span class="winner-badge ${won?'winner-yes':'winner-no'}">${won?'WON':'LOST'}</span>`
       : `<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">OPEN</span>`;
@@ -583,7 +771,9 @@ function renderMyBets() {
   }).join('');
 }
 
-// ── UTILS ──
+// ══════════════════════════════
+//  UTILS
+// ══════════════════════════════
 function parseCSV(text) {
   const rows = [];
   for (const line of text.split('\n')) {
@@ -601,10 +791,6 @@ function parseCSV(text) {
 }
 function clean(s){ return s.replace(/^"|"$/g,'').trim(); }
 function esc(s)  { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-// ── INIT ──
-loadLeaderboard();
-loadMarketData();
 </script>
 </body>
 </html>
