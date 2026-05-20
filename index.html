@@ -386,10 +386,26 @@
 </div>
 
 <script>
-const SHEET_ID = '1G7nWsbdvE2H7qAecd3KqpokufElzLHNu318bZFEV-lk';
-const GVZ_URL  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
-const API_URL  = 'https://script.google.com/macros/s/AKfycbwjpJ51GhlRx_ZiRzvIqrLR2JUpmVgysG8rHLA03rg2lJa7ctSMmVnFJZmL0mvM7fKT/exec';
+const SHEET_ID  = '1G7nWsbdvE2H7qAecd3KqpokufElzLHNu318bZFEV-lk';
+const GVZ_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+const API_URL   = 'https://script.google.com/macros/s/AKfycbxsD8DpBMi2nxbtf06kF52HePXL2q9Ak-WT2RG6Qaj0W44NdavuYHQ0qOfLafWIg6lW/exec';
 const ADMIN_PIN = 'dc100admin';
+
+// Google Apps Script requires form-encoded POST (not JSON) to avoid CORS preflight blocks.
+// We send everything as URLSearchParams; the script decodes it server-side.
+async function apiPost(payload) {
+  const body = new URLSearchParams();
+  for (const [k, v] of Object.entries(payload)) {
+    // URLSearchParams handles large base64 strings fine
+    body.append(k, v === undefined || v === null ? '' : String(v));
+  }
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString()
+  });
+  return res.json();
+}
 
 let session={}, lbData=[], lbFilter='all', markets=[], bets=[], profiles=[], activeBet={};
 
@@ -403,8 +419,7 @@ async function doLogin(){
   if(pass===ADMIN_PIN){session={name:user,beer:user,isAdmin:true};startApp();return;}
   btn.disabled=true;btn.textContent='Signing in…';err.textContent='';
   try{
-    const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'login',username:user,password:pass})});
-    const data=await res.json();
+    const data=await apiPost({action:'login',username:user,password:pass});
     if(data.ok){session={name:data.name,beer:data.beer,isAdmin:false};startApp();}
     else err.textContent=data.error||'Login failed.';
   }catch(e){err.textContent='Could not reach server. Try again.';}
@@ -582,19 +597,19 @@ function cancelBet(mid){
 async function placeBet(mid){
   const amt=parseInt(document.getElementById('betamt-'+mid).value);
   if(!amt||amt<1){alert('Enter a valid amount!');return;}
-  try{await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'placeBet',marketId:mid,user:session.beer,side:activeBet.side,amount:amt})});cancelBet(mid);await loadMarketData();}
+  try{await apiPost({action:'placeBet',marketId:mid,user:session.beer,side:activeBet.side,amount:amt});cancelBet(mid);await loadMarketData();}
   catch(e){alert('Could not place bet.');}
 }
 async function resolveMarket(mid,winner){
   if(!confirm(`Resolve as ${winner.toUpperCase()}?`))return;
-  try{await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'resolveMarket',marketId:mid,winner})});await loadMarketData();}
+  try{await apiPost({action:'resolveMarket',marketId:mid,winner});await loadMarketData();}
   catch(e){alert('Could not resolve.');}
 }
 function toggleCreate(){document.getElementById('create-form').classList.toggle('open');document.getElementById('new-q').value='';}
 async function createMarket(){
   const q=document.getElementById('new-q').value.trim(),cat=document.getElementById('new-cat').value;
   if(!q){alert('Enter a question!');return;}
-  try{await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'createMarket',id:'mkt_'+Date.now(),question:q,category:cat,createdBy:session.beer})});toggleCreate();await loadMarketData();}
+  try{await apiPost({action:'createMarket',id:'mkt_'+Date.now(),question:q,category:cat,createdBy:session.beer});toggleCreate();await loadMarketData();}
   catch(e){alert('Could not create market.');}
 }
 
@@ -679,8 +694,7 @@ async function saveProfile(){
   try{
     const payload={action:'updateProfile',beer:session.beer,bio};
     if(avatar)payload.avatar=avatar;
-    const res=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});
-    const data=await res.json();
+    const data=await apiPost(payload);
     if(data.ok){avEl._pending=null;showMsg('profile-msg','Profile saved!','ok');await loadMarketData();}
     else showMsg('profile-msg',data.error||'Failed.','err');
   }catch(e){showMsg('profile-msg','Could not reach server.','err');}
@@ -694,8 +708,7 @@ async function changePassword(){
   if(newPw!==conf){showMsg('pw-msg','Passwords do not match.','err');return;}
   if(newPw.length<4){showMsg('pw-msg','Min 4 characters.','err');return;}
   try{
-    const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'changePassword',beer:session.beer,oldPw,newPw})});
-    const data=await res.json();
+    const data=await apiPost({action:'changePassword',beer:session.beer,oldPw,newPw});
     if(data.ok){showMsg('pw-msg','Password changed!','ok');['pw-old','pw-new','pw-confirm'].forEach(id=>document.getElementById(id).value='');}
     else showMsg('pw-msg',data.error||'Failed.','err');
   }catch(e){showMsg('pw-msg','Could not reach server.','err');}
