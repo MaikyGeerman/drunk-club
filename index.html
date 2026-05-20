@@ -277,6 +277,7 @@
       <div class="meta-item"><span class="meta-label">Total chugs</span><span class="meta-val gold" id="stat-total">—</span></div>
       <div class="meta-item"><span class="meta-label">Active</span><span class="meta-val" id="stat-active">—</span></div>
       <div class="meta-item"><span class="meta-label">Season ends</span><span class="meta-val">31 OCT</span></div>
+      <div class="meta-item"><span class="meta-label">Your $DEGEN</span><span class="meta-val gold" id="my-degen">—</span></div>
     </div>
   </header>
 
@@ -388,7 +389,7 @@
 <script>
 const SHEET_ID  = '1G7nWsbdvE2H7qAecd3KqpokufElzLHNu318bZFEV-lk';
 const GVZ_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
-const API_URL   = 'https://script.google.com/macros/s/AKfycbwMKczkbgiAMLQ0s15n84UW4691ZJ6bXPOq7YBxqrqlnzki15Cjf9K42QeFv19mXf-3/exec';
+const API_URL   = 'https://script.google.com/macros/s/AKfycbxsD8DpBMi2nxbtf06kF52HePXL2q9Ak-WT2RG6Qaj0W44NdavuYHQ0qOfLafWIg6lW/exec';
 const ADMIN_PIN = 'dc100admin';
 
 // GET request — used for everything except avatar upload
@@ -423,11 +424,11 @@ async function doLogin(){
   const btn=document.getElementById('login-btn');
   const err=document.getElementById('login-error');
   if(!user||!pass){err.textContent='Enter your beer name and password.';return;}
-  if(pass===ADMIN_PIN){session={name:user,beer:user,isAdmin:true};startApp();return;}
+  if(pass===ADMIN_PIN){session={name:user,beer:user,isAdmin:true,balance:9999,spent:0};startApp();return;}
   btn.disabled=true;btn.textContent='Signing in…';err.textContent='';
   try{
     const data=await apiCall({action:'login',username:user,password:pass});
-    if(data.ok){session={name:data.name,beer:data.beer,isAdmin:false};startApp();}
+    if(data.ok){session={name:data.name,beer:data.beer,isAdmin:false,balance:data.balance||0,spent:data.spent||0};startApp();}
     else err.textContent=data.error||'Login failed.';
   }catch(e){err.textContent='Could not reach server. Try again.';}
   btn.disabled=false;btn.textContent='Sign in';
@@ -438,6 +439,7 @@ function startApp(){
   document.getElementById('app').style.display='block';
   document.getElementById('topbar-name').textContent=session.beer;
   if(session.isAdmin)document.getElementById('create-wrap').style.display='block';
+  updateDegenDisplay();
   loadLeaderboard();loadMarketData();
 }
 
@@ -460,10 +462,29 @@ function switchTab(name,btn){
 }
 
 // ── PROFILE HELPERS ──
-function getProfile(beer){return profiles.find(p=>(p.beerName||'').toLowerCase()===(beer||'').toLowerCase())||{};}
+function getProfile(beer){
+  const lower=(beer||'').toLowerCase();
+  return profiles.find(p=>(p.beerName||'').toLowerCase()===lower)||{};
+}
+// Normalise a profile object so keys are always consistent regardless of sheet header casing
+function normProfile(p){
+  return {
+    beerName: p.beerName||p.beername||'',
+    realName: p.realName||p.realname||'',
+    bio:      p.bio||'',
+    avatar:   p.avatar||''
+  };
+}
 function setAvatarEl(el,beer,avatarData){
-  if(avatarData){el.innerHTML=`<img src="${avatarData}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;}
-  else{el.innerHTML='';el.textContent=(beer||'?').substring(0,2).toUpperCase();}
+  if(avatarData && avatarData.startsWith('http')){
+    // Drive URL — use as img src directly
+    el.innerHTML=`<img src="${avatarData}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML=(${JSON.stringify('?')})">`;
+  } else if(avatarData && avatarData.startsWith('data:')){
+    // Legacy base64
+    el.innerHTML=`<img src="${avatarData}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    el.innerHTML='';el.textContent=(beer||'?').substring(0,2).toUpperCase();
+  }
 }
 function updateTopbarAvatar(){
   const p=getProfile(session.beer);
@@ -529,7 +550,8 @@ function setLbFilter(btn){document.querySelectorAll('.filter-btn').forEach(b=>b.
 async function loadMarketData(){
   try{
     const res=await fetch(API_URL);const data=await res.json();
-    markets=data.markets||[];bets=data.bets||[];profiles=data.profiles||[];
+    markets=data.markets||[];bets=data.bets||[];
+    profiles=(data.profiles||[]).map(p=>normProfile(p));
     renderMarkets();renderFMStats();renderFMLB();renderMyBets();updateTopbarAvatar();
     // re-render leaderboard to pick up any new avatars
     if(lbData.length)renderLeaderboard();
@@ -572,7 +594,8 @@ function marketCard(m){
     <div class="bet-form" id="betform-${esc(m.id)}">
       <div class="bet-form-row">
         <label>Betting as</label><span class="bet-user-tag">${esc(session?session.beer:'')}</span>
-        <label>$DEGEN</label><input type="number" id="betamt-${esc(m.id)}" value="50" min="1">
+        <label style="margin-left:8px">Balance</label><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${(session.balance||0)-(session.spent||0)} $DEGEN</span>
+        <label>Amount</label><input type="number" id="betamt-${esc(m.id)}" value="50" min="1" max="${(session.balance||0)-(session.spent||0)}">
         <button class="confirm-btn" onclick="placeBet('${esc(m.id)}')">Bet</button>
         <button class="cancel-btn" onclick="cancelBet('${esc(m.id)}')">×</button>
       </div>
@@ -604,8 +627,15 @@ function cancelBet(mid){
 async function placeBet(mid){
   const amt=parseInt(document.getElementById('betamt-'+mid).value);
   if(!amt||amt<1){alert('Enter a valid amount!');return;}
-  try{await apiCall({action:'placeBet',marketId:mid,user:session.beer,side:activeBet.side,amount:amt});cancelBet(mid);await loadMarketData();}
-  catch(e){alert('Could not place bet.');}
+  const remaining=(session.balance||0)-(session.spent||0);
+  if(amt>remaining){alert('Not enough $DEGEN! You have '+remaining+' remaining.');return;}
+  try{
+    const res=await apiCall({action:'placeBet',marketId:mid,user:session.beer,side:activeBet.side,amount:amt});
+    if(!res.ok){alert(res.error||'Could not place bet.');return;}
+    session.spent=(session.spent||0)+amt;
+    updateDegenDisplay();
+    cancelBet(mid);await loadMarketData();
+  }catch(e){alert('Could not place bet.');}
 }
 async function resolveMarket(mid,winner){
   if(!confirm(`Resolve as ${winner.toUpperCase()}?`))return;
@@ -709,6 +739,8 @@ async function saveProfile(){
       const avRes = await apiUpload(session.beer, avatar);
       if (!avRes.ok) { showMsg('profile-msg', avRes.error||'Avatar save failed.','err'); return; }
       avEl._pending = null;
+      // Update displayed avatar with the Drive URL returned by server
+      if (avRes.url) setAvatarEl(avEl, session.beer, avRes.url);
     }
 
     showMsg('profile-msg','Profile saved!','ok');
