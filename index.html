@@ -266,7 +266,7 @@
     <div class="login-field"><label>Password</label><input type="password" id="login-pass" placeholder="Your phone number" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Sign in</button>
     <div class="login-error" id="login-error"></div>
-    <div class="login-hint">First time? Your password is your <strong>phone number</strong>. Change it after logging in.</div>
+    <div class="login-hint">First time? Your password is your <strong>phone number</strong> without + or spaces. Change it after logging in, and please don't use a password you use somewhere else.</div>
   </div>
 </div>
 
@@ -324,9 +324,9 @@
 
   <div class="tabs">
     <button class="tab-btn active" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">🏆 Leaderboard</button>
-    <button class="tab-btn" data-tab="market"      onclick="switchTab('market',this)">📈 FriendMarket</button>
+    <button class="tab-btn" data-tab="market"      onclick="switchTab('market',this)">📈 DC100 Market</button>
     <button class="tab-btn" data-tab="mybets"      onclick="switchTab('mybets',this)">🎯 My Bets</button>
-    <button class="tab-btn" data-tab="suggest"     onclick="switchTab('suggest',this)">💡 Suggest<span class="tab-badge" id="badge-suggest"></span></button>
+    <button class="tab-btn" data-tab="suggest"     onclick="switchTab('suggest',this)">💡 Suggest Bets<span class="tab-badge" id="badge-suggest"></span></button>
     <button class="tab-btn" data-tab="profile"     onclick="switchTab('profile',this)">👤 Profile</button>
   </div>
 
