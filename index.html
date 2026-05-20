@@ -10,7 +10,6 @@
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
   body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6;}
-  /* LOGIN */
   #login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg);}
   .login-box{width:100%;max-width:420px;padding:20px;}
   .login-logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,12vw,72px);line-height:.9;margin-bottom:8px;}
@@ -22,15 +21,12 @@
   .login-field input:focus{border-color:var(--gold);}
   .login-field input::placeholder{color:var(--muted);}
   .login-btn{width:100%;margin-top:8px;padding:14px;background:var(--gold);border:none;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#0d0d0d;font-weight:500;cursor:pointer;transition:opacity .15s;}
-  .login-btn:hover{opacity:.88;}
-  .login-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .login-btn:hover{opacity:.88;}.login-btn:disabled{opacity:.4;cursor:not-allowed;}
   .login-error{margin-top:12px;font-family:'DM Mono',monospace;font-size:12px;color:var(--red);text-align:center;min-height:18px;}
   .login-hint{margin-top:20px;font-size:12px;color:var(--muted);text-align:center;line-height:1.6;}
   .login-hint strong{color:var(--text);}
-  /* APP */
   #app{display:none;position:relative;z-index:1;padding-bottom:60px;}
   .container{max-width:900px;margin:0 auto;padding:0 20px;}
-  /* TOPBAR */
   .topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 0 0;}
   .topbar-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.02em;}
   .topbar-logo span{color:var(--gold);}
@@ -43,7 +39,6 @@
   .user-name-pill{font-family:'DM Mono',monospace;font-size:12px;}
   .logout-btn{background:none;border:1px solid var(--border2);border-radius:6px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;}
   .logout-btn:hover{color:var(--red);border-color:var(--red);}
-  /* HEADER */
   header{padding:32px 0 0;}
   .eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
   h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,10vw,96px);line-height:.92;}
@@ -53,14 +48,10 @@
   .meta-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
   .meta-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;}
   .meta-val.gold{color:var(--gold);}
-  /* TABS */
   .tabs{display:flex;margin:36px 0 0;border-bottom:1px solid var(--border2);overflow-x:auto;}
   .tab-btn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:12px 20px;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px;transition:all .15s;white-space:nowrap;}
-  .tab-btn:hover{color:var(--text);}
-  .tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
-  .tab-pane{display:none;padding-top:36px;}
-  .tab-pane.active{display:block;}
-  /* INPUTS */
+  .tab-btn:hover{color:var(--text);}.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+  .tab-pane{display:none;padding-top:36px;}.tab-pane.active{display:block;}
   .controls{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
   .search-wrap{flex:1;min-width:200px;position:relative;}
   .search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
@@ -71,16 +62,13 @@
   select{padding:10px 14px;cursor:pointer;}
   .filter-btns{display:flex;gap:6px;align-items:center;}
   .filter-btn{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:10px 16px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;}
-  .filter-btn:hover{color:var(--text);}
-  .filter-btn.active{background:var(--gold);border-color:var(--gold);color:#0d0d0d;font-weight:500;}
-  /* TABLE */
+  .filter-btn:hover{color:var(--text);}.filter-btn.active{background:var(--gold);border-color:var(--gold);color:#0d0d0d;font-weight:500;}
   .table-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;}
   table{width:100%;border-collapse:collapse;font-size:14px;}
   thead{background:var(--bg3);border-bottom:1px solid var(--border2);}
   th{padding:12px 16px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
   tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
-  tbody tr:last-child{border-bottom:none;}
-  tbody tr:hover{background:var(--bg2);}
+  tbody tr:last-child{border-bottom:none;}tbody tr:hover{background:var(--bg2);}
   td{padding:13px 16px;vertical-align:middle;}
   .rank{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);width:44px;}
   .rank-1{color:var(--gold);font-weight:500;}.rank-2{color:var(--silver);}.rank-3{color:var(--bronze);}
@@ -101,7 +89,7 @@
   @keyframes spin{to{transform:rotate(360deg);}}
   @keyframes fadeRow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
   tbody tr{animation:fadeRow .25s ease both;}
-  /* PROFILE MODAL */
+  /* MODAL */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
   .modal-overlay.open{display:flex;}
   .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;position:relative;}
@@ -119,7 +107,7 @@
   .modal-stat{background:var(--bg3);border-radius:8px;padding:10px 14px;flex:1;min-width:70px;}
   .modal-stat-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
   .modal-stat-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;}
-  .modal-stat-val.gold{color:var(--gold);}
+  .modal-stat-val.gold{color:var(--gold);}.modal-stat-val.green{color:var(--green);}
   .modal-section-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:20px 28px 10px;}
   .modal-bets{padding:0 28px 28px;}
   .modal-bet-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px;}
@@ -134,7 +122,7 @@
   .bet-outcome.won{background:rgba(76,175,125,.15);color:var(--green);}
   .bet-outcome.lost{background:rgba(224,85,85,.15);color:var(--red);}
   .bet-outcome.open{color:var(--muted);}
-  /* MY PROFILE TAB */
+  /* PROFILE TAB */
   .profile-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
   @media(max-width:620px){.profile-wrap{grid-template-columns:1fr;}}
   .profile-card{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:24px;}
@@ -156,7 +144,7 @@
   .fm-stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;}
   .fm-stat-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
   .fm-stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;}
-  .fm-stat-val.gold{color:var(--gold);}.fm-stat-val.green{color:var(--green);}
+  .fm-stat-val.gold{color:var(--gold);}.fm-stat-val.green{color:var(--green);}.fm-stat-val.red{color:var(--red);}
   .section-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
   .section-title::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);}
   .market-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:20px;margin-bottom:16px;transition:border-color .15s;}
@@ -179,8 +167,7 @@
   .prob-bar-fill{height:100%;border-radius:2px;background:var(--green);transition:width .5s ease;}
   .bet-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .bet-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px;font-family:'DM Mono',monospace;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text);}
-  .bet-btn-label{font-size:13px;letter-spacing:.06em;}
-  .bet-btn-price{font-size:18px;font-weight:500;}
+  .bet-btn-label{font-size:13px;letter-spacing:.06em;}.bet-btn-price{font-size:18px;font-weight:500;}
   .bet-btn.yes:hover,.bet-btn.yes.selected{border-color:var(--green);background:rgba(76,175,125,.1);color:var(--green);}
   .bet-btn.no:hover,.bet-btn.no.selected{border-color:var(--red);background:rgba(224,85,85,.1);color:var(--red);}
   .bet-form{margin-top:12px;padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);display:none;}
@@ -188,6 +175,7 @@
   .bet-form-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .bet-form label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;}
   .bet-user-tag{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);}
+  .bet-balance-tag{font-family:'DM Mono',monospace;font-size:12px;color:var(--green);}
   .bet-form input[type=number]{width:100px;padding:8px 12px;}
   .confirm-btn{background:var(--green);border:none;border-radius:6px;padding:8px 18px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#0d0d0d;font-weight:500;cursor:pointer;transition:opacity .15s;white-space:nowrap;}
   .confirm-btn:hover{opacity:.85;}
@@ -223,16 +211,16 @@
     <div class="login-logo">Drunk Club<br><span>of 100</span></div>
     <div class="login-sub">🍺 Season 4 · Members only</div>
     <div class="login-field"><label>Beer name</label><input type="text" id="login-user" placeholder="e.g. Beerflow" autocomplete="username"></div>
-    <div class="login-field"><label>Password (phone number)</label><input type="password" id="login-pass" placeholder="Your phone number" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="login-field"><label>Password</label><input type="password" id="login-pass" placeholder="Your phone number" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Sign in</button>
     <div class="login-error" id="login-error"></div>
-    <div class="login-hint">First time? Your password is your <strong>phone number</strong> as listed in the sheet. You can change it after logging in.</div>
+    <div class="login-hint">First time? Your password is your <strong>phone number</strong>. Change it after logging in.</div>
   </div>
 </div>
 
 <!-- PROFILE MODAL -->
 <div class="modal-overlay" id="profile-modal" onclick="closeModal(event)">
-  <div class="modal" id="modal-inner">
+  <div class="modal">
     <button class="modal-close" onclick="closeProfileModal()">×</button>
     <div class="modal-header">
       <div class="modal-top">
@@ -240,13 +228,13 @@
         <div class="modal-info">
           <div class="modal-real-name" id="modal-real-name">—</div>
           <div class="modal-beer-name" id="modal-beer-name">—</div>
-          <div class="modal-lg"        id="modal-lg"></div>
+          <div class="modal-lg" id="modal-lg"></div>
         </div>
       </div>
       <div class="modal-stats">
         <div class="modal-stat"><div class="modal-stat-label">Chugs</div><div class="modal-stat-val gold" id="modal-chugs">—</div></div>
+        <div class="modal-stat"><div class="modal-stat-label">$drunk</div><div class="modal-stat-val green" id="modal-drunk">—</div></div>
         <div class="modal-stat"><div class="modal-stat-label">Bets</div><div class="modal-stat-val" id="modal-bet-count">—</div></div>
-        <div class="modal-stat"><div class="modal-stat-label">Volume</div><div class="modal-stat-val" id="modal-volume">—</div></div>
       </div>
       <div id="modal-bio" class="modal-bio empty"></div>
     </div>
@@ -276,8 +264,9 @@
       <div class="meta-item"><span class="meta-label">Members</span><span class="meta-val" id="stat-members">—</span></div>
       <div class="meta-item"><span class="meta-label">Total chugs</span><span class="meta-val gold" id="stat-total">—</span></div>
       <div class="meta-item"><span class="meta-label">Active</span><span class="meta-val" id="stat-active">—</span></div>
-      <div class="meta-item"><span class="meta-label">Season ends</span><span class="meta-val">31 OCT</span></div>
-      <div class="meta-item"><span class="meta-label">Your $DEGEN</span><span class="meta-val gold" id="my-degen">—</span></div>
+      <div class="meta-item"><span class="meta-label">Your $drunk</span><span class="meta-val gold" id="my-drunk">—</span></div>
+      <div class="meta-item"><span class="meta-label">🏦 Total won</span><span class="meta-val green" id="stat-won">—</span></div>
+      <div class="meta-item"><span class="meta-label">💸 Total lost</span><span class="meta-val" style="color:var(--red)" id="stat-lost">—</span></div>
     </div>
   </header>
 
@@ -296,9 +285,9 @@
         <input type="text" id="lb-search" placeholder="Search name or beer…" oninput="renderLeaderboard()">
       </div>
       <select id="lb-sort" onchange="renderLeaderboard()">
-        <option value="bal_desc">Balance ↓</option><option value="bal_asc">Balance ↑</option>
-        <option value="name_asc">Name A–Z</option><option value="beer_asc">Beer name A–Z</option>
-        <option value="lg_asc">Local group</option>
+        <option value="bal_desc">Chugs ↓</option><option value="bal_asc">Chugs ↑</option>
+        <option value="name_asc">Name A–Z</option><option value="beer_asc">Beer A–Z</option>
+        <option value="drunk_desc">$drunk ↓</option><option value="lg_asc">Local group</option>
       </select>
       <div class="filter-btns">
         <button class="filter-btn active" data-filter="all"    onclick="setLbFilter(this)">All</button>
@@ -307,8 +296,8 @@
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>#</th><th>Name</th><th class="hide-mobile">Beer name</th><th class="hide-mobile">LG</th><th style="text-align:right">Balance</th></tr></thead>
-        <tbody id="lb-tbody"><tr><td colspan="5" class="state-msg"><span class="spinner"></span> Loading…</td></tr></tbody>
+        <thead><tr><th>#</th><th>Name</th><th class="hide-mobile">Beer name</th><th class="hide-mobile">LG</th><th style="text-align:right">Chugs</th><th style="text-align:right">$drunk</th></tr></thead>
+        <tbody id="lb-tbody"><tr><td colspan="6" class="state-msg"><span class="spinner"></span> Loading…</td></tr></tbody>
       </table>
       <div class="table-footer"><span id="lb-count">—</span><span id="lb-updated">—</span></div>
     </div>
@@ -342,11 +331,11 @@
     <div id="markets-list"><div class="state-msg"><span class="spinner"></span> Loading markets…</div></div>
     <div style="margin-top:40px"><div class="section-title">Resolved markets</div><div id="resolved-list"></div></div>
     <div style="margin-top:40px">
-      <div class="section-title">Bettor leaderboard</div>
+      <div class="section-title">$drunk leaderboard</div>
       <div class="table-wrap">
         <table class="fm-lb-table">
-          <thead><tr><th>#</th><th>Name</th><th>Bets</th><th>Volume ($DEGEN)</th></tr></thead>
-          <tbody id="fm-lb-body"><tr><td colspan="4" class="state-msg" style="padding:30px">No bets yet.</td></tr></tbody>
+          <thead><tr><th>#</th><th>Name</th><th>Balance</th><th>Won</th><th>Lost</th></tr></thead>
+          <tbody id="fm-lb-body"><tr><td colspan="5" class="state-msg" style="padding:30px">No data yet.</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -389,25 +378,24 @@
 <script>
 const SHEET_ID  = '1G7nWsbdvE2H7qAecd3KqpokufElzLHNu318bZFEV-lk';
 const GVZ_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
-const API_URL   = 'https://script.google.com/macros/s/AKfycbxsD8DpBMi2nxbtf06kF52HePXL2q9Ak-WT2RG6Qaj0W44NdavuYHQ0qOfLafWIg6lW/exec';
+const API_URL   = 'PASTE_YOUR_NEW_WEB_APP_URL_HERE';
 const ADMIN_PIN = 'dc100admin';
 
-// GET request — used for everything except avatar upload
+let session  = {};
+let lbData   = [], lbFilter = 'all';
+let markets  = [], bets = [], profiles = [], balances = [];
+let activeBet = {};
+
+// ── API HELPERS ───────────────────────────────────────────
 async function apiCall(payload) {
   const params = new URLSearchParams();
-  for (const [k, v] of Object.entries(payload)) {
-    params.append(k, v === undefined || v === null ? '' : String(v));
-  }
+  for (const [k,v] of Object.entries(payload))
+    params.append(k, v == null ? '' : String(v));
   const res = await fetch(API_URL + '?' + params.toString());
   return res.json();
 }
-
-// POST request — used only for avatar (base64 too large for URL params)
-// Sends the raw base64 string as the body with beer name as a query param.
-// Apps Script doPost reads e.postData.contents for the body.
 async function apiUpload(beer, base64data) {
-  const url = API_URL + '?action=updateAvatar&beer=' + encodeURIComponent(beer);
-  const res = await fetch(url, {
+  const res = await fetch(API_URL + '?action=updateAvatar&beer=' + encodeURIComponent(beer), {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: base64data
@@ -415,195 +403,220 @@ async function apiUpload(beer, base64data) {
   return res.json();
 }
 
-let session={}, lbData=[], lbFilter='all', markets=[], bets=[], profiles=[], activeBet={};
-
-// ── AUTH ──
-async function doLogin(){
-  const user=document.getElementById('login-user').value.trim();
-  const pass=document.getElementById('login-pass').value.trim();
-  const btn=document.getElementById('login-btn');
-  const err=document.getElementById('login-error');
-  if(!user||!pass){err.textContent='Enter your beer name and password.';return;}
-  if(pass===ADMIN_PIN){session={name:user,beer:user,isAdmin:true,balance:9999,spent:0};startApp();return;}
-  btn.disabled=true;btn.textContent='Signing in…';err.textContent='';
-  try{
-    const data=await apiCall({action:'login',username:user,password:pass});
-    if(data.ok){session={name:data.name,beer:data.beer,isAdmin:false,balance:data.balance||0,spent:data.spent||0};startApp();}
-    else err.textContent=data.error||'Login failed.';
-  }catch(e){err.textContent='Could not reach server. Try again.';}
-  btn.disabled=false;btn.textContent='Sign in';
+// ── AUTH ──────────────────────────────────────────────────
+async function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value.trim();
+  const btn  = document.getElementById('login-btn');
+  const err  = document.getElementById('login-error');
+  if (!user || !pass) { err.textContent = 'Enter your beer name and password.'; return; }
+  if (pass === ADMIN_PIN) { session = { name:user, beer:user, isAdmin:true, balance:9999 }; startApp(); return; }
+  btn.disabled = true; btn.textContent = 'Signing in…'; err.textContent = '';
+  try {
+    const data = await apiCall({ action:'login', username:user, password:pass });
+    if (data.ok) {
+      session = { name:data.name, beer:data.beer, isAdmin:false,
+                  balance:data.balance||0, totalWon:data.totalWon||0, totalLost:data.totalLost||0 };
+      startApp();
+    } else err.textContent = data.error || 'Login failed.';
+  } catch(e) { err.textContent = 'Could not reach server. Try again.'; }
+  btn.disabled = false; btn.textContent = 'Sign in';
 }
 
-function startApp(){
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('topbar-name').textContent=session.beer;
-  if(session.isAdmin)document.getElementById('create-wrap').style.display='block';
-  updateDegenDisplay();
-  loadLeaderboard();loadMarketData();
+function startApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('topbar-name').textContent = session.beer;
+  if (session.isAdmin) document.getElementById('create-wrap').style.display = 'block';
+  updateDrunkDisplay();
+  loadLeaderboard();
+  loadMarketData();
 }
 
-function doLogout(){
-  session={};
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-pass').value='';
-  document.getElementById('login-error').textContent='';
+function doLogout() {
+  session = {};
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').textContent = '';
 }
 
-// ── TABS ──
-function switchTab(name,btn){
-  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+function updateDrunkDisplay() {
+  document.getElementById('my-drunk').textContent = (session.balance||0).toLocaleString();
+}
+
+// ── TABS ──────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b  => b.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  if(btn)btn.classList.add('active');
-  if(name==='market'||name==='mybets')loadMarketData();
-  if(name==='profile')populateMyProfile();
+  if (btn) btn.classList.add('active');
+  if (name === 'market' || name === 'mybets') loadMarketData();
+  if (name === 'profile') populateMyProfile();
 }
 
-// ── PROFILE HELPERS ──
-function getProfile(beer){
-  const lower=(beer||'').toLowerCase();
-  return profiles.find(p=>(p.beerName||'').toLowerCase()===lower)||{};
+// ── PROFILE HELPERS ───────────────────────────────────────
+// Profiles are now returned from the server already normalised to camelCase keys
+function getProfile(beer) {
+  const lower = (beer||'').toLowerCase();
+  return profiles.find(p => (p.beerName||'').toLowerCase() === lower) || {};
 }
-// Normalise a profile object so keys are always consistent regardless of sheet header casing
-function normProfile(p){
-  return {
-    beerName: p.beerName||p.beername||'',
-    realName: p.realName||p.realname||'',
-    bio:      p.bio||'',
-    avatar:   p.avatar||''
-  };
+function getBalance(beer) {
+  const lower = (beer||'').toLowerCase();
+  return balances.find(b => (b.beername||'').toString().toLowerCase() === lower) || {};
 }
-function setAvatarEl(el,beer,avatarData){
-  if(avatarData && avatarData.startsWith('http')){
-    // Drive URL — use as img src directly
-    el.innerHTML=`<img src="${avatarData}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML=(${JSON.stringify('?')})">`;
-  } else if(avatarData && avatarData.startsWith('data:')){
-    // Legacy base64
-    el.innerHTML=`<img src="${avatarData}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+function setAvatarEl(el, beer, avatarUrl) {
+  if (avatarUrl && (avatarUrl.startsWith('http') || avatarUrl.startsWith('data:'))) {
+    el.innerHTML = `<img src="${avatarUrl}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML='${(beer||'?').substring(0,2).toUpperCase()}'">`;
   } else {
-    el.innerHTML='';el.textContent=(beer||'?').substring(0,2).toUpperCase();
+    el.innerHTML = '';
+    el.textContent = (beer||'?').substring(0,2).toUpperCase();
   }
 }
-function updateTopbarAvatar(){
-  const p=getProfile(session.beer);
-  setAvatarEl(document.getElementById('topbar-avatar'),session.beer,p.avatar);
+function updateTopbarAvatar() {
+  const p = getProfile(session.beer);
+  setAvatarEl(document.getElementById('topbar-avatar'), session.beer, p.avatar);
 }
 
-// ── LEADERBOARD ──
-async function loadLeaderboard(){
-  try{
-    const res=await fetch(GVZ_URL);const text=await res.text();
-    const rows=parseCSV(text);const hdr=rows[0].map(h=>h.toLowerCase().trim());
-    const ni=hdr.findIndex(h=>h.includes('name')&&!h.includes('beer'));
-    const bi=hdr.findIndex(h=>h.includes('beer'));
-    const li=hdr.findIndex(h=>h==='lg');
-    const ci=hdr.findIndex(h=>h==='count');
-    lbData=rows.slice(1).map(r=>({name:clean(r[ni]||''),beer:clean(r[bi]||''),lg:clean(r[li]||''),bal:parseInt(r[ci])||0})).filter(r=>r.name&&r.beer);
-    const total=lbData.reduce((s,r)=>s+r.bal,0);
-    document.getElementById('stat-members').textContent=lbData.length;
-    document.getElementById('stat-total').textContent=total.toLocaleString();
-    document.getElementById('stat-active').textContent=lbData.filter(r=>r.bal>0).length;
+// ── LEADERBOARD ───────────────────────────────────────────
+async function loadLeaderboard() {
+  try {
+    const res  = await fetch(GVZ_URL);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    const hdr  = rows[0].map(h => h.toLowerCase().trim());
+    const ni   = hdr.findIndex(h => h.includes('name') && !h.includes('beer'));
+    const bi   = hdr.findIndex(h => h.includes('beer'));
+    const li   = hdr.findIndex(h => h === 'lg');
+    const ci   = hdr.findIndex(h => h === 'count');
+    lbData = rows.slice(1)
+      .map(r => ({ name:clean(r[ni]||''), beer:clean(r[bi]||''), lg:clean(r[li]||''), bal:parseInt(r[ci])||0 }))
+      .filter(r => r.name && r.beer);
+    const total = lbData.reduce((s,r) => s+r.bal, 0);
+    document.getElementById('stat-members').textContent = lbData.length;
+    document.getElementById('stat-total').textContent   = total.toLocaleString();
+    document.getElementById('stat-active').textContent  = lbData.filter(r=>r.bal>0).length;
     renderLeaderboard();
-    document.getElementById('lb-updated').innerHTML='Updated <span style="color:var(--green)">'+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span>';
-  }catch(e){document.getElementById('lb-tbody').innerHTML='<tr><td colspan="5" class="state-msg">⚠ Could not load sheet.</td></tr>';}
+    document.getElementById('lb-updated').innerHTML = 'Updated <span style="color:var(--green)">' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) + '</span>';
+  } catch(e) {
+    document.getElementById('lb-tbody').innerHTML = '<tr><td colspan="6" class="state-msg">⚠ Could not load sheet.</td></tr>';
+  }
 }
 
-function renderLeaderboard(){
-  const q=document.getElementById('lb-search').value.toLowerCase();
-  const sort=document.getElementById('lb-sort').value;
-  let data=lbData.filter(r=>{
-    if(lbFilter==='active'&&r.bal===0)return false;
-    if(q&&!r.name.toLowerCase().includes(q)&&!r.beer.toLowerCase().includes(q))return false;
+function renderLeaderboard() {
+  const q    = document.getElementById('lb-search').value.toLowerCase();
+  const sort = document.getElementById('lb-sort').value;
+  let data   = lbData.filter(r => {
+    if (lbFilter==='active' && r.bal===0) return false;
+    if (q && !r.name.toLowerCase().includes(q) && !r.beer.toLowerCase().includes(q)) return false;
     return true;
   });
-  data=[...data].sort((a,b)=>{
-    if(sort==='bal_desc')return b.bal-a.bal;if(sort==='bal_asc')return a.bal-b.bal;
-    if(sort==='name_asc')return a.name.localeCompare(b.name);if(sort==='beer_asc')return a.beer.localeCompare(b.beer);
-    if(sort==='lg_asc')return a.lg.localeCompare(b.lg);return 0;
+  data = [...data].sort((a,b) => {
+    const aBal = getBalance(a.beer); const bBal = getBalance(b.beer);
+    const aDrunk = Number(aBal.balance)||0; const bDrunk = Number(bBal.balance)||0;
+    if (sort==='bal_desc')   return b.bal-a.bal;
+    if (sort==='bal_asc')    return a.bal-b.bal;
+    if (sort==='name_asc')   return a.name.localeCompare(b.name);
+    if (sort==='beer_asc')   return a.beer.localeCompare(b.beer);
+    if (sort==='drunk_desc') return bDrunk-aDrunk;
+    if (sort==='lg_asc')     return a.lg.localeCompare(b.lg);
+    return 0;
   });
-  const maxBal=Math.max(...lbData.map(r=>r.bal),1);
-  document.getElementById('lb-tbody').innerHTML=data.map((r,i)=>{
-    const p=getProfile(r.beer);
-    const rc=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
-    const top=r.bal>=maxBal*.5;const pct=Math.round(r.bal/maxBal*100);
-    const bc=r.bal===0?'zero':top?'top':'';
-    const isMe=session&&r.beer.toLowerCase()===session.beer.toLowerCase();
-    const avHtml=p.avatar
-      ?`<img src="${p.avatar}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;margin-right:8px;vertical-align:middle;flex-shrink:0;">`
-      :`<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:rgba(232,200,74,.1);font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);margin-right:8px;flex-shrink:0;">${(r.beer||'?').substring(0,2).toUpperCase()}</span>`;
+  const maxBal = Math.max(...lbData.map(r=>r.bal), 1);
+  document.getElementById('lb-tbody').innerHTML = data.map((r,i) => {
+    const p     = getProfile(r.beer);
+    const bal   = getBalance(r.beer);
+    const drunk = Number(bal.balance) || '—';
+    const rc    = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+    const top   = r.bal >= maxBal*.5;
+    const pct   = Math.round(r.bal/maxBal*100);
+    const bc    = r.bal===0?'zero':top?'top':'';
+    const isMe  = session.beer && r.beer.toLowerCase()===session.beer.toLowerCase();
+    const avHtml = p.avatar && (p.avatar.startsWith('http')||p.avatar.startsWith('data:'))
+      ? `<img src="${p.avatar}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;margin-right:8px;flex-shrink:0;" onerror="this.style.display='none'">`
+      : `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:rgba(232,200,74,.1);font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);margin-right:8px;flex-shrink:0;">${(r.beer||'?').substring(0,2).toUpperCase()}</span>`;
     return `<tr style="animation-delay:${Math.min(i*18,300)}ms${isMe?';background:rgba(232,200,74,.04)':''}">
       <td class="rank ${rc}">${i+1}</td>
       <td class="name-cell"><span style="display:inline-flex;align-items:center;">${avHtml}<span class="name-link" onclick="openProfileModal('${esc(r.beer)}')">${esc(r.name)}</span>${isMe?'<span style="font-family:DM Mono,monospace;font-size:10px;color:var(--gold);margin-left:6px">you</span>':''}</span></td>
       <td class="hide-mobile"><span class="beer-pill">${esc(r.beer)}</span></td>
       <td class="lg-tag hide-mobile">${esc(r.lg)}</td>
       <td><div class="balance-cell"><div class="bar-track"><div class="bar-fill ${bc}" style="width:${pct}%"></div></div><span class="balance-num ${top?'top':''}">${r.bal}</span></div></td>
+      <td style="text-align:right;font-family:'DM Mono',monospace;font-size:13px;color:var(--green)">${typeof drunk==='number'?drunk.toLocaleString():drunk}</td>
     </tr>`;
-  }).join('')||'<tr><td colspan="5" class="state-msg">No results.</td></tr>';
-  document.getElementById('lb-count').textContent=data.length+' account'+(data.length!==1?'s':'');
+  }).join('') || '<tr><td colspan="6" class="state-msg">No results.</td></tr>';
+  document.getElementById('lb-count').textContent = data.length + ' account'+(data.length!==1?'s':'');
 }
 
-function setLbFilter(btn){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');lbFilter=btn.dataset.filter;renderLeaderboard();}
-
-// ── MARKET DATA ──
-async function loadMarketData(){
-  try{
-    const res=await fetch(API_URL);const data=await res.json();
-    markets=data.markets||[];bets=data.bets||[];
-    profiles=(data.profiles||[]).map(p=>normProfile(p));
-    renderMarkets();renderFMStats();renderFMLB();renderMyBets();updateTopbarAvatar();
-    // re-render leaderboard to pick up any new avatars
-    if(lbData.length)renderLeaderboard();
-  }catch(e){document.getElementById('markets-list').innerHTML='<div class="state-msg">⚠ Could not load market data.</div>';}
+function setLbFilter(btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); lbFilter=btn.dataset.filter; renderLeaderboard();
 }
 
-function renderFMStats(){
-  const vol=bets.reduce((s,b)=>s+(parseInt(b.amount)||0),0);
-  document.getElementById('fm-open').textContent=markets.filter(m=>m.status==='open').length;
-  document.getElementById('fm-volume').textContent=vol.toLocaleString();
-  document.getElementById('fm-bets').textContent=bets.length;
-  document.getElementById('fm-resolved').textContent=markets.filter(m=>m.status==='resolved').length;
+// ── MARKET DATA ───────────────────────────────────────────
+async function loadMarketData() {
+  try {
+    const data = await apiCall({});
+    markets  = data.markets  || [];
+    bets     = data.bets     || [];
+    profiles = data.profiles || []; // already normalised to camelCase by server
+    balances = data.balances || [];
+    // Update global stats
+    document.getElementById('stat-won').textContent  = (data.totalWon  ||0).toLocaleString();
+    document.getElementById('stat-lost').textContent = (data.totalLost ||0).toLocaleString();
+    renderMarkets(); renderFMStats(); renderFMLB(); renderMyBets();
+    updateTopbarAvatar();
+    if (lbData.length) renderLeaderboard();
+  } catch(e) {
+    document.getElementById('markets-list').innerHTML = '<div class="state-msg">⚠ Could not load market data.</div>';
+  }
+}
+
+function renderFMStats() {
+  const vol = bets.reduce((s,b)=>s+(parseInt(b.amount)||0),0);
+  document.getElementById('fm-open').textContent     = markets.filter(m=>m.status==='open').length;
+  document.getElementById('fm-volume').textContent   = vol.toLocaleString();
+  document.getElementById('fm-bets').textContent     = bets.length;
+  document.getElementById('fm-resolved').textContent = markets.filter(m=>m.status==='resolved').length;
 }
 
 function getProb(m){const y=parseFloat(m.yesPool)||0,n=parseFloat(m.noPool)||0;return(y+n)===0?50:Math.round(y/(y+n)*100);}
-function catClass(c){return'cat-'+(c||'other');}
+function catClass(c){return 'cat-'+(c||'other');}
 function catEmoji(c){return{chug:'🍺',social:'💬',food:'🍔',sleep:'😴'}[c]||'•';}
 
-function renderMarkets(){
-  const open=markets.filter(m=>m.status==='open');
-  const res=markets.filter(m=>m.status==='resolved');
-  document.getElementById('markets-list').innerHTML=open.length?open.map(marketCard).join(''):'<div class="state-msg" style="padding:30px">No open markets yet.</div>';
-  document.getElementById('resolved-list').innerHTML=res.length?res.map(marketCard).join(''):'<div style="color:var(--muted);font-size:13px;font-family:DM Mono,monospace;padding:10px 0">None yet.</div>';
+function renderMarkets() {
+  const open = markets.filter(m=>m.status==='open');
+  const res  = markets.filter(m=>m.status==='resolved');
+  document.getElementById('markets-list').innerHTML  = open.length ? open.map(marketCard).join('') : '<div class="state-msg" style="padding:30px">No open markets yet.</div>';
+  document.getElementById('resolved-list').innerHTML = res.length  ? res.map(marketCard).join('')  : '<div style="color:var(--muted);font-size:13px;font-family:DM Mono,monospace;padding:10px 0">None yet.</div>';
 }
 
-function marketCard(m){
-  const prob=getProb(m);
-  const total=(parseFloat(m.yesPool)||0)+(parseFloat(m.noPool)||0);
-  const mBets=bets.filter(b=>b.marketId===m.id).length;
-  const resolved=m.status==='resolved';
-  const myBet=bets.find(b=>b.marketId===m.id&&session&&(b.user||'').toLowerCase()===session.beer.toLowerCase());
-  const winnerBadge=resolved?`<span class="winner-badge winner-${m.winner}" style="margin-left:8px">${m.winner.toUpperCase()} won</span>`:'';
-  const myBetTag=myBet?`<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);margin-left:8px">you bet ${myBet.side.toUpperCase()}</span>`:'';
-  const resolveRow=(session&&session.isAdmin&&!resolved)?`<div style="display:flex;gap:8px;margin-top:12px"><button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','yes')">Resolve YES ✓</button><button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','no')">Resolve NO ✗</button></div>`:'';
-  const betSection=!resolved?`
+function marketCard(m) {
+  const prob     = getProb(m);
+  const total    = (parseFloat(m.yesPool)||0)+(parseFloat(m.noPool)||0);
+  const mBets    = bets.filter(b=>b.marketId===m.id).length;
+  const resolved = m.status==='resolved';
+  const myBet    = bets.find(b=>b.marketId===m.id && session.beer && (b.user||'').toLowerCase()===session.beer.toLowerCase());
+  const winnerBadge = resolved ? `<span class="winner-badge winner-${m.winner}" style="margin-left:8px">${m.winner.toUpperCase()} won</span>` : '';
+  const myBetTag    = myBet   ? `<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);margin-left:8px">you bet ${myBet.side.toUpperCase()}</span>` : '';
+  const resolveRow  = (session.isAdmin && !resolved) ? `<div style="display:flex;gap:8px;margin-top:12px"><button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','yes')">Resolve YES ✓</button><button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','no')">Resolve NO ✗</button></div>` : '';
+  const betSection  = !resolved ? `
     <div class="bet-btns">
       <button class="bet-btn yes${myBet&&myBet.side==='yes'?' selected':''}" onclick="selectBet('${esc(m.id)}','yes',this)"><span class="bet-btn-label">YES</span><span class="bet-btn-price">${prob}¢</span></button>
-      <button class="bet-btn no${myBet&&myBet.side==='no'?' selected':''}" onclick="selectBet('${esc(m.id)}','no',this)"><span class="bet-btn-label">NO</span><span class="bet-btn-price">${100-prob}¢</span></button>
+      <button class="bet-btn no${myBet&&myBet.side==='no'?' selected':''}"  onclick="selectBet('${esc(m.id)}','no',this)"><span class="bet-btn-label">NO</span><span class="bet-btn-price">${100-prob}¢</span></button>
     </div>
     <div class="bet-form" id="betform-${esc(m.id)}">
       <div class="bet-form-row">
-        <label>Betting as</label><span class="bet-user-tag">${esc(session?session.beer:'')}</span>
-        <label style="margin-left:8px">Balance</label><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${(session.balance||0)-(session.spent||0)} $DEGEN</span>
-        <label>Amount</label><input type="number" id="betamt-${esc(m.id)}" value="50" min="1" max="${(session.balance||0)-(session.spent||0)}">
+        <label>Betting as</label><span class="bet-user-tag">${esc(session.beer||'')}</span>
+        <label>Balance</label><span class="bet-balance-tag">${(session.balance||0).toLocaleString()} $drunk</span>
+        <label>Amount</label><input type="number" id="betamt-${esc(m.id)}" value="50" min="1" max="${session.balance||0}">
         <button class="confirm-btn" onclick="placeBet('${esc(m.id)}')">Bet</button>
-        <button class="cancel-btn" onclick="cancelBet('${esc(m.id)}')">×</button>
+        <button class="cancel-btn"  onclick="cancelBet('${esc(m.id)}')">×</button>
       </div>
-    </div>`:'';
+    </div>` : '';
   return `<div class="market-card${resolved?' resolved':''}" id="mc-${esc(m.id)}">
     <span class="market-cat ${catClass(m.category)}">${catEmoji(m.category)} ${(m.category||'other').toUpperCase()}</span>
     <div class="market-header">
-      <div><div class="market-question">${esc(m.question)}</div><div class="market-meta">${mBets} bet${mBets!==1?'s':''} · ${total.toLocaleString()} $DEGEN${winnerBadge}${myBetTag}</div></div>
+      <div><div class="market-question">${esc(m.question)}</div><div class="market-meta">${mBets} bet${mBets!==1?'s':''} · ${total.toLocaleString()} $drunk${winnerBadge}${myBetTag}</div></div>
       ${!resolved?`<div class="market-right"><div class="market-prob${prob<40?' low':''}">${prob}%</div><div class="market-prob-label">YES</div></div>`:''}
     </div>
     ${!resolved?`<div class="prob-bar"><div class="prob-bar-fill" style="width:${prob}%"></div></div>`:''}
@@ -611,109 +624,122 @@ function marketCard(m){
   </div>`;
 }
 
-function selectBet(mid,side,btn){
-  const form=document.getElementById('betform-'+mid);
-  const card=document.getElementById('mc-'+mid);
-  const already=activeBet.mid===mid&&activeBet.side===side&&form.classList.contains('open');
+function selectBet(mid, side, btn) {
+  const form = document.getElementById('betform-'+mid);
+  const card = document.getElementById('mc-'+mid);
+  const already = activeBet.mid===mid && activeBet.side===side && form.classList.contains('open');
   card.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
-  if(already){form.classList.remove('open');activeBet={};}
-  else{btn.classList.add('selected');form.classList.add('open');activeBet={mid,side};}
+  if (already) { form.classList.remove('open'); activeBet={}; }
+  else { btn.classList.add('selected'); form.classList.add('open'); activeBet={mid,side}; }
 }
-function cancelBet(mid){
-  const f=document.getElementById('betform-'+mid);if(f)f.classList.remove('open');
-  const c=document.getElementById('mc-'+mid);if(c)c.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
+function cancelBet(mid) {
+  const f=document.getElementById('betform-'+mid); if(f) f.classList.remove('open');
+  const c=document.getElementById('mc-'+mid); if(c) c.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
   activeBet={};
 }
-async function placeBet(mid){
-  const amt=parseInt(document.getElementById('betamt-'+mid).value);
-  if(!amt||amt<1){alert('Enter a valid amount!');return;}
-  const remaining=(session.balance||0)-(session.spent||0);
-  if(amt>remaining){alert('Not enough $DEGEN! You have '+remaining+' remaining.');return;}
-  try{
-    const res=await apiCall({action:'placeBet',marketId:mid,user:session.beer,side:activeBet.side,amount:amt});
-    if(!res.ok){alert(res.error||'Could not place bet.');return;}
-    session.spent=(session.spent||0)+amt;
-    updateDegenDisplay();
-    cancelBet(mid);await loadMarketData();
-  }catch(e){alert('Could not place bet.');}
+async function placeBet(mid) {
+  const amt = parseInt(document.getElementById('betamt-'+mid).value);
+  if (!amt||amt<1) { alert('Enter a valid amount!'); return; }
+  if (amt > (session.balance||0)) { alert('Not enough $drunk! You have '+(session.balance||0)+' remaining.'); return; }
+  try {
+    const res = await apiCall({ action:'placeBet', marketId:mid, user:session.beer, side:activeBet.side, amount:amt });
+    if (!res.ok) { alert(res.error||'Could not place bet.'); return; }
+    session.balance = res.newBalance;
+    updateDrunkDisplay();
+    cancelBet(mid); await loadMarketData();
+  } catch(e) { alert('Could not place bet.'); }
 }
-async function resolveMarket(mid,winner){
-  if(!confirm(`Resolve as ${winner.toUpperCase()}?`))return;
-  try{await apiCall({action:'resolveMarket',marketId:mid,winner});await loadMarketData();}
-  catch(e){alert('Could not resolve.');}
+async function resolveMarket(mid, winner) {
+  if (!confirm(`Resolve as ${winner.toUpperCase()}?`)) return;
+  try {
+    const res = await apiCall({ action:'resolveMarket', marketId:mid, winner });
+    if (!res.ok) { alert(res.error||'Could not resolve.'); return; }
+    // Refresh session balance after payout
+    const loginRes = await apiCall({ action:'login', username:session.beer, password:'__skip__' });
+    // just reload data; balance will update on next load
+    await loadMarketData();
+  } catch(e) { alert('Could not resolve.'); }
 }
-function toggleCreate(){document.getElementById('create-form').classList.toggle('open');document.getElementById('new-q').value='';}
-async function createMarket(){
-  const q=document.getElementById('new-q').value.trim(),cat=document.getElementById('new-cat').value;
-  if(!q){alert('Enter a question!');return;}
-  try{await apiCall({action:'createMarket',id:'mkt_'+Date.now(),question:q,category:cat,createdBy:session.beer});toggleCreate();await loadMarketData();}
-  catch(e){alert('Could not create market.');}
-}
-
-function renderFMLB(){
-  const totals={};
-  bets.forEach(b=>{if(!totals[b.user])totals[b.user]={bets:0,vol:0};totals[b.user].bets++;totals[b.user].vol+=parseInt(b.amount)||0;});
-  const sorted=Object.entries(totals).sort((a,b)=>b[1].vol-a[1].vol);
-  document.getElementById('fm-lb-body').innerHTML=sorted.length
-    ?sorted.map(([name,d],i)=>`<tr><td class="rank ${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}">${i+1}</td><td style="font-weight:500"><span class="name-link" onclick="openProfileModal('${esc(name)}')">${esc(name)}</span></td><td style="font-family:'DM Mono',monospace">${d.bets}</td><td style="font-family:'DM Mono',monospace;color:var(--gold)">${d.vol.toLocaleString()}</td></tr>`).join('')
-    :'<tr><td colspan="4" class="state-msg" style="padding:30px">No bets yet.</td></tr>';
+function toggleCreate() { document.getElementById('create-form').classList.toggle('open'); document.getElementById('new-q').value=''; }
+async function createMarket() {
+  const q=document.getElementById('new-q').value.trim(), cat=document.getElementById('new-cat').value;
+  if (!q) { alert('Enter a question!'); return; }
+  try { await apiCall({ action:'createMarket', id:'mkt_'+Date.now(), question:q, category:cat, createdBy:session.beer }); toggleCreate(); await loadMarketData(); }
+  catch(e) { alert('Could not create market.'); }
 }
 
-function renderMyBets(){
-  if(!session.beer)return;
-  const myBets=bets.filter(b=>(b.user||'').toLowerCase()===session.beer.toLowerCase());
-  if(!myBets.length){document.getElementById('mybets-list').innerHTML='<div class="mybets-empty">You haven\'t placed any bets yet.<br>Head to the FriendMarket tab!</div>';return;}
-  document.getElementById('mybets-list').innerHTML=myBets.map(b=>{
-    const m=markets.find(x=>x.id===b.marketId);if(!m)return'';
-    const resolved=m.status==='resolved',won=resolved&&m.winner===b.side;
-    const badge=resolved?`<span class="winner-badge ${won?'winner-yes':'winner-no'}">${won?'WON':'LOST'}</span>`:`<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">OPEN</span>`;
-    return `<div class="market-card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div><div class="market-question" style="font-size:15px">${esc(m.question)}</div><div class="market-meta" style="margin-top:6px">Bet <strong style="color:${b.side==='yes'?'var(--green)':'var(--red)'}">${(b.side||'').toUpperCase()}</strong> · <span style="color:var(--gold);font-family:'DM Mono',monospace">${parseInt(b.amount).toLocaleString()} $DEGEN</span></div></div>${badge}</div></div>`;
+function renderFMLB() {
+  if (!balances.length) {
+    document.getElementById('fm-lb-body').innerHTML = '<tr><td colspan="5" class="state-msg" style="padding:30px">No data yet.</td></tr>';
+    return;
+  }
+  const sorted = [...balances].sort((a,b) => (Number(b.balance)||0)-(Number(a.balance)||0));
+  document.getElementById('fm-lb-body').innerHTML = sorted.map((r,i) => {
+    const lbRow = lbData.find(l=>l.beer.toLowerCase()===(r.beername||'').toString().toLowerCase())||{};
+    return `<tr>
+      <td class="rank ${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}">${i+1}</td>
+      <td style="font-weight:500"><span class="name-link" onclick="openProfileModal('${esc(String(r.beername))}')">${esc(String(r.beername))}</span></td>
+      <td style="font-family:'DM Mono',monospace;color:var(--green)">${(Number(r.balance)||0).toLocaleString()}</td>
+      <td style="font-family:'DM Mono',monospace;color:var(--gold)">${(Number(r.totalwon)||0).toLocaleString()}</td>
+      <td style="font-family:'DM Mono',monospace;color:var(--red)">${(Number(r.totallost)||0).toLocaleString()}</td>
+    </tr>`;
   }).join('');
 }
 
-// ── PROFILE MODAL ──
-function openProfileModal(beer){
-  const lbRow=lbData.find(r=>r.beer.toLowerCase()===beer.toLowerCase())||{};
-  const p=getProfile(beer);
-  const userBets=bets.filter(b=>(b.user||'').toLowerCase()===beer.toLowerCase());
-  const volume=userBets.reduce((s,b)=>s+(parseInt(b.amount)||0),0);
-  setAvatarEl(document.getElementById('modal-avatar'),beer,p.avatar);
-  document.getElementById('modal-real-name').textContent=lbRow.name||beer;
-  document.getElementById('modal-beer-name').textContent='🍺 '+beer;
-  document.getElementById('modal-lg').textContent=lbRow.lg?'📍 '+lbRow.lg:'';
-  document.getElementById('modal-chugs').textContent=lbRow.bal!==undefined?lbRow.bal:'—';
-  document.getElementById('modal-bet-count').textContent=userBets.length;
-  document.getElementById('modal-volume').textContent=volume.toLocaleString();
-  const bioEl=document.getElementById('modal-bio');
-  if(p.bio){bioEl.textContent=p.bio;bioEl.classList.remove('empty');}
-  else{bioEl.textContent='No bio yet.';bioEl.classList.add('empty');}
-  document.getElementById('modal-bets').innerHTML=userBets.length
-    ?userBets.map(b=>{
-        const m=markets.find(x=>x.id===b.marketId);if(!m)return'';
-        const resolved=m.status==='resolved',won=resolved&&m.winner===b.side;
+function renderMyBets() {
+  if (!session.beer) return;
+  const myBets = bets.filter(b=>(b.user||'').toLowerCase()===session.beer.toLowerCase());
+  if (!myBets.length) { document.getElementById('mybets-list').innerHTML='<div class="mybets-empty">You haven\'t placed any bets yet.<br>Head to the FriendMarket tab!</div>'; return; }
+  document.getElementById('mybets-list').innerHTML = myBets.map(b => {
+    const m=markets.find(x=>x.id===b.marketId); if(!m) return '';
+    const resolved=m.status==='resolved', won=resolved&&m.winner===b.side;
+    const badge=resolved?`<span class="winner-badge ${won?'winner-yes':'winner-no'}">${won?'WON':'LOST'}</span>`:`<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">OPEN</span>`;
+    return `<div class="market-card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div><div class="market-question" style="font-size:15px">${esc(m.question)}</div><div class="market-meta" style="margin-top:6px">Bet <strong style="color:${b.side==='yes'?'var(--green)':'var(--red)'}">${(b.side||'').toUpperCase()}</strong> · <span style="color:var(--gold);font-family:'DM Mono',monospace">${parseInt(b.amount).toLocaleString()} $drunk</span></div></div>${badge}</div></div>`;
+  }).join('');
+}
+
+// ── PROFILE MODAL ─────────────────────────────────────────
+function openProfileModal(beer) {
+  const lbRow    = lbData.find(r=>r.beer.toLowerCase()===beer.toLowerCase())||{};
+  const p        = getProfile(beer);
+  const bal      = getBalance(beer);
+  const userBets = bets.filter(b=>(b.user||'').toLowerCase()===beer.toLowerCase());
+  setAvatarEl(document.getElementById('modal-avatar'), beer, p.avatar);
+  document.getElementById('modal-real-name').textContent = lbRow.name||beer;
+  document.getElementById('modal-beer-name').textContent = '🍺 '+beer;
+  document.getElementById('modal-lg').textContent        = lbRow.lg?'📍 '+lbRow.lg:'';
+  document.getElementById('modal-chugs').textContent     = lbRow.bal!==undefined?lbRow.bal:'—';
+  document.getElementById('modal-drunk').textContent     = bal.balance!==undefined?(Number(bal.balance)||0).toLocaleString():'—';
+  document.getElementById('modal-bet-count').textContent = userBets.length;
+  const bioEl = document.getElementById('modal-bio');
+  if (p.bio) { bioEl.textContent=p.bio; bioEl.classList.remove('empty'); }
+  else       { bioEl.textContent='No bio yet.'; bioEl.classList.add('empty'); }
+  document.getElementById('modal-bets').innerHTML = userBets.length
+    ? userBets.map(b => {
+        const m=markets.find(x=>x.id===b.marketId); if(!m) return '';
+        const resolved=m.status==='resolved', won=resolved&&m.winner===b.side;
         const outcome=resolved?(won?'<span class="bet-outcome won">WON</span>':'<span class="bet-outcome lost">LOST</span>'):'<span class="bet-outcome open">open</span>';
         return `<div class="modal-bet-row"><div class="modal-bet-q">${esc(m.question)}</div><div class="modal-bet-right"><span class="bet-side ${b.side}">${(b.side||'').toUpperCase()}</span><span class="bet-amt">${parseInt(b.amount).toLocaleString()}</span>${outcome}</div></div>`;
       }).join('')
-    :'<div style="color:var(--muted);font-family:DM Mono,monospace;font-size:13px;padding:10px 0">No bets yet.</div>';
+    : '<div style="color:var(--muted);font-family:DM Mono,monospace;font-size:13px;padding:10px 0">No bets yet.</div>';
   document.getElementById('profile-modal').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
-function closeProfileModal(){document.getElementById('profile-modal').classList.remove('open');document.body.style.overflow='';}
-function closeModal(e){if(e.target===document.getElementById('profile-modal'))closeProfileModal();}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProfileModal();});
+function closeProfileModal(){ document.getElementById('profile-modal').classList.remove('open'); document.body.style.overflow=''; }
+function closeModal(e){ if(e.target===document.getElementById('profile-modal')) closeProfileModal(); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeProfileModal(); });
 
-// ── MY PROFILE TAB ──
-function populateMyProfile(){
-  if(!session.beer)return;
-  const p=getProfile(session.beer);
-  document.getElementById('my-name-display').textContent=session.name+' · '+session.beer;
-  document.getElementById('my-bio').value=p.bio||'';
-  setAvatarEl(document.getElementById('my-avatar'),session.beer,p.avatar);
+// ── MY PROFILE TAB ────────────────────────────────────────
+function populateMyProfile() {
+  if (!session.beer) return;
+  const p = getProfile(session.beer);
+  document.getElementById('my-name-display').textContent = session.name+' · '+session.beer;
+  document.getElementById('my-bio').value = p.bio || '';
+  setAvatarEl(document.getElementById('my-avatar'), session.beer, p.avatar);
 }
-
-function handleAvatarUpload(e){
-  const file=e.target.files[0];if(!file)return;
-  if(file.size>500*1024){alert('Image must be under 500KB. Please resize it first.');return;}
+function handleAvatarUpload(e) {
+  const file=e.target.files[0]; if(!file) return;
+  if (file.size>500*1024) { alert('Image must be under 500KB. Please resize it first.'); return; }
   const reader=new FileReader();
   reader.onload=ev=>{
     const b64=ev.target.result;
@@ -723,47 +749,39 @@ function handleAvatarUpload(e){
   };
   reader.readAsDataURL(file);
 }
-
-async function saveProfile(){
-  const bio   = document.getElementById('my-bio').value.trim();
-  const avEl  = document.getElementById('my-avatar');
-  const avatar= avEl._pending || null;
+async function saveProfile() {
+  const bio  = document.getElementById('my-bio').value.trim();
+  const avEl = document.getElementById('my-avatar');
+  const avatar = avEl._pending || null;
   showMsg('profile-msg','Saving…','');
   try {
-    // Save bio via GET
     const bioRes = await apiCall({ action:'updateBio', beer:session.beer, bio });
     if (!bioRes.ok) { showMsg('profile-msg', bioRes.error||'Bio save failed.','err'); return; }
-
-    // Save avatar via POST only if a new one was selected
     if (avatar) {
       const avRes = await apiUpload(session.beer, avatar);
       if (!avRes.ok) { showMsg('profile-msg', avRes.error||'Avatar save failed.','err'); return; }
       avEl._pending = null;
-      // Update displayed avatar with the Drive URL returned by server
       if (avRes.url) setAvatarEl(avEl, session.beer, avRes.url);
     }
-
     showMsg('profile-msg','Profile saved!','ok');
     await loadMarketData();
-  } catch(e) {
-    showMsg('profile-msg','Could not reach server.','err');
-  }
+  } catch(e) { showMsg('profile-msg','Could not reach server.','err'); }
 }
-
-async function changePassword(){
+async function changePassword() {
   const oldPw=document.getElementById('pw-old').value.trim();
   const newPw=document.getElementById('pw-new').value.trim();
-  const conf=document.getElementById('pw-confirm').value.trim();
-  if(!oldPw||!newPw||!conf){showMsg('pw-msg','Fill in all fields.','err');return;}
-  if(newPw!==conf){showMsg('pw-msg','Passwords do not match.','err');return;}
-  if(newPw.length<4){showMsg('pw-msg','Min 4 characters.','err');return;}
-  try{
-    const data=await apiCall({action:'changePassword',beer:session.beer,oldPw,newPw});
-    if(data.ok){showMsg('pw-msg','Password changed!','ok');['pw-old','pw-new','pw-confirm'].forEach(id=>document.getElementById(id).value='');}
-    else showMsg('pw-msg',data.error||'Failed.','err');
-  }catch(e){showMsg('pw-msg','Could not reach server.','err');}
+  const conf =document.getElementById('pw-confirm').value.trim();
+  if (!oldPw||!newPw||!conf) { showMsg('pw-msg','Fill in all fields.','err'); return; }
+  if (newPw!==conf)           { showMsg('pw-msg','Passwords do not match.','err'); return; }
+  if (newPw.length<4)         { showMsg('pw-msg','Min 4 characters.','err'); return; }
+  try {
+    const data=await apiCall({ action:'changePassword', beer:session.beer, oldPw, newPw });
+    if (data.ok) { showMsg('pw-msg','Password changed!','ok'); ['pw-old','pw-new','pw-confirm'].forEach(id=>document.getElementById(id).value=''); }
+    else showMsg('pw-msg', data.error||'Failed.','err');
+  } catch(e) { showMsg('pw-msg','Could not reach server.','err'); }
 }
 
+// ── UTILS ─────────────────────────────────────────────────
 function showMsg(id,text,type){const el=document.getElementById(id);el.textContent=text;el.className='form-msg '+type;}
 function parseCSV(text){const rows=[];for(const line of text.split('\n')){if(!line.trim())continue;const row=[];let cur='',inQ=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"')inQ=!inQ;else if(c===','&&!inQ){row.push(cur);cur='';}else cur+=c;}row.push(cur);rows.push(row);}return rows;}
 function clean(s){return s.replace(/^"|"$/g,'').trim();}
