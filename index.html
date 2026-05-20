@@ -388,16 +388,29 @@
 <script>
 const SHEET_ID  = '1G7nWsbdvE2H7qAecd3KqpokufElzLHNu318bZFEV-lk';
 const GVZ_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
-const API_URL   = 'https://script.google.com/macros/s/AKfycbxdLoCigvFnbdLgNoJyFugGZf74DoDpV5WlAWNzrlwLJragN4oQ_7bQuCZFTShGA9RQ/exec';
+const API_URL   = 'https://script.google.com/macros/s/AKfycbxsD8DpBMi2nxbtf06kF52HePXL2q9Ak-WT2RG6Qaj0W44NdavuYHQ0qOfLafWIg6lW/exec';
 const ADMIN_PIN = 'dc100admin';
 
-// Apps Script GET requests work cross-origin without CORS issues.
+// GET request — used for everything except avatar upload
 async function apiCall(payload) {
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(payload)) {
     params.append(k, v === undefined || v === null ? '' : String(v));
   }
   const res = await fetch(API_URL + '?' + params.toString());
+  return res.json();
+}
+
+// POST request — used only for avatar (base64 too large for URL params)
+// Sends the raw base64 string as the body with beer name as a query param.
+// Apps Script doPost reads e.postData.contents for the body.
+async function apiUpload(beer, base64data) {
+  const url = API_URL + '?action=updateAvatar&beer=' + encodeURIComponent(beer);
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: base64data
+  });
   return res.json();
 }
 
@@ -682,16 +695,27 @@ function handleAvatarUpload(e){
 }
 
 async function saveProfile(){
-  const bio=document.getElementById('my-bio').value.trim();
-  const avEl=document.getElementById('my-avatar');
-  const avatar=avEl._pending||undefined;
-  try{
-    const payload={action:'updateProfile',beer:session.beer,bio};
-    if(avatar)payload.avatar=avatar;
-    const data=await apiCall(payload);
-    if(data.ok){avEl._pending=null;showMsg('profile-msg','Profile saved!','ok');await loadMarketData();}
-    else showMsg('profile-msg',data.error||'Failed.','err');
-  }catch(e){showMsg('profile-msg','Could not reach server.','err');}
+  const bio   = document.getElementById('my-bio').value.trim();
+  const avEl  = document.getElementById('my-avatar');
+  const avatar= avEl._pending || null;
+  showMsg('profile-msg','Saving…','');
+  try {
+    // Save bio via GET
+    const bioRes = await apiCall({ action:'updateBio', beer:session.beer, bio });
+    if (!bioRes.ok) { showMsg('profile-msg', bioRes.error||'Bio save failed.','err'); return; }
+
+    // Save avatar via POST only if a new one was selected
+    if (avatar) {
+      const avRes = await apiUpload(session.beer, avatar);
+      if (!avRes.ok) { showMsg('profile-msg', avRes.error||'Avatar save failed.','err'); return; }
+      avEl._pending = null;
+    }
+
+    showMsg('profile-msg','Profile saved!','ok');
+    await loadMarketData();
+  } catch(e) {
+    showMsg('profile-msg','Could not reach server.','err');
+  }
 }
 
 async function changePassword(){
