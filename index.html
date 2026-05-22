@@ -276,11 +276,127 @@
     white-space:nowrap; pointer-events:none; max-width:90vw;
   }
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ── BEER LOADING SCREEN ── */
+  #beer-loader {
+    position:fixed; inset:0; z-index:500;
+    background:var(--bg);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:24px;
+  }
+  .beer-loader-title {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:28px; letter-spacing:.06em;
+    color:var(--text);
+  }
+  .beer-glass-wrap { position:relative; width:80px; height:130px; }
+  /* the glass outline */
+  .beer-glass {
+    position:absolute; inset:0;
+    border:3px solid rgba(255,255,255,0.18);
+    border-top:none;
+    border-radius:0 0 16px 16px;
+    overflow:hidden;
+  }
+  /* the foam + liquid fill rising from bottom */
+  .beer-fill {
+    position:absolute; bottom:0; left:0; right:0;
+    height:0%;
+    background:linear-gradient(180deg, #f5d96e 0%, #e8a020 60%, #c8780a 100%);
+    transition:height 0.08s linear;
+    border-radius:0 0 13px 13px;
+  }
+  /* foam on top of liquid */
+  .beer-foam {
+    position:absolute; left:-4px; right:-4px;
+    height:18px;
+    background:rgba(255,255,255,0.85);
+    border-radius:50%;
+    top:-8px;
+    display:none;
+  }
+  /* handle on the right */
+  .beer-handle {
+    position:absolute; right:-22px; top:20px;
+    width:22px; height:50px;
+    border:3px solid rgba(255,255,255,0.18);
+    border-left:none;
+    border-radius:0 14px 14px 0;
+  }
+  /* bubbles */
+  .bubble {
+    position:absolute;
+    background:rgba(255,255,255,0.35);
+    border-radius:50%;
+    animation:rise linear infinite;
+  }
+  @keyframes rise {
+    0%   { transform:translateY(0); opacity:0.4; }
+    100% { transform:translateY(-120px); opacity:0; }
+  }
+  .beer-loader-sub {
+    font-family:'DM Mono',monospace;
+    font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted);
+  }
+  .beer-loader-pct {
+    font-family:'DM Mono',monospace;
+    font-size:13px; color:var(--gold);
+  }
+
+  /* ── WHO LIKED / WHO BET PANELS ── */
+  .social-panel {
+    margin-top:10px; padding:12px 14px;
+    background:var(--bg3); border-radius:8px;
+    border:1px solid var(--border);
+    display:none;
+  }
+  .social-panel.open { display:block; }
+  .social-panel-title {
+    font-family:'DM Mono',monospace; font-size:10px;
+    letter-spacing:.13em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:10px;
+  }
+  .social-row {
+    display:flex; align-items:center; gap:8px;
+    padding:5px 0; border-bottom:1px solid var(--border);
+    font-size:13px;
+  }
+  .social-row:last-child { border-bottom:none; }
+  .social-av {
+    width:24px; height:24px; border-radius:50%;
+    background:rgba(232,200,74,.1);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'DM Mono',monospace; font-size:9px;
+    color:var(--gold); flex-shrink:0; overflow:hidden;
+  }
+  .social-av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .social-name { flex:1; cursor:pointer; }
+  .social-name:hover { text-decoration:underline; }
+  .social-amount { font-family:'DM Mono',monospace; font-size:12px; }
+  .yes-amt { color:var(--green); }
+  .no-amt  { color:var(--red); }
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
+
+<!-- ── BEER LOADING SCREEN ── -->
+<div id="beer-loader" style="display:none">
+  <div class="beer-loader-title">Loading the bar…</div>
+  <div class="beer-glass-wrap">
+    <div class="beer-glass">
+      <div class="beer-fill" id="beer-fill">
+        <div class="beer-foam" id="beer-foam"></div>
+      </div>
+    </div>
+    <div class="beer-handle"></div>
+  </div>
+  <div class="beer-loader-pct" id="beer-pct">0%</div>
+  <div class="beer-loader-sub" id="beer-sub">Fetching your $drunk…</div>
+</div>
+
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">Drunk Club<br><span>of 100</span></div>
@@ -531,11 +647,17 @@ async function doLogin() {
 
 function startApp(){
   document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='block';
+  // show beer loader while data loads
+  startBeerLoader();
   document.getElementById('topbar-name').textContent=session.beer;
-  spawnBeers(); // [ADDED] trigger beer floats
   if(session.isAdmin){ document.getElementById('create-wrap').style.display='block'; document.getElementById('admin-review-panel').style.display='block'; document.getElementById('all-suggestions-wrap').style.display='block'; }
-  updateDrunkDisplay(); loadMarketData(); loadLeaderboard();
+  updateDrunkDisplay();
+  // load both in parallel, show app when both done
+  Promise.all([loadMarketData(), loadLeaderboard()]).then(() => {
+    document.getElementById('app').style.display='block';
+    finishBeerLoader();
+    spawnBeers();
+  });
 }
 function doLogout(){
   session={}; localStorage.removeItem('dc100s');
@@ -705,6 +827,183 @@ function marketCard(m){
         <span style="font-size:15px">${iLiked?'❤️':'🤍'}</span><span class="like-count">${mLikes.length}</span>
       </button>
       <button class="comment-toggle-btn" onclick="toggleComments('${esc(m.id)}')">
+        <span style="font-size:15px">💬</span><span>${mComments.length}</span>
+      </button>
+      <button class="comment-toggle-btn" onclick="toggleSocialPanel('wholiked-${esc(m.id)}')" title="See who liked this">
+        👥 ${mLikes.length} like${mLikes.length!==1?'s':''}
+      </button>
+      <button class="comment-toggle-btn" onclick="toggleSocialPanel('whobet-${esc(m.id)}')" title="See who bet on this">
+        🎲 ${bets.filter(b=>b.marketId===m.id).length} bet${bets.filter(b=>b.marketId===m.id).length!==1?'s':''}
+      </button>
+    </div>
+    <!-- who liked panel -->
+    <div class="social-panel" id="wholiked-${esc(m.id)}">
+      <div class="social-panel-title">❤ Liked by</div>
+      ${mLikes.length ? mLikes.map(l=>{
+        const lp=getProfile(l.user||'');
+        const lav=lp.avatar&&lp.avatar.startsWith('http')?`<img src="${lp.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:(l.user||'?').substring(0,2).toUpperCase();
+        return `<div class="social-row"><div class="social-av">${lav}</div><div class="social-name" onclick="openProfileModal('${esc(l.user||'')}')">${esc(l.user||'')}</div></div>`;
+      }).join('') : '<div style="color:var(--muted);font-size:12px;font-family:DM Mono,monospace;padding:4px 0">No likes yet.</div>'}
+    </div>
+    <!-- who bet panel -->
+    <div class="social-panel" id="whobet-${esc(m.id)}">
+      <div class="social-panel-title">🎲 Bets placed</div>
+      ${(()=>{const mb=bets.filter(b=>b.marketId===m.id);return mb.length?mb.map(b=>{
+        const bp=getProfile(b.user||'');
+        const bav=bp.avatar&&bp.avatar.startsWith('http')?`<img src="${bp.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:(b.user||'?').substring(0,2).toUpperCase();
+        const sc=b.side==='yes'?'yes-amt':'no-amt';
+        return `<div class="social-row"><div class="social-av">${bav}</div><div class="social-name" onclick="openProfileModal('${esc(b.user||'')}')">${esc(b.user||'')}</div><span class="social-amount ${sc}">${(b.side||'').toUpperCase()} · ${parseInt(b.amount)||0} $drunk</span></div>`;
+      }).join(''):'<div style="color:var(--muted);font-size:12px;font-family:DM Mono,monospace;padding:4px 0">No bets yet.</div>';})()}
+    </div>
+    <div class="comments-section" id="comments-${esc(m.id)}">
+      ${commentsHtml}
+      <div class="comment-input-row">
+        <input type="text" id="cmtinput-${esc(m.id)}" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')postComment('${esc(m.id)}')">
+        <button class="comment-send-btn" onclick="postComment('${esc(m.id)}')">Send</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleComments(mid){
+  const el=document.getElementById('comments-'+mid);
+  if(el) el.classList.toggle('open');
+}
+
+async function toggleLike(mid,btn){
+  guardedAction('like_'+mid, async () => {
+    try{
+      const res=await apiCall({action:'toggleLike',marketId:mid});
+      if(res.ok){ await loadMarketData(); }
+    }catch(e){}
+  });
+}
+
+async function postComment(mid){
+  guardedAction('comment_'+mid, async () => {
+    const inp=document.getElementById('cmtinput-'+mid);
+    const text=(inp?.value||'').trim();
+    if(!text)return;
+    try{
+      const res=await apiCall({action:'addComment',marketId:mid,text});
+      if(res.ok){ inp.value=''; await loadMarketData(); document.getElementById('comments-'+mid)?.classList.add('open'); }
+    }catch(e){}
+  });
+}
+
+function selectBet(mid,side,btn){
+  const form=document.getElementById('betform-'+mid),card=document.getElementById('mc-'+mid);
+  const already=activeBet.mid===mid&&activeBet.side===side&&form.classList.contains('open');
+  card.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
+  if(already){form.classList.remove('open');activeBet={};}
+  else{btn.classList.add('selected');form.classList.add('open');activeBet={mid,side};}
+}
+function cancelBet(mid){
+  const f=document.getElementById('betform-'+mid);if(f)f.classList.remove('open');
+  const c=document.getElementById('mc-'+mid);if(c)c.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
+  activeBet={};
+}
+async function placeBet(mid){
+  guardedAction('bet_'+mid, async () => {
+    const amt=parseInt(document.getElementById('betamt-'+mid).value);
+    if(!amt||amt<1){showToast('\u26a0\ufe0f Enter a valid amount!');return;}
+    if(amt>(session.balance||0)){showToast('\U0001f4b8 Not enough $drunk!');return;}
+    try{
+      const res=await apiCall({action:'placeBet',marketId:mid,side:activeBet.side,amount:amt});
+      if(!res.ok){showToast('\u274c '+(res.error||'Could not place bet.'));return;}
+      session.balance=res.newBalance; saveSession(); updateDrunkDisplay(); cancelBet(mid); await loadMarketData();
+      showToast('\U0001f3b2 Bet placed!');
+    }catch(e){showToast('\u274c Could not place bet.');}
+  });
+}
+
+async function resolveMarket(mid,winner){
+  if(!confirm('Resolve as '+winner.toUpperCase()+'?'))return;
+  try{ const res=await apiCall({action:'resolveMarket',marketId:mid,winner}); if(!res.ok){alert(res.error);return;} await loadMarketData(); }catch(e){alert('Could not resolve.');}
+}
+function toggleCreate(){document.getElementById('create-form').classList.toggle('open');document.getElementById('new-q').value='';}
+async function createMarket(){
+  guardedAction('createMarket', async () => {
+    const q=document.getElementById('new-q').value.trim(),cat=document.getElementById('new-cat').value;
+    if(!q){showToast('\u26a0\ufe0f Enter a question!');return;}
+    try{ await apiCall({action:'createMarket',id:'mkt_'+Date.now(),question:q,category:cat}); toggleCreate(); await loadMarketData(); showToast('\U0001f389 Market created!'); }catch(e){showToast('\u274c Could not create.');}
+  });
+}
+
+function renderFMStats(){
+  const vol=bets.reduce((s,b)=>s+(parseInt(b.amount)||0),0);
+  document.getElementById('fm-open').textContent=markets.filter(m=>m.status==='open').length;
+  document.getElementById('fm-volume').textContent=vol.toLocaleString();
+  document.getElementById('fm-bets').textContent=bets.length;
+  document.getElementById('fm-resolved').textContent=markets.filter(m=>m.status==='resolved').length;
+}
+function getProb(m){const y=parseFloat(m.yesPool)||0,n=parseFloat(m.noPool)||0;return(y+n)===0?50:Math.round(y/(y+n)*100);}
+function catClass(c){return 'cat-'+(c||'other');}
+function catEmoji(c){return{chug:'🍺',social:'💬',food:'🍔',sleep:'😴'}[c]||'•';}
+
+function renderMarkets(){
+  const open=markets.filter(m=>m.status==='open'), res=markets.filter(m=>m.status==='resolved');
+  document.getElementById('markets-list').innerHTML=open.length?open.map(marketCard).join(''):'<div class="state-msg" style="padding:30px">No open markets yet.</div>';
+  document.getElementById('resolved-list').innerHTML=res.length?res.map(marketCard).join(''):'<div style="color:var(--muted);font-size:13px;font-family:DM Mono,monospace;padding:10px 0">None yet.</div>';
+}
+
+function marketCard(m){
+  const prob=getProb(m);
+  const total=(parseFloat(m.yesPool)||0)+(parseFloat(m.noPool)||0);
+  const mBets=bets.filter(b=>b.marketId===m.id).length;
+  const resolved=m.status==='resolved';
+  const myBet=bets.find(b=>b.marketId===m.id&&session.beer&&(b.user||'').toLowerCase()===session.beer.toLowerCase());
+  const mLikes=likes.filter(l=>(l.marketId||l.marketid||'').toString()===m.id);
+  const iLiked=mLikes.some(l=>(l.user||'').toLowerCase()===(session.beer||'').toLowerCase());
+  const mComments=comments.filter(c=>(c.marketId||c.marketid||'').toString()===m.id);
+  const winnerBadge=resolved?`<span class="winner-badge winner-${m.winner}" style="margin-left:8px">${m.winner.toUpperCase()} won</span>`:'';
+  const myBetTag=myBet?`<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);margin-left:8px">you bet ${myBet.side.toUpperCase()}</span>`:'';
+  const resolveRow=session.isAdmin&&!resolved?`<div style="display:flex;gap:8px;margin-top:12px"><button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','yes')">Resolve YES ✓</button><button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','no')">Resolve NO ✗</button></div>`:'';
+  const betSection=!resolved?`
+    <div class="bet-btns">
+      <button class="bet-btn yes${myBet&&myBet.side==='yes'?' selected':''}" onclick="selectBet('${esc(m.id)}','yes',this)"><span class="bet-btn-label">YES</span><span class="bet-btn-price">${prob}¢</span></button>
+      <button class="bet-btn no${myBet&&myBet.side==='no'?' selected':''}"  onclick="selectBet('${esc(m.id)}','no',this)"><span class="bet-btn-label">NO</span><span class="bet-btn-price">${100-prob}¢</span></button>
+    </div>
+    <div class="bet-form" id="betform-${esc(m.id)}">
+      <div class="bet-form-row">
+        <label>Betting as</label><span class="bet-user-tag">${esc(session.beer||'')}</span>
+        <label>Balance</label><span class="bet-balance-tag">${(session.balance||0).toLocaleString()} $drunk</span>
+        <label>Amount</label><input type="number" id="betamt-${esc(m.id)}" value="50" min="1" max="${session.balance||0}">
+        <button class="confirm-btn" onclick="placeBet('${esc(m.id)}')">Bet</button>
+        <button class="cancel-btn"  onclick="cancelBet('${esc(m.id)}')">×</button>
+      </div>
+    </div>`:'';
+
+  // comments HTML
+  const commentsHtml=mComments.map(c=>{
+    const cp=getProfile(c.user||c.User||'');
+    const avUrl=cp.avatar||'';
+    const avHtml=avUrl&&avUrl.startsWith('http')?`<img src="${avUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`:(c.user||'?').substring(0,2).toUpperCase();
+    const ts=c.timestamp||c.Timestamp||'';
+    const timeStr=ts?new Date(ts).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    return `<div class="comment-row">
+      <div class="comment-avatar">${avHtml}</div>
+      <div class="comment-body">
+        <div class="comment-author" onclick="openProfileModal('${esc(String(c.user||''))}')">${esc(String(c.user||''))}</div>
+        <div class="comment-text">${esc(String(c.text||c.Text||''))}</div>
+        <div class="comment-time">${timeStr}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="market-card${resolved?' resolved':''}" id="mc-${esc(m.id)}">
+    <span class="market-cat ${catClass(m.category)}">${catEmoji(m.category)} ${(m.category||'other').toUpperCase()}</span>
+    <div class="market-header">
+      <div><div class="market-question">${esc(m.question)}</div><div class="market-meta">${mBets} bet${mBets!==1?'s':''} · ${total.toLocaleString()} $drunk${winnerBadge}${myBetTag}</div></div>
+      ${!resolved?`<div class="market-right"><div class="market-prob${prob<40?' low':''}">${prob}%</div><div class="market-prob-label">YES</div></div>`:''}
+    </div>
+    ${!resolved?`<div class="prob-bar"><div class="prob-bar-fill" style="width:${prob}%"></div></div>`:''}
+    ${betSection}${resolveRow}
+    <div class="market-social">
+      <button class="like-btn${iLiked?' liked':''}" onclick="toggleLike('${esc(m.id)}',this)">
+        <span style="font-size:15px">${iLiked?'❤️':'🤍'}</span><span class="like-count">${mLikes.length}</span>
+      </button>
+      <button class="comment-toggle-btn" onclick="toggleComments('${esc(m.id)}')">
         <span style="font-size:15px">💬</span><span>${mComments.length} comment${mComments.length!==1?'s':''}</span>
       </button>
     </div>
@@ -731,13 +1030,15 @@ async function toggleLike(mid,btn){
 }
 
 async function postComment(mid){
-  const inp=document.getElementById('cmtinput-'+mid);
-  const text=(inp?.value||'').trim();
-  if(!text)return;
-  try{
-    const res=await apiCall({action:'addComment',marketId:mid,text});
-    if(res.ok){ inp.value=''; await loadMarketData(); document.getElementById('comments-'+mid)?.classList.add('open'); }
-  }catch(e){}
+  guardedAction('comment_'+mid, async () => {
+    const inp=document.getElementById('cmtinput-'+mid);
+    const text=(inp?.value||'').trim();
+    if(!text)return;
+    try{
+      const res=await apiCall({action:'addComment',marketId:mid,text});
+      if(res.ok){ inp.value=''; await loadMarketData(); document.getElementById('comments-'+mid)?.classList.add('open'); }
+    }catch(e){}
+  });
 }
 
 function selectBet(mid,side,btn){
@@ -753,15 +1054,19 @@ function cancelBet(mid){
   activeBet={};
 }
 async function placeBet(mid){
-  const amt=parseInt(document.getElementById('betamt-'+mid).value);
-  if(!amt||amt<1){showToast('⚠️ Enter a valid amount!');return;}
-  if(amt>(session.balance||0)){showToast('💸 Not enough $drunk!');return;}
-  try{
-    const res=await apiCall({action:'placeBet',marketId:mid,side:activeBet.side,amount:amt});
-    if(!res.ok){showToast('❌ '+(res.error||'Could not place bet.'));return;}
-    session.balance=res.newBalance; saveSession(); updateDrunkDisplay(); cancelBet(mid); await loadMarketData();
-  }catch(e){showToast('❌ Could not place bet.');}
+  guardedAction('bet_'+mid, async () => {
+    const amt=parseInt(document.getElementById('betamt-'+mid).value);
+    if(!amt||amt<1){showToast('\u26a0\ufe0f Enter a valid amount!');return;}
+    if(amt>(session.balance||0)){showToast('\U0001f4b8 Not enough $drunk!');return;}
+    try{
+      const res=await apiCall({action:'placeBet',marketId:mid,side:activeBet.side,amount:amt});
+      if(!res.ok){showToast('\u274c '+(res.error||'Could not place bet.'));return;}
+      session.balance=res.newBalance; saveSession(); updateDrunkDisplay(); cancelBet(mid); await loadMarketData();
+      showToast('\U0001f3b2 Bet placed!');
+    }catch(e){showToast('\u274c Could not place bet.');}
+  });
 }
+
 async function resolveMarket(mid,winner){
   if(!confirm('Resolve as '+winner.toUpperCase()+'?'))return;
   try{ const res=await apiCall({action:'resolveMarket',marketId:mid,winner}); if(!res.ok){alert(res.error);return;} await loadMarketData(); }catch(e){alert('Could not resolve.');}
@@ -799,13 +1104,15 @@ function renderMyBets(){
 
 // ── SUGGESTIONS ───────────────────────────────────────────
 async function submitSuggestion(){
-  const q=document.getElementById('sug-q').value.trim(), cat=document.getElementById('sug-cat').value;
-  if(!q){showMsg('sug-msg','Enter a question!','err');return;}
-  try{
-    const res=await apiCall({action:'suggestMarket',question:q,category:cat});
-    if(res.ok){ showMsg('sug-msg','Suggestion submitted! 🎉','ok'); document.getElementById('sug-q').value=''; await loadMarketData(); renderSuggestions(); }
-    else showMsg('sug-msg',res.error||'Failed.','err');
-  }catch(e){showMsg('sug-msg','Could not reach server.','err');}
+  guardedAction('submitSuggestion', async () => {
+    const q=document.getElementById('sug-q').value.trim(), cat=document.getElementById('sug-cat').value;
+    if(!q){showMsg('sug-msg','Enter a question!','err');return;}
+    try{
+      const res=await apiCall({action:'suggestMarket',question:q,category:cat});
+      if(res.ok){ showMsg('sug-msg','Suggestion submitted! \U0001f389','ok'); document.getElementById('sug-q').value=''; await loadMarketData(); renderSuggestions(); }
+      else showMsg('sug-msg',res.error||'Failed.','err');
+    }catch(e){showMsg('sug-msg','Could not reach server.','err');}
+  });
 }
 
 function renderSuggestions(){
@@ -947,6 +1254,94 @@ function showToast(msg, dur) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(function(){ t.classList.remove('show'); }, dur);
+}
+
+
+// ── BEER LOADING SCREEN ──────────────────────────────────
+// Shows an animated beer glass filling up while data loads.
+// Call startBeerLoader() to show it, finishBeerLoader() to dismiss.
+let _beerInterval = null;
+let _beerPct = 0;
+
+function startBeerLoader() {
+  _beerPct = 0;
+  const loader = document.getElementById('beer-loader');
+  const fill   = document.getElementById('beer-fill');
+  const foam   = document.getElementById('beer-foam');
+  const pct    = document.getElementById('beer-pct');
+  const sub    = document.getElementById('beer-sub');
+  loader.style.display = 'flex';
+  fill.style.height = '0%';
+  foam.style.display = 'none';
+  pct.textContent = '0%';
+  sub.textContent  = 'Fetching your $drunk…';
+  // add bubbles
+  const glass = fill;
+  for(let i = 0; i < 4; i++) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const sz = 4 + Math.random()*5;
+    b.style.cssText = `width:${sz}px;height:${sz}px;left:${10+Math.random()*60}%;bottom:${Math.random()*30}%;animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*2}s`;
+    glass.appendChild(b);
+  }
+  // animate fill from 0 → 85% while data loads (stops at 85, jumps to 100 when done)
+  const msgs = ['Fetching your $drunk…','Loading markets…','Counting your bets…','Warming up the tap…'];
+  let msgIdx = 0;
+  _beerInterval = setInterval(() => {
+    if(_beerPct < 85) {
+      _beerPct += 1.2;
+      fill.style.height = Math.min(_beerPct, 85) + '%';
+      pct.textContent   = Math.round(Math.min(_beerPct, 85)) + '%';
+      foam.style.display = _beerPct > 20 ? 'block' : 'none';
+      if(_beerPct % 28 < 1.5) { sub.textContent = msgs[msgIdx % msgs.length]; msgIdx++; }
+    }
+  }, 50);
+}
+
+function finishBeerLoader() {
+  clearInterval(_beerInterval);
+  const fill   = document.getElementById('beer-fill');
+  const pct    = document.getElementById('beer-pct');
+  const sub    = document.getElementById('beer-sub');
+  const foam   = document.getElementById('beer-foam');
+  const loader = document.getElementById('beer-loader');
+  // rush to 100%
+  fill.style.transition = 'height 0.4s ease';
+  fill.style.height = '100%';
+  foam.style.display = 'block';
+  pct.textContent  = '100%';
+  sub.textContent  = 'Cheers! 🍺';
+  setTimeout(() => {
+    loader.style.opacity = '0';
+    loader.style.transition = 'opacity 0.4s ease';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      loader.style.opacity = '1';
+      loader.style.transition = '';
+      // reset fill transition for next time
+      fill.style.transition = 'height 0.08s linear';
+    }, 400);
+  }, 600);
+}
+
+// ── DOUBLE-CLICK / SPAM PREVENTION ───────────────────────
+// Wraps any async action so it can't be triggered twice at once.
+// Usage: guardedAction('commentBtn', async () => { ... })
+const _actionInFlight = {};
+async function guardedAction(key, fn) {
+  if(_actionInFlight[key]) return; // already running
+  _actionInFlight[key] = true;
+  try { await fn(); }
+  finally { 
+    // short cooldown so the UI can update before re-enabling
+    setTimeout(() => { _actionInFlight[key] = false; }, 800);
+  }
+}
+
+
+function toggleSocialPanel(id) {
+  const el = document.getElementById(id);
+  if(el) el.classList.toggle('open');
 }
 
 </script>
