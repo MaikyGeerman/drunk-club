@@ -346,15 +346,15 @@
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">🏆 Leaderboard</button>
-    <button class="tab-btn" data-tab="market"      onclick="switchTab('market',this)">📈 DC100 Market</button>
+    <button class="tab-btn active" data-tab="market"      onclick="switchTab('market',this)">📈 DC100 Market</button>
+    <button class="tab-btn"        data-tab="leaderboard" onclick="switchTab('leaderboard',this)">🏆 Leaderboard</button>
     <button class="tab-btn" data-tab="mybets"      onclick="switchTab('mybets',this)">🎯 My Bets</button>
     <button class="tab-btn" data-tab="suggest"     onclick="switchTab('suggest',this)">💡 Suggest Bets<span class="tab-badge" id="badge-suggest"></span></button>
     <button class="tab-btn" data-tab="profile"     onclick="switchTab('profile',this)">👤 Profile</button>
   </div>
 
   <!-- LEADERBOARD -->
-  <div id="tab-leaderboard" class="tab-pane active">
+  <div id="tab-leaderboard" class="tab-pane">
     <div class="controls">
       <div class="search-wrap">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -380,7 +380,7 @@
   </div>
 
   <!-- FRIENDMARKET -->
-  <div id="tab-market" class="tab-pane">
+  <div id="tab-market" class="tab-pane active">
     <div class="fm-stats">
       <div class="fm-stat"><div class="fm-stat-label">Open markets</div><div class="fm-stat-val gold" id="fm-open">—</div></div>
       <div class="fm-stat"><div class="fm-stat-label">Total volume</div><div class="fm-stat-val green" id="fm-volume">—</div></div>
@@ -494,8 +494,8 @@ let markets  = [], bets = [], profiles = [], balances = [], suggestions = [], co
 let activeBet = {};
 
 // restore session
-(function(){ try{ const s=sessionStorage.getItem('dc100s'); if(s) session=JSON.parse(s); }catch(e){} })();
-function saveSession(){ try{ sessionStorage.setItem('dc100s',JSON.stringify(session)); }catch(e){} }
+(function(){ try{ const s=localStorage.getItem('dc100s'); if(s) session=JSON.parse(s); }catch(e){} })();
+function saveSession(){ try{ localStorage.setItem('dc100s',JSON.stringify(session)); }catch(e){} }
 
 // ── API ───────────────────────────────────────────────────
 async function apiCall(payload) {
@@ -535,10 +535,10 @@ function startApp(){
   document.getElementById('topbar-name').textContent=session.beer;
   spawnBeers(); // [ADDED] trigger beer floats
   if(session.isAdmin){ document.getElementById('create-wrap').style.display='block'; document.getElementById('admin-review-panel').style.display='block'; document.getElementById('all-suggestions-wrap').style.display='block'; }
-  updateDrunkDisplay(); loadLeaderboard(); loadMarketData();
+  updateDrunkDisplay(); loadMarketData(); loadLeaderboard();
 }
 function doLogout(){
-  session={}; sessionStorage.removeItem('dc100s');
+  session={}; localStorage.removeItem('dc100s');
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('app').style.display='none';
   document.getElementById('login-pass').value='';
@@ -622,6 +622,12 @@ async function loadMarketData(){
     const badge=document.getElementById('badge-suggest');
     if(pending>0&&session.isAdmin){ badge.textContent=pending; badge.classList.add('show'); } else badge.classList.remove('show');
     renderMarkets();renderFMStats();renderFMLB();renderMyBets();
+    // auto-refresh whichever tab is currently visible
+    const activeTab = document.querySelector('.tab-btn.active');
+    if(activeTab) {
+      const t = activeTab.dataset.tab;
+      if(t==='leaderboard' && lbData.length) renderLeaderboard();
+    }
     updateTopbarAvatar(); if(lbData.length)renderLeaderboard();
   }catch(e){ document.getElementById('markets-list').innerHTML='<div class="state-msg">⚠ Could not load data.</div>'; }
 }
