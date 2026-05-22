@@ -1,892 +1,1042 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Drunk Club of 100 — Season 4</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
-  :root{--bg:#0d0d0d;--bg2:#141414;--bg3:#1a1a1a;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--gold:#e8c84a;--gold2:#f5d96e;--silver:#9ba3b0;--bronze:#c4855a;--text:#f0ece4;--muted:#6b6760;--green:#4caf7d;--red:#e05555;--purple:#9b6dff;}
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
-  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6;}
-  /* LOGIN */
-  #login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg);}
-  .login-box{width:100%;max-width:420px;padding:20px;}
-  .login-logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,12vw,72px);line-height:.9;margin-bottom:8px;}
-  .login-logo span{color:var(--gold);}
-  .login-sub{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:40px;}
-  .login-field{margin-bottom:16px;}
-  .login-field label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
-  .login-field input{width:100%;padding:12px 16px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .15s;}
-  .login-field input:focus{border-color:var(--gold);}
-  .login-field input::placeholder{color:var(--muted);}
-  .login-btn{width:100%;margin-top:8px;padding:14px;background:var(--gold);border:none;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#0d0d0d;font-weight:500;cursor:pointer;transition:opacity .15s;}
-  .login-btn:hover{opacity:.88;}.login-btn:disabled{opacity:.4;cursor:not-allowed;}
-  .login-error{margin-top:12px;font-family:'DM Mono',monospace;font-size:12px;color:var(--red);text-align:center;min-height:18px;}
-  .login-hint{margin-top:20px;font-size:12px;color:var(--muted);text-align:center;line-height:1.6;}
-  .login-hint strong{color:var(--text);}
-  /* APP */
-  #app{display:none;position:relative;z-index:1;padding-bottom:60px;}
-  .container{max-width:900px;margin:0 auto;padding:0 20px;}
-  /* TOPBAR */
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 0 0;}
-  .topbar-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.02em;}
-  .topbar-logo span{color:var(--gold);}
-  .topbar-right{display:flex;align-items:center;gap:12px;}
-  .user-pill{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:100px;padding:5px 14px 5px 5px;cursor:pointer;transition:border-color .15s;}
-  .user-pill:hover{border-color:var(--gold);}
-  .avatar{width:28px;height:28px;border-radius:50%;background:rgba(232,200,74,.15);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);font-weight:500;overflow:hidden;flex-shrink:0;}
-  .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-  .avatar.lg{width:72px;height:72px;font-size:24px;}
-  .user-name-pill{font-family:'DM Mono',monospace;font-size:12px;}
-  .logout-btn{background:none;border:1px solid var(--border2);border-radius:6px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;}
-  .logout-btn:hover{color:var(--red);border-color:var(--red);}
-  /* HEADER */
-  header{padding:32px 0 0;}
-  .eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
-  h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,10vw,96px);line-height:.92;}
-  h1 span{color:var(--gold);}
-  .header-meta{margin-top:20px;display:flex;gap:28px;flex-wrap:wrap;}
-  .meta-item{display:flex;flex-direction:column;gap:2px;}
-  .meta-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
-  .meta-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;}
-  .meta-val.gold{color:var(--gold);}
-  /* TABS */
-  .tabs{display:flex;margin:36px 0 0;border-bottom:1px solid var(--border2);overflow-x:auto;}
-  .tab-btn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:12px 20px;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px;transition:all .15s;white-space:nowrap;position:relative;}
-  .tab-btn:hover{color:var(--text);}.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
-  .tab-badge{position:absolute;top:8px;right:6px;background:var(--red);color:#fff;font-size:9px;font-family:'DM Mono',monospace;border-radius:100px;padding:1px 5px;min-width:16px;text-align:center;display:none;}
-  .tab-badge.show{display:inline-block;}
-  .tab-pane{display:none;padding-top:36px;}.tab-pane.active{display:block;}
-  /* INPUTS */
-  .controls{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
-  .search-wrap{flex:1;min-width:200px;position:relative;}
-  .search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
-  input[type=text],input[type=number],input[type=password],textarea,select{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;}
-  input[type=text]:focus,input[type=number]:focus,input[type=password]:focus,textarea:focus,select:focus{border-color:var(--gold);}
-  input::placeholder,textarea::placeholder{color:var(--muted);}
-  .search-wrap input{width:100%;padding:10px 14px 10px 40px;}
-  select{padding:10px 14px;cursor:pointer;}
-  .filter-btns{display:flex;gap:6px;align-items:center;}
-  .filter-btn{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:10px 16px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;}
-  .filter-btn:hover{color:var(--text);}.filter-btn.active{background:var(--gold);border-color:var(--gold);color:#0d0d0d;font-weight:500;}
-  /* TABLE */
-  .table-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;}
-  table{width:100%;border-collapse:collapse;font-size:14px;}
-  thead{background:var(--bg3);border-bottom:1px solid var(--border2);}
-  th{padding:12px 16px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
-  tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
-  tbody tr:last-child{border-bottom:none;}tbody tr:hover{background:var(--bg2);}
-  td{padding:13px 16px;vertical-align:middle;}
-  .rank{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);width:44px;}
-  .rank-1{color:var(--gold);font-weight:500;}.rank-2{color:var(--silver);}.rank-3{color:var(--bronze);}
-  .name-cell{font-weight:500;}
-  .name-link{cursor:pointer;border-bottom:1px solid transparent;transition:border-color .15s;}
-  .name-link:hover{border-bottom-color:var(--gold);}
-  .beer-pill{display:inline-block;background:rgba(232,200,74,.08);border:1px solid rgba(232,200,74,.2);border-radius:100px;padding:2px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--gold2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;}
-  .lg-tag{font-size:12px;color:var(--muted);}
-  .balance-cell{display:flex;align-items:center;gap:10px;justify-content:flex-end;}
-  .balance-num{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;min-width:32px;text-align:right;}
-  .balance-num.top{color:var(--gold);}
-  .bar-track{width:80px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;flex-shrink:0;}
-  .bar-fill{height:100%;border-radius:2px;background:var(--green);}
-  .bar-fill.top{background:var(--gold);}.bar-fill.zero{background:var(--muted);opacity:.3;}
-  .table-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);background:var(--bg3);}
-  .state-msg{text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);}
-  .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin-right:10px;vertical-align:middle;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-  @keyframes fadeRow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
-  tbody tr{animation:fadeRow .25s ease both;}
-  /* MODAL */
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
-  .modal-overlay.open{display:flex;}
-  .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;position:relative;}
-  .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:color .15s;}
-  .modal-close:hover{color:var(--text);}
-  .modal-header{padding:28px 28px 0;}
-  .modal-top{display:flex;gap:18px;align-items:flex-start;}
-  .modal-info{flex:1;min-width:0;}
-  .modal-real-name{font-size:20px;font-weight:500;margin-bottom:3px;}
-  .modal-beer-name{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);margin-bottom:4px;}
-  .modal-lg{font-size:13px;color:var(--muted);}
-  .modal-bio{margin-top:16px;padding:14px;background:var(--bg3);border-radius:8px;font-size:14px;line-height:1.65;white-space:pre-wrap;}
-  .modal-bio.empty{color:var(--muted);font-style:italic;}
-  .modal-stats{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;}
-  .modal-stat{background:var(--bg3);border-radius:8px;padding:10px 14px;flex:1;min-width:70px;}
-  .modal-stat-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-  .modal-stat-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;}
-  .modal-stat-val.gold{color:var(--gold);}.modal-stat-val.green{color:var(--green);}
-  .modal-section-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:20px 28px 10px;}
-  .modal-bets{padding:0 28px 28px;}
-  .modal-bet-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px;}
-  .modal-bet-row:last-child{border-bottom:none;}
-  .modal-bet-q{font-size:13px;flex:1;}
-  .modal-bet-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-  .bet-side{font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:100px;}
-  .bet-side.yes{background:rgba(76,175,125,.15);color:var(--green);border:1px solid rgba(76,175,125,.3);}
-  .bet-side.no{background:rgba(224,85,85,.15);color:var(--red);border:1px solid rgba(224,85,85,.3);}
-  .bet-amt{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);}
-  .bet-outcome{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:100px;}
-  .bet-outcome.won{background:rgba(76,175,125,.15);color:var(--green);}
-  .bet-outcome.lost{background:rgba(224,85,85,.15);color:var(--red);}
-  .bet-outcome.open{color:var(--muted);}
-  /* PROFILE TAB */
-  .profile-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-  @media(max-width:620px){.profile-wrap{grid-template-columns:1fr;}}
-  .profile-card{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:24px;}
-  .profile-card h3{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;}
-  .profile-avatar-section{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:20px;}
-  .avatar-upload-btn{background:none;border:1px dashed var(--border2);border-radius:6px;padding:8px 16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;}
-  .avatar-upload-btn:hover{border-color:var(--gold);color:var(--gold);}
-  #avatar-file-input{display:none;}
-  .form-field{margin-bottom:14px;}
-  .form-field label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-  .form-field input,.form-field textarea{width:100%;padding:10px 14px;}
-  .form-field textarea{resize:vertical;min-height:90px;}
-  .save-btn{background:var(--gold);border:none;border-radius:6px;padding:10px 22px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#0d0d0d;font-weight:500;cursor:pointer;transition:opacity .15s;}
-  .save-btn:hover{opacity:.85;}
-  .form-msg{margin-top:10px;font-family:'DM Mono',monospace;font-size:12px;min-height:18px;}
-  .form-msg.ok{color:var(--green);}.form-msg.err{color:var(--red);}
-  /* FRIENDMARKET */
-  .fm-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:32px;}
-  .fm-stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;}
-  .fm-stat-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-  .fm-stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;}
-  .fm-stat-val.gold{color:var(--gold);}.fm-stat-val.green{color:var(--green);}
-  .section-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-  .section-title::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);}
-  .market-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:20px;margin-bottom:16px;transition:border-color .15s;}
-  .market-card:hover{border-color:rgba(255,255,255,0.2);}
-  .market-card.resolved{opacity:.65;border-style:dashed;}
-  .market-cat{display:inline-flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:100px;border:1px solid;margin-bottom:8px;}
-  .cat-chug{color:#4caf7d;border-color:rgba(76,175,125,.3);background:rgba(76,175,125,.08);}
-  .cat-social{color:var(--purple);border-color:rgba(155,109,255,.3);background:rgba(155,109,255,.08);}
-  .cat-food{color:#e8a84a;border-color:rgba(232,168,74,.3);background:rgba(232,168,74,.08);}
-  .cat-sleep{color:#5ab4e8;border-color:rgba(90,180,232,.3);background:rgba(90,180,232,.08);}
-  .cat-other{color:var(--muted);border-color:var(--border2);}
-  .market-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
-  .market-question{font-size:16px;font-weight:500;line-height:1.4;}
-  .market-meta{font-size:12px;color:var(--muted);margin-top:4px;font-family:'DM Mono',monospace;}
-  .market-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
-  .market-prob{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;color:var(--green);}
-  .market-prob.low{color:var(--red);}
-  .market-prob-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
-  .prob-bar{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin:0 0 14px;overflow:hidden;}
-  .prob-bar-fill{height:100%;border-radius:2px;background:var(--green);transition:width .5s ease;}
-  .bet-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-  .bet-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px;font-family:'DM Mono',monospace;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text);}
-  .bet-btn-label{font-size:13px;letter-spacing:.06em;}.bet-btn-price{font-size:18px;font-weight:500;}
-  .bet-btn.yes:hover,.bet-btn.yes.selected{border-color:var(--green);background:rgba(76,175,125,.1);color:var(--green);}
-  .bet-btn.no:hover,.bet-btn.no.selected{border-color:var(--red);background:rgba(224,85,85,.1);color:var(--red);}
-  .bet-form{margin-top:12px;padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);display:none;}
-  .bet-form.open{display:block;}
-  .bet-form-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-  .bet-form label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;}
-  .bet-user-tag{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);}
-  .bet-balance-tag{font-family:'DM Mono',monospace;font-size:12px;color:var(--green);}
-  .bet-form input[type=number]{width:100px;padding:8px 12px;}
-  .confirm-btn{background:var(--green);border:none;border-radius:6px;padding:8px 18px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#0d0d0d;font-weight:500;cursor:pointer;transition:opacity .15s;white-space:nowrap;}
-  .confirm-btn:hover{opacity:.85;}
-  .cancel-btn{background:none;border:1px solid var(--border2);border-radius:6px;padding:8px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;}
-  .cancel-btn:hover{color:var(--text);}
-  .winner-badge{display:inline-flex;align-items:center;font-family:'DM Mono',monospace;font-size:11px;padding:4px 12px;border-radius:100px;}
-  .winner-yes{background:rgba(76,175,125,.15);color:var(--green);border:1px solid rgba(76,175,125,.3);}
-  .winner-no{background:rgba(224,85,85,.15);color:var(--red);border:1px solid rgba(224,85,85,.3);}
-  .resolve-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);cursor:pointer;transition:all .15s;}
-  .resolve-btn:hover{border-color:var(--gold);color:var(--gold);}
-  .create-toggle{background:none;border:1px dashed var(--border2);border-radius:10px;width:100%;padding:16px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
-  .create-toggle:hover{border-color:var(--gold);color:var(--gold);}
-  .create-form{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:22px;margin-top:10px;display:none;}
-  .create-form.open{display:block;}
-  .form-row{margin-bottom:14px;}
-  .form-row label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-  .form-row input[type=text],.form-row select,.form-row textarea{width:100%;padding:10px 14px;}
-  .form-actions{display:flex;gap:10px;margin-top:6px;}
-  .fm-lb-table{width:100%;border-collapse:collapse;font-size:14px;}
-  .fm-lb-table th{padding:10px 14px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border2);}
-  .fm-lb-table td{padding:12px 14px;border-bottom:1px solid var(--border);}
-  .fm-lb-table tr:last-child td{border-bottom:none;}
-  .fm-lb-table tr:hover td{background:var(--bg2);}
-  .mybets-empty{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);padding:40px 0;text-align:center;}
-  /* SOCIAL — likes & comments */
-  .market-social{display:flex;align-items:center;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
-  .like-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);padding:0;transition:color .15s;}
-  .like-btn:hover{color:var(--text);}
-  .like-btn.liked{color:var(--red);}
-  .like-count{font-size:12px;}
-  .comment-toggle-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);padding:0;transition:color .15s;}
-  .comment-toggle-btn:hover{color:var(--text);}
-  .comments-section{margin-top:14px;display:none;}
-  .comments-section.open{display:block;}
-  .comment-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
-  .comment-row:last-of-type{border-bottom:none;}
-  .comment-avatar{width:28px;height:28px;border-radius:50%;background:rgba(232,200,74,.1);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);flex-shrink:0;overflow:hidden;}
-  .comment-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-  .comment-body{flex:1;}
-  .comment-author{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);margin-bottom:3px;cursor:pointer;}
-  .comment-author:hover{text-decoration:underline;}
-  .comment-text{font-size:13px;line-height:1.5;color:var(--text);}
-  .comment-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;}
-  .comment-input-row{display:flex;gap:8px;margin-top:12px;}
-  .comment-input-row input{flex:1;padding:8px 12px;}
-  .comment-send-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text);cursor:pointer;transition:all .15s;white-space:nowrap;}
-  .comment-send-btn:hover{border-color:var(--gold);color:var(--gold);}
-  /* SUGGESTIONS */
-  .suggest-form{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:22px;margin-bottom:32px;}
-  .suggest-form h3{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
-  .sug-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:18px;margin-bottom:12px;}
-  .sug-card.pending{border-color:rgba(232,200,74,.2);}
-  .sug-card.approved{border-color:rgba(76,175,125,.2);}
-  .sug-card.rejected{border-color:rgba(224,85,85,.15);opacity:.7;}
-  .sug-status{display:inline-flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 10px;border-radius:100px;margin-bottom:8px;}
-  .sug-status.pending{background:rgba(232,200,74,.1);color:var(--gold);border:1px solid rgba(232,200,74,.2);}
-  .sug-status.approved{background:rgba(76,175,125,.1);color:var(--green);border:1px solid rgba(76,175,125,.2);}
-  .sug-status.rejected{background:rgba(224,85,85,.1);color:var(--red);border:1px solid rgba(224,85,85,.2);}
-  .sug-question{font-size:15px;font-weight:500;margin-bottom:6px;}
-  .sug-meta{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
-  .sug-comment{font-size:13px;color:var(--muted);font-style:italic;margin-top:6px;}
-  .sug-admin-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
-  .approve-btn{background:rgba(76,175,125,.1);border:1px solid rgba(76,175,125,.3);border-radius:6px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);cursor:pointer;transition:all .15s;}
-  .approve-btn:hover{background:rgba(76,175,125,.2);}
-  .reject-btn{background:rgba(224,85,85,.1);border:1px solid rgba(224,85,85,.3);border-radius:6px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);cursor:pointer;transition:all .15s;}
-  .reject-btn:hover{background:rgba(224,85,85,.2);}
-  .reject-comment-input{flex:1;min-width:150px;padding:6px 12px;font-size:13px;}
-  @media(max-width:600px){.bar-track,.lg-tag{display:none;}th.hide-mobile,td.hide-mobile{display:none;}.market-right{display:none;}}
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c27;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+    --text:#f0f0f8;--muted:#8888aa;--accent:#e8a020;
+    --yes:#22c98a;--no:#ff4f6b;
+    --yes-dim:rgba(34,201,138,0.15);--no-dim:rgba(255,79,107,0.15);
+    --gold:#f5c842;
+  }
+  body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:600px;overflow-x:hidden}
+
+  /* ── AUTH ── */
+  #auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:600px;padding:32px 24px;position:relative;overflow:hidden}
+  .auth-bg-beer{position:absolute;font-size:80px;opacity:0.04;pointer-events:none;user-select:none}
+  .auth-logo{font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--accent);margin-bottom:4px;position:relative;z-index:1}
+  .auth-sub{font-size:13px;color:var(--muted);margin-bottom:32px;position:relative;z-index:1}
+  .auth-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:28px;width:100%;max-width:360px;position:relative;z-index:1}
+  .auth-tabs{display:flex;margin-bottom:24px;border-bottom:1px solid var(--border)}
+  .auth-tab{flex:1;text-align:center;padding:10px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent}
+  .auth-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .field{margin-bottom:14px}
+  .field-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:6px}
+  input[type=text],input[type=password],input[type=number]{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'Syne',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color 0.2s}
+  input:focus{border-color:var(--accent)}
+  .btn-auth{width:100%;padding:13px;background:var(--accent);color:#0a0a0f;border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-top:6px;transition:opacity 0.15s}
+  .btn-auth:hover{opacity:0.88}
+  .auth-err{font-size:12px;color:var(--no);margin-top:10px;text-align:center;min-height:18px}
+
+  /* ── APP ── */
+  #app-screen{display:none}
+  .header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,0.95);position:sticky;top:0;z-index:100}
+  .logo{font-size:20px;font-weight:800;letter-spacing:-0.5px;display:flex;align-items:center;gap:8px}
+  .logo-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+  .header-right{display:flex;align-items:center;gap:8px}
+  .wallet-chip{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border2);border-radius:999px;padding:7px 13px;font-size:13px}
+  .wallet-bal{font-family:'DM Mono',monospace;font-weight:500;color:var(--gold)}
+  .user-chip{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:999px;padding:5px 13px 5px 5px;font-size:13px;cursor:pointer;transition:border-color 0.2s}
+  .user-chip:hover{border-color:var(--accent)}
+  .tabs{display:flex;padding:0 20px;border-bottom:1px solid var(--border);overflow-x:auto}
+  .tab{padding:13px 16px;font-size:12px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap}
+  .tab:hover{color:var(--text)}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .main{padding:18px 20px;max-width:760px;margin:0 auto}
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+  .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:6px}
+  .stat-value{font-family:'DM Mono',monospace;font-size:20px;font-weight:500}
+
+  /* ── MARKETS ── */
+  .markets-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:6px}
+  .markets-section-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+  .markets-count{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);background:var(--surface2);border-radius:999px;padding:2px 8px}
+  .section-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;margin-top:6px}
+
+  /* Open market card */
+  .market-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:10px;transition:border-color 0.2s,transform 0.15s;position:relative;overflow:hidden}
+  .market-card.open-market{border-left:3px solid var(--accent)}
+  .market-card.open-market::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0.5}
+  .market-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+
+  /* Closed market card */
+  .market-card.res-yes{border:1px solid rgba(34,201,138,0.4);background:rgba(34,201,138,0.03)}
+  .market-card.res-no{border:1px solid rgba(255,79,107,0.4);background:rgba(255,79,107,0.03)}
+  .closed-overlay{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+  .closed-yes{background:var(--yes-dim);color:var(--yes)}
+  .closed-no{background:var(--no-dim);color:var(--no)}
+
+  .market-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .market-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:4px;padding:3px 8px}
+  .tag-sleep{color:#a78bfa;background:rgba(167,139,250,0.12)}
+  .tag-drinks{color:#fb923c;background:rgba(251,146,60,0.12)}
+  .tag-food{color:#4ade80;background:rgba(74,222,128,0.12)}
+  .tag-social{color:#f472b6;background:rgba(244,114,182,0.12)}
+  .tag-misc{color:#60a5fa;background:rgba(96,165,250,0.12)}
+  .market-q{font-size:15px;font-weight:700;line-height:1.4;flex:1}
+  .market-q.resolved-q{color:var(--muted);font-size:14px}
+  .odds-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--yes);text-align:right}
+  .odds-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;text-align:right}
+  .prob-bar{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:12px}
+  .prob-fill{height:100%;border-radius:99px;transition:width 0.4s}
+  .prob-fill-open{background:linear-gradient(90deg,var(--accent),rgba(232,160,32,0.5))}
+  .prob-fill-yes{background:var(--yes)}
+  .prob-fill-no{background:var(--no)}
+  .mkt-footer{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
+  .vol-badge{font-family:'DM Mono',monospace;color:var(--gold)}
+  .bet-row{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+  .bet-btn{flex:1;padding:10px 0;border-radius:10px;border:1.5px solid transparent;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s}
+  .btn-yes{background:var(--yes-dim);color:var(--yes);border-color:rgba(34,201,138,0.3)}
+  .btn-yes:hover{background:rgba(34,201,138,0.25);border-color:var(--yes)}
+  .btn-no{background:var(--no-dim);color:var(--no);border-color:rgba(255,79,107,0.3)}
+  .btn-no:hover{background:rgba(255,79,107,0.25);border-color:var(--no)}
+  .resolve-btn{font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gold);font-family:'Syne',sans-serif}
+  .resolve-btn:hover{background:rgba(245,200,66,0.1)}
+  .closed-divider{display:flex;align-items:center;gap:10px;margin:20px 0 14px}
+  .closed-divider-line{flex:1;height:1px;background:var(--border)}
+  .closed-divider-text{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+  /* ── MY BETS ── */
+  .bets-section{margin-bottom:24px}
+  .bets-section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .bets-section-icon{font-size:18px}
+  .bets-section-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+  .bets-section-count{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);background:var(--surface2);border-radius:999px;padding:2px 8px}
+  .pos-card{border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid var(--border)}
+  .pos-card.open-bet{background:var(--surface);border-left:3px solid var(--accent)}
+  .pos-card.won-bet{background:rgba(34,201,138,0.04);border-left:3px solid var(--yes);border-color:rgba(34,201,138,0.3)}
+  .pos-card.lost-bet{background:rgba(255,79,107,0.03);border-left:3px solid var(--no);border-color:rgba(255,79,107,0.2)}
+  .pos-q{font-size:14px;font-weight:700;margin-bottom:8px;line-height:1.4}
+  .pos-meta{display:flex;gap:14px;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;flex-wrap:wrap;align-items:center}
+  .c-yes{color:var(--yes)} .c-no{color:var(--no)}
+  .pos-status{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .status-open{background:rgba(232,160,32,0.12);color:var(--accent)}
+  .status-won{background:var(--yes-dim);color:var(--yes)}
+  .status-lost{background:var(--no-dim);color:var(--no)}
+
+  /* ── LEADERBOARD ── */
+  .lb-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;margin-bottom:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:border-color 0.2s,transform 0.15s}
+  .lb-row:hover{border-color:var(--border2);transform:translateY(-1px)}
+  .lb-row.me{border-color:rgba(232,160,32,0.35)}
+  .lb-rank{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);width:24px;flex-shrink:0}
+  .lb-rank.top{color:var(--gold);font-weight:500}
+  .lb-info{flex:1;min-width:0}
+  .lb-name-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .lb-name{font-weight:700;font-size:14px}
+  .lb-handle{font-size:12px;color:var(--accent);font-family:'DM Mono',monospace;margin-top:1px}
+  .lb-sub{font-size:12px;color:var(--muted);margin-top:1px}
+  .lb-bal{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--gold);flex-shrink:0}
+  .admin-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(124,111,255,0.2);color:#a78bfa;border:1px solid rgba(124,111,255,0.3);letter-spacing:0.3px;flex-shrink:0}
+  .act-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;flex-shrink:0;font-family:'DM Mono',monospace;letter-spacing:0.3px}
+  .act-yes{background:var(--yes-dim);color:var(--yes);border:1px solid rgba(34,201,138,0.3)}
+  .act-no{background:rgba(136,136,170,0.1);color:var(--muted);border:1px solid rgba(136,136,170,0.2)}
+
+  /* ── MEMBERS ── */
+  .roster-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .filter-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s}
+  .filter-btn:hover{color:var(--text);border-color:var(--text)}
+  .filter-btn.active{background:rgba(232,160,32,0.12);color:var(--accent);border-color:rgba(232,160,32,0.4)}
+  .member-row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;margin-bottom:5px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:border-color 0.15s}
+  .member-row:hover{border-color:var(--border2)}
+  .member-row.me{border-color:rgba(232,160,32,0.3)}
+  .member-name{font-weight:700;font-size:14px;flex:1}
+  .member-sub{font-size:12px;color:var(--muted);margin-top:1px;font-family:'DM Mono',monospace}
+  .member-bal{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--gold);flex-shrink:0;margin-right:8px}
+  .roster-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+  .rs-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center}
+  .rs-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500}
+  .rs-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin-top:3px}
+
+  /* ── ACHIEVEMENTS ── */
+  .achievements-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+  .ach-chip{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);transition:all 0.15s}
+  .ach-chip.unlocked{background:rgba(232,160,32,0.08);border-color:rgba(232,160,32,0.3)}
+  .ach-chip.locked{opacity:0.4;filter:grayscale(1)}
+  .ach-icon{font-size:20px;flex-shrink:0}
+  .ach-name{font-size:12px;font-weight:700;line-height:1.2}
+  .ach-desc{font-size:11px;color:var(--muted);margin-top:1px}
+  .ach-badge-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+  .ach-tiny{font-size:14px;cursor:default}
+
+  /* ── PROFILE ── */
+  .prof-hero{display:flex;flex-direction:column;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+  .prof-av-wrap{position:relative;margin-bottom:14px}
+  .prof-av-wrap.clickable{cursor:pointer}
+  .prof-av{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border2)}
+  .prof-av-text{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;border:2px solid var(--border2)}
+  .av-edit-badge{position:absolute;bottom:2px;right:2px;width:24px;height:24px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid var(--surface)}
+  .prof-name{font-size:20px;font-weight:800}
+  .prof-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+  .prof-handle{font-size:14px;color:var(--accent);font-family:'DM Mono',monospace;margin-top:3px}
+  .prof-bal{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);margin-top:6px}
+  .prof-bio{font-size:13px;color:var(--muted);margin-top:8px;text-align:center;line-height:1.5;max-width:300px}
+  .prof-stats{display:flex;gap:22px;margin-top:16px;flex-wrap:wrap;justify-content:center}
+  .prof-stat{text-align:center}
+  .prof-stat-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--text)}
+  .prof-stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+  .edit-sep{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin:18px 0 12px;padding-top:18px;border-top:1px solid var(--border)}
+  .handle-prefix{position:relative}
+  .handle-prefix input{padding-left:24px}
+  .handle-at{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;font-family:'DM Mono',monospace;pointer-events:none}
+  .bh-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .bh-item:last-child{border-bottom:none}
+  .bh-side{font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;flex-shrink:0;font-family:'DM Mono',monospace}
+  .bh-yes{background:var(--yes-dim);color:var(--yes)}
+  .bh-no{background:var(--no-dim);color:var(--no)}
+  .win-rate-bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-top:6px}
+  .win-rate-fill{height:100%;background:var(--yes);border-radius:99px}
+
+  /* ── SYNC ── */
+  .sync-banner{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:16px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+  .sync-info{flex:1;min-width:180px}
+  .sync-title{font-size:13px;font-weight:700;margin-bottom:3px}
+  .sync-sub{font-size:12px;color:var(--muted);line-height:1.5}
+  .sync-last{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:6px}
+
+  /* ── MODALS ── */
+  .fab{position:fixed;bottom:22px;right:22px;width:52px;height:52px;border-radius:50%;background:var(--accent);border:none;color:#0a0a0f;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:150;transition:transform 0.15s;box-shadow:0 4px 20px rgba(232,160,32,0.4)}
+  .fab:hover{transform:scale(1.08)}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+  .overlay.open{display:flex}
+  .modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:26px;width:100%;max-width:440px;margin:auto}
+  .modal-title{font-size:18px;font-weight:800;margin-bottom:6px}
+  .modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+  .input-group{margin-bottom:14px}
+  .input-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:6px}
+  select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'Syne',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color 0.2s}
+  select:focus,textarea:focus{border-color:var(--accent)}
+  textarea{resize:vertical;min-height:72px}
+  select option{background:#1c1c27}
+  .btn-primary{width:100%;padding:13px;background:var(--accent);color:#0a0a0f;border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:opacity 0.15s;margin-top:4px}
+  .btn-primary:hover{opacity:0.88}
+  .btn-secondary{width:100%;padding:12px;background:transparent;color:var(--muted);border:1px solid var(--border2);border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;cursor:pointer;margin-top:8px}
+  .btn-secondary:hover{color:var(--text);border-color:var(--text)}
+  .btn-danger{width:100%;padding:12px;background:transparent;color:var(--no);border:1px solid rgba(255,79,107,0.3);border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;cursor:pointer;margin-top:8px}
+  .btn-danger:hover{background:var(--no-dim)}
+  .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
+  .chip{padding:9px;text-align:center;border-radius:8px;border:1px solid var(--border2);font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Mono',monospace;color:var(--muted);background:var(--surface2);transition:all 0.15s}
+  .chip:hover,.chip.sel{color:var(--accent);border-color:var(--accent);background:rgba(232,160,32,0.1)}
+  .payout-box{background:var(--surface2);border-radius:10px;padding:13px;margin:10px 0;font-family:'DM Mono',monospace;font-size:13px}
+  .pay-row{display:flex;justify-content:space-between;margin-bottom:5px;color:var(--muted)}
+  .pay-row:last-child{margin-bottom:0}
+  .pay-row span:last-child{color:var(--text)}
+  .pay-win span:last-child{color:var(--yes);font-size:16px}
+  .toast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:11px 20px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;transition:all 0.28s;z-index:300;white-space:nowrap;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .hidden{display:none!important}
+  .empty-state{text-align:center;padding:44px 0;color:var(--muted)}
+  .empty-icon{font-size:32px;margin-bottom:10px}
+  .empty-text{font-size:14px}
+
+  /* floating beers */
+  .beer-float{position:fixed;pointer-events:none;user-select:none;font-size:28px;opacity:0;animation:floatUp 6s ease-in forwards}
+  @keyframes floatUp{0%{opacity:0;transform:translateY(0) rotate(0deg)}10%{opacity:0.18}80%{opacity:0.1}100%{opacity:0;transform:translateY(-320px) rotate(25deg)}}
 </style>
-</head>
-<body>
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">Drunk Club<br><span>of 100</span></div>
-    <div class="login-sub">🍺 Season 4 · Members only</div>
-    <div class="login-field"><label>Beer name</label><input type="text" id="login-user" placeholder="e.g. Beerflow" autocomplete="username"></div>
-    <div class="login-field"><label>Password</label><input type="password" id="login-pass" placeholder="Your phone number" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign in</button>
-    <div class="login-error" id="login-error"></div>
-    <div class="login-hint">First time? Your password is your <strong>phone number</strong> without + or spaces. Change it after logging in, and please don't use a password you use somewhere else.</div>
-  </div>
-</div>
-
-<!-- PROFILE MODAL -->
-<div class="modal-overlay" id="profile-modal" onclick="closeModal(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeProfileModal()">×</button>
-    <div class="modal-header">
-      <div class="modal-top">
-        <div class="avatar lg" id="modal-avatar">?</div>
-        <div class="modal-info">
-          <div class="modal-real-name" id="modal-real-name">—</div>
-          <div class="modal-beer-name" id="modal-beer-name">—</div>
-          <div class="modal-lg" id="modal-lg"></div>
-        </div>
-      </div>
-      <div class="modal-stats">
-        <div class="modal-stat"><div class="modal-stat-label">Chugs</div><div class="modal-stat-val gold" id="modal-chugs">—</div></div>
-        <div class="modal-stat"><div class="modal-stat-label">$drunk</div><div class="modal-stat-val green" id="modal-drunk">—</div></div>
-        <div class="modal-stat"><div class="modal-stat-label">Bets</div><div class="modal-stat-val" id="modal-bet-count">—</div></div>
-      </div>
-      <div id="modal-bio" class="modal-bio empty"></div>
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-bg-beer" style="top:10%;left:5%">🍺</div>
+  <div class="auth-bg-beer" style="top:20%;right:8%;font-size:60px">🍻</div>
+  <div class="auth-bg-beer" style="bottom:15%;left:12%;font-size:50px">🍺</div>
+  <div class="auth-bg-beer" style="bottom:25%;right:5%;font-size:90px">🍻</div>
+  <div class="auth-bg-beer" style="top:55%;left:40%;font-size:40px">🍺</div>
+  <div class="auth-logo">🍺 DC100 Market</div>
+  <div class="auth-sub">Predict your friends. Spend fake money. Win bragging rights.</div>
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="atab-login" onclick="switchAuthTab('login')">Log in</div>
+      <div class="auth-tab" id="atab-reg" onclick="switchAuthTab('register')">Register</div>
     </div>
-    <div class="modal-section-title">Bet history</div>
-    <div class="modal-bets" id="modal-bets"></div>
+    <div id="login-form">
+      <div class="field"><div class="field-label">Username</div><input type="text" id="l-user" placeholder="your_name" autocomplete="username"/></div>
+      <div class="field"><div class="field-label">Password</div><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+      <button class="btn-auth" onclick="doLogin()">Log in 🍺</button>
+    </div>
+    <div id="reg-form" class="hidden">
+      <div class="field"><div class="field-label">Username</div><input type="text" id="r-user" placeholder="pick a name" autocomplete="username"/></div>
+      <div class="field"><div class="field-label">Password</div><input type="password" id="r-pass" placeholder="choose a password" autocomplete="new-password"/></div>
+      <div class="field"><div class="field-label">Confirm password</div><input type="password" id="r-pass2" placeholder="repeat password"/></div>
+      <button class="btn-auth" onclick="doRegister()">Create account</button>
+    </div>
+    <div class="auth-err" id="auth-err"></div>
   </div>
 </div>
 
 <!-- APP -->
-<div id="app">
-<div class="container">
-  <div class="topbar">
-    <div class="topbar-logo">DC<span>100</span></div>
-    <div class="topbar-right">
-      <div class="user-pill" onclick="switchTab('profile',document.querySelector('[data-tab=profile]'))">
-        <div class="avatar" id="topbar-avatar">?</div>
-        <span class="user-name-pill" id="topbar-name">—</span>
+<div id="app-screen">
+  <div class="header">
+    <div class="logo"><div class="logo-dot"></div>DC100 Market</div>
+    <div class="header-right">
+      <div class="wallet-chip"><span style="font-size:14px">🍺</span><span class="wallet-bal" id="hdr-bal">0 $DRUNK</span></div>
+      <div class="user-chip" onclick="openMyProfile()">
+        <div id="hdr-av-wrap"></div>
+        <span id="hdr-name" style="font-size:13px;font-weight:700"></span>
       </div>
-      <button class="logout-btn" onclick="doLogout()">Log out</button>
     </div>
   </div>
-
-  <header>
-    <p class="eyebrow">🍺 Season 4 · Live</p>
-    <h1>Drunk Club<br><span>of 100</span></h1>
-    <div class="header-meta">
-      <div class="meta-item"><span class="meta-label">Members</span><span class="meta-val" id="stat-members">—</span></div>
-      <div class="meta-item"><span class="meta-label">Total chugs</span><span class="meta-val gold" id="stat-total">—</span></div>
-      <div class="meta-item"><span class="meta-label">Active</span><span class="meta-val" id="stat-active">—</span></div>
-      <div class="meta-item"><span class="meta-label">Your $drunk</span><span class="meta-val gold" id="my-drunk">—</span></div>
-      <div class="meta-item"><span class="meta-label">🏦 Total won</span><span class="meta-val" style="color:var(--green)" id="stat-won">—</span></div>
-      <div class="meta-item"><span class="meta-label">💸 Total lost</span><span class="meta-val" style="color:var(--red)" id="stat-lost">—</span></div>
-    </div>
-  </header>
-
   <div class="tabs">
-    <button class="tab-btn" data-tab="market"      onclick="switchTab('market',this)">📈 DC100 Market</button>
-    <button class="tab-btn active" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">🏆 Leaderboard</button>
-    <button class="tab-btn" data-tab="mybets"      onclick="switchTab('mybets',this)">🎯 My Bets</button>
-    <button class="tab-btn" data-tab="suggest"     onclick="switchTab('suggest',this)">💡 Suggest Bets<span class="tab-badge" id="badge-suggest"></span></button>
-    <button class="tab-btn" data-tab="profile"     onclick="switchTab('profile',this)">👤 Profile</button>
+    <div class="tab active" id="tab-btn-markets" onclick="switchTab('markets',this)">🎲 Markets</div>
+    <div class="tab" id="tab-btn-portfolio" onclick="switchTab('portfolio',this)">My Bets</div>
+    <div class="tab" id="tab-btn-leaderboard" onclick="switchTab('leaderboard',this)">🏆 Board</div>
+    <div class="tab" id="tab-btn-members" onclick="switchTab('members',this)">Members</div>
+    <div class="tab" id="tab-btn-sync" onclick="switchTab('sync',this)">🍺 Sync</div>
   </div>
+  <div class="main">
 
-  <!-- LEADERBOARD -->
-  <div id="tab-leaderboard" class="tab-pane active">
-    <div class="controls">
-      <div class="search-wrap">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="lb-search" placeholder="Search name or beer…" oninput="renderLeaderboard()">
+    <!-- MARKETS -->
+    <div id="tab-markets">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Open markets</div><div class="stat-value" id="s-open">0</div></div>
+        <div class="stat-card"><div class="stat-label">Your balance</div><div class="stat-value" style="color:var(--gold)" id="s-bal">0</div></div>
+        <div class="stat-card"><div class="stat-label">Total volume</div><div class="stat-value" id="s-vol">0</div></div>
       </div>
-      <select id="lb-sort" onchange="renderLeaderboard()">
-        <option value="bal_desc">Chugs ↓</option><option value="bal_asc">Chugs ↑</option>
-        <option value="name_asc">Name A–Z</option><option value="beer_asc">Beer A–Z</option>
-        <option value="drunk_desc">$drunk ↓</option><option value="lg_asc">Local group</option>
+      <div class="markets-section-header">
+        <div class="markets-section-title">🔥 Open markets</div>
+        <span class="markets-count" id="open-count">0</span>
+      </div>
+      <div id="markets-list"></div>
+      <div id="closed-divider" class="closed-divider hidden">
+        <div class="closed-divider-line"></div>
+        <div class="closed-divider-text">🔒 Closed markets</div>
+        <div class="closed-divider-line"></div>
+      </div>
+      <div id="resolved-list"></div>
+    </div>
+
+    <!-- MY BETS -->
+    <div id="tab-portfolio" class="hidden">
+      <div class="bets-section">
+        <div class="bets-section-header">
+          <span class="bets-section-icon">⚡</span>
+          <span class="bets-section-label">Current bets</span>
+          <span class="bets-section-count" id="current-bets-count">0</span>
+        </div>
+        <div id="current-bets-list"></div>
+      </div>
+      <div class="bets-section">
+        <div class="bets-section-header">
+          <span class="bets-section-icon">📜</span>
+          <span class="bets-section-label">Previous bets</span>
+          <span class="bets-section-count" id="prev-bets-count">0</span>
+        </div>
+        <div id="prev-bets-list"></div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div id="tab-leaderboard" class="hidden">
+      <div class="section-title">🏆 Top degenerates</div>
+      <div id="lb-list"></div>
+    </div>
+
+    <!-- MEMBERS -->
+    <div id="tab-members" class="hidden">
+      <div class="roster-summary">
+        <div class="rs-card"><div class="rs-val" id="r-total">0</div><div class="rs-lbl">Total</div></div>
+        <div class="rs-card"><div class="rs-val" style="color:var(--yes)" id="r-active">0</div><div class="rs-lbl">Activated</div></div>
+        <div class="rs-card"><div class="rs-val" style="color:var(--muted)" id="r-pending">0</div><div class="rs-lbl">Pending</div></div>
+      </div>
+      <div class="roster-filters">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setFilter('active',this)">Activated</button>
+        <button class="filter-btn" onclick="setFilter('pending',this)">Pending</button>
+      </div>
+      <div id="members-list"></div>
+    </div>
+
+    <!-- SYNC -->
+    <div id="tab-sync" class="hidden">
+      <div class="sync-banner">
+        <div class="sync-info">
+          <div class="sync-title">🍺 Sync from spreadsheet</div>
+          <div class="sync-sub">Upload the DC100 Excel file. Reads <strong style="color:var(--text)">CHUGET LIST</strong>: col C = name, col E = beers, col I = phone (initial password).</div>
+          <div class="sync-last" id="sync-last-time">Never synced</div>
+        </div>
+        <label style="padding:10px 18px;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:10px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-top:4px">
+          📂 Choose file
+          <input type="file" id="xlsx-input" accept=".xlsx,.xls" style="display:none" onchange="handleXlsx(event)"/>
+        </label>
+      </div>
+      <div id="sync-results"></div>
+    </div>
+  </div>
+  <button class="fab" onclick="openCreate()">+</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- MY PROFILE MODAL -->
+<div class="overlay" id="myProfileModal">
+  <div class="modal">
+    <div class="prof-hero">
+      <div class="prof-av-wrap clickable" onclick="triggerAvatarUpload()">
+        <div id="my-av-display"></div>
+        <div class="av-edit-badge">✏️</div>
+      </div>
+      <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)"/>
+      <div class="prof-name-row">
+        <div class="prof-name" id="my-display-name"></div>
+        <span id="my-admin-badge" class="admin-badge hidden">👑 Admin</span>
+      </div>
+      <div class="prof-handle" id="my-handle"></div>
+      <div class="prof-bal" id="my-bal"></div>
+      <div class="ach-badge-row" id="my-ach-row" style="justify-content:center;margin-top:8px"></div>
+      <div class="prof-bio" id="my-bio"></div>
+      <div class="prof-stats">
+        <div class="prof-stat"><div class="prof-stat-val" id="my-s-bets">0</div><div class="prof-stat-lbl">Bets</div></div>
+        <div class="prof-stat"><div class="prof-stat-val" id="my-s-wins">0</div><div class="prof-stat-lbl">Wins</div></div>
+        <div class="prof-stat"><div class="prof-stat-val" id="my-s-mkts">0</div><div class="prof-stat-lbl">Markets</div></div>
+      </div>
+    </div>
+    <div class="edit-sep" style="margin-top:0;padding-top:0;border-top:none">Achievements</div>
+    <div id="my-achievements-grid" class="achievements-grid"></div>
+    <div class="edit-sep">Edit profile</div>
+    <div class="input-group"><div class="input-label">Display name</div><input type="text" id="edit-dn" placeholder="Your name"/></div>
+    <div class="input-group"><div class="input-label">Handle</div><div class="handle-prefix"><span class="handle-at">@</span><input type="text" id="edit-handle" placeholder="beerflow" style="padding-left:24px"/></div></div>
+    <div class="input-group"><div class="input-label">Sheet name</div><input type="text" id="edit-sheetname" placeholder="e.g. Mats Brokmann"/></div>
+    <div class="input-group"><div class="input-label">Bio</div><textarea id="edit-bio" placeholder="World's most accurate drunk predictor..."></textarea></div>
+    <button class="btn-primary" onclick="saveProfile()">Save changes</button>
+    <button class="btn-secondary" onclick="closeModals()">Cancel</button>
+    <button class="btn-danger" onclick="doLogout()">Log out</button>
+  </div>
+</div>
+
+<!-- VIEW PROFILE MODAL -->
+<div class="overlay" id="viewProfileModal">
+  <div class="modal">
+    <div class="prof-hero">
+      <div class="prof-av-wrap"><div id="view-av-display"></div></div>
+      <div class="prof-name-row">
+        <div class="prof-name" id="view-name"></div>
+        <span id="view-admin-badge" class="admin-badge hidden">👑 Admin</span>
+      </div>
+      <div class="prof-handle" id="view-handle"></div>
+      <div class="prof-bal" id="view-bal"></div>
+      <div class="ach-badge-row" id="view-ach-row" style="justify-content:center;margin-top:8px"></div>
+      <div class="prof-bio" id="view-bio"></div>
+      <div class="prof-stats">
+        <div class="prof-stat"><div class="prof-stat-val" id="view-s-bets">0</div><div class="prof-stat-lbl">Bets</div></div>
+        <div class="prof-stat"><div class="prof-stat-val" id="view-s-wins">0</div><div class="prof-stat-lbl">Wins</div></div>
+        <div class="prof-stat"><div class="prof-stat-val" id="view-s-mkts">0</div><div class="prof-stat-lbl">Markets</div></div>
+        <div class="prof-stat"><div class="prof-stat-val" id="view-s-pnl">—</div><div class="prof-stat-lbl">P&amp;L</div></div>
+      </div>
+    </div>
+    <div class="edit-sep" style="margin-top:0;padding-top:0;border-top:none">Achievements</div>
+    <div id="view-achievements-grid" class="achievements-grid"></div>
+    <div class="edit-sep">Bet history</div>
+    <div id="view-bet-history"></div>
+    <button class="btn-secondary" style="margin-top:16px" onclick="closeModals()">Close</button>
+  </div>
+</div>
+
+<!-- CREATE MODAL -->
+<div class="overlay" id="createModal">
+  <div class="modal">
+    <div class="modal-title">Create a market 🎲</div>
+    <div class="modal-sub">Ask something about your crew. Keep it spicy.</div>
+    <div class="input-group"><div class="input-label">Question</div><textarea id="new-q" placeholder="Will Daan drink more than 10 beers tonight?"></textarea></div>
+    <div class="input-group"><div class="input-label">Category</div>
+      <select id="new-cat">
+        <option value="sleep">😴 Sleep</option><option value="drinks">🍺 Drinks</option>
+        <option value="food">🍔 Food</option><option value="social">💬 Social</option><option value="misc">⚡ Misc</option>
       </select>
-      <div class="filter-btns">
-        <button class="filter-btn active" data-filter="all"    onclick="setLbFilter(this)">All</button>
-        <button class="filter-btn"        data-filter="active" onclick="setLbFilter(this)">Active</button>
-      </div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>#</th><th>Name</th><th class="hide-mobile">Beer name</th><th class="hide-mobile">LG</th><th style="text-align:right">Chugs</th><th style="text-align:right">$drunk</th></tr></thead>
-        <tbody id="lb-tbody"><tr><td colspan="6" class="state-msg"><span class="spinner"></span> Loading…</td></tr></tbody>
-      </table>
-      <div class="table-footer"><span id="lb-count">—</span><span id="lb-updated">—</span></div>
-    </div>
+    <div class="input-group"><div class="input-label">Starting probability (Yes %)</div><input type="number" id="new-prob" value="50" min="5" max="95"/></div>
+    <button class="btn-primary" onclick="createMarket()">Post market</button>
+    <button class="btn-secondary" onclick="closeModals()">Cancel</button>
   </div>
-
-  <!-- DC100 MARKET -->
-  <div id="tab-market" class="tab-pane">
-    <div class="fm-stats">
-      <div class="fm-stat"><div class="fm-stat-label">Open markets</div><div class="fm-stat-val gold" id="fm-open">—</div></div>
-      <div class="fm-stat"><div class="fm-stat-label">Total volume</div><div class="fm-stat-val green" id="fm-volume">—</div></div>
-      <div class="fm-stat"><div class="fm-stat-label">Total bets</div><div class="fm-stat-val" id="fm-bets">—</div></div>
-      <div class="fm-stat"><div class="fm-stat-label">Resolved</div><div class="fm-stat-val" id="fm-resolved">—</div></div>
-    </div>
-    <!-- Admin create market -->
-    <div id="create-wrap" style="display:none;margin-bottom:32px;">
-      <button class="create-toggle" onclick="toggleCreate()">＋ Create market directly (admin)</button>
-      <div class="create-form" id="create-form">
-        <div class="form-row"><label>Question</label><input type="text" id="new-q" placeholder="Will someone chug from a shoe tonight?"></div>
-        <div class="form-row"><label>Category</label>
-          <select id="new-cat">
-            <option value="chug">🍺 Chug</option><option value="social">💬 Social</option>
-            <option value="food">🍔 Food</option><option value="sleep">😴 Sleep</option><option value="other">Other</option>
-          </select>
-        </div>
-        <div class="form-actions">
-          <button class="confirm-btn" onclick="createMarket()">Create</button>
-          <button class="cancel-btn" onclick="toggleCreate()">Cancel</button>
-        </div>
-      </div>
-    </div>
-    <div class="section-title">Active markets</div>
-    <div id="markets-list"><div class="state-msg"><span class="spinner"></span> Loading…</div></div>
-    <div style="margin-top:40px"><div class="section-title">Resolved markets</div><div id="resolved-list"></div></div>
-    <div style="margin-top:40px">
-      <div class="section-title">$drunk leaderboard</div>
-      <div class="table-wrap">
-        <table class="fm-lb-table">
-          <thead><tr><th>#</th><th>Name</th><th>Balance</th><th>Won</th><th>Lost</th></tr></thead>
-          <tbody id="fm-lb-body"><tr><td colspan="5" class="state-msg" style="padding:30px">No data yet.</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- MY BETS -->
-  <div id="tab-mybets" class="tab-pane">
-    <div id="mybets-list"><div class="mybets-empty">Loading…</div></div>
-  </div>
-
-  <!-- SUGGEST A MARKET -->
-  <div id="tab-suggest" class="tab-pane">
-    <!-- Suggest form (everyone) -->
-    <div class="suggest-form">
-      <h3>💡 Suggest a new market</h3>
-      <div class="form-row"><label>Question</label><input type="text" id="sug-q" placeholder="Will Floris chug 5 in a row tonight?"></div>
-      <div class="form-row"><label>Category</label>
-        <select id="sug-cat">
-          <option value="chug">🍺 Chug</option><option value="social">💬 Social</option>
-          <option value="food">🍔 Food</option><option value="sleep">😴 Sleep</option><option value="other">Other</option>
-        </select>
-      </div>
-      <button class="confirm-btn" onclick="submitSuggestion()">Submit suggestion</button>
-      <div class="form-msg" id="sug-msg"></div>
-    </div>
-
-    <!-- Admin review panel (shown only to admins) -->
-    <div id="admin-review-panel" style="display:none;margin-bottom:32px;">
-      <div class="section-title">⚡ Pending approval</div>
-      <div id="pending-suggestions"></div>
-    </div>
-
-    <!-- My suggestions -->
-    <div class="section-title">My suggestions</div>
-    <div id="my-suggestions"><div class="state-msg" style="padding:30px">No suggestions yet.</div></div>
-
-    <!-- All suggestions (admin sees all) -->
-    <div id="all-suggestions-wrap" style="display:none;margin-top:32px;">
-      <div class="section-title">All suggestions</div>
-      <div id="all-suggestions"></div>
-    </div>
-  </div>
-
-  <!-- PROFILE -->
-  <div id="tab-profile" class="tab-pane">
-    <div class="profile-wrap">
-      <div class="profile-card">
-        <h3>My profile</h3>
-        <div class="profile-avatar-section">
-          <div class="avatar lg" id="my-avatar">?</div>
-          <button class="avatar-upload-btn" onclick="document.getElementById('avatar-file-input').click()">Change photo</button>
-          <input type="file" id="avatar-file-input" accept="image/*" onchange="handleAvatarUpload(event)">
-          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);text-align:center" id="my-name-display">—</div>
-        </div>
-        <div class="form-field"><label>Bio</label><textarea id="my-bio" placeholder="Tell the club something about yourself…"></textarea></div>
-        <button class="save-btn" onclick="saveProfile()">Save profile</button>
-        <div class="form-msg" id="profile-msg"></div>
-      </div>
-      <div class="profile-card">
-        <h3>Change password</h3>
-        <div class="form-field"><label>Current password</label><input type="password" id="pw-old" placeholder="Current password"></div>
-        <div class="form-field"><label>New password</label><input type="password" id="pw-new" placeholder="New password"></div>
-        <div class="form-field"><label>Confirm new password</label><input type="password" id="pw-confirm" placeholder="Repeat new password"></div>
-        <button class="save-btn" onclick="changePassword()">Save password</button>
-        <div class="form-msg" id="pw-msg"></div>
-      </div>
-    </div>
-  </div>
-
-</div>
 </div>
 
+<!-- BET MODAL -->
+<div class="overlay" id="betModal">
+  <div class="modal">
+    <div class="modal-title" id="bet-title">Place a bet</div>
+    <div class="modal-sub" id="bet-q"></div>
+    <div class="input-group">
+      <div class="input-label">Amount ($DRUNK)</div>
+      <div class="chips">
+        <div class="chip" onclick="pickAmt(10,this)">10</div><div class="chip" onclick="pickAmt(25,this)">25</div>
+        <div class="chip" onclick="pickAmt(50,this)">50</div><div class="chip" onclick="pickAmt(100,this)">100</div>
+      </div>
+      <input type="number" id="bet-amt" placeholder="Custom amount" min="1" oninput="calcPay()"/>
+    </div>
+    <div class="payout-box">
+      <div class="pay-row"><span>Odds</span><span id="pay-odds">—</span></div>
+      <div class="pay-row"><span>Bet</span><span id="pay-bet">0 $DRUNK</span></div>
+      <div class="pay-row pay-win"><span>Potential win</span><span id="pay-win">0 $DRUNK</span></div>
+    </div>
+    <button class="btn-primary" onclick="confirmBet()">Confirm bet</button>
+    <button class="btn-secondary" onclick="closeModals()">Cancel</button>
+  </div>
+</div>
+
+<!-- RESOLVE MODAL -->
+<div class="overlay" id="resolveModal">
+  <div class="modal">
+    <div class="modal-title">Resolve market</div>
+    <div id="res-q" style="font-size:15px;font-weight:700;margin-bottom:8px;line-height:1.4"></div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px">What actually happened? Winners get paid!</div>
+    <button class="btn-primary" style="background:var(--yes);color:#fff" onclick="resolveMarket(true)">✓ YES — it happened!</button>
+    <button class="btn-primary" style="background:var(--no);color:#fff;margin-top:10px" onclick="resolveMarket(false)">✗ NO — it didn't!</button>
+    <button class="btn-secondary" onclick="closeModals()">Cancel</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwC6tWkm93yvrz7_tOySjewH0WKBVJGDaatiGub1F3OKRieVynvCY_Ow_pIP7sRUhHv/exec';
+const DB='dc100_v7';
+let S=null,currentUser=null,betSide=null,betMktId=null,resolveMktId=null,rosterFilter='all';
 
-let session  = {};
-let lbData   = [], lbFilter = 'all';
-let markets  = [], bets = [], profiles = [], balances = [], suggestions = [], comments = [], likes = [];
-let activeBet = {};
+// ── ACHIEVEMENTS DEFINITION ──
+const ACHIEVEMENTS=[
+  {id:'first_sip',icon:'🌱',name:'First Sip',desc:'Log your first beer',check:(acc,stats)=>acc.balance>=1},
+  {id:'beer_me',icon:'🍺',name:'Beer Me',desc:'Reach 10 $DRUNK',check:(acc,stats)=>acc.balance>=10},
+  {id:'hydrated',icon:'💦',name:'Hydrated',desc:'Reach 50 $DRUNK',check:(acc,stats)=>acc.balance>=50},
+  {id:'on_fire',icon:'🔥',name:'On Fire',desc:'Reach 100 $DRUNK',check:(acc,stats)=>acc.balance>=100},
+  {id:'dc_legend',icon:'👑',name:'DC Legend',desc:'Reach 200 $DRUNK',check:(acc,stats)=>acc.balance>=200},
+  {id:'the_100',icon:'💀',name:'The 100',desc:'Hit the DC100 goal',check:(acc,stats)=>acc.balance>=100},
+  {id:'first_bet',icon:'🎯',name:'First Bet',desc:'Place your first bet',check:(acc,stats)=>stats.bets>=1},
+  {id:'oracle',icon:'🔮',name:'Oracle',desc:'5 correct predictions',check:(acc,stats)=>stats.wins>=5},
+  {id:'big_brain',icon:'🧠',name:'Big Brain',desc:'10 correct predictions',check:(acc,stats)=>stats.wins>=10},
+  {id:'profit_gang',icon:'📈',name:'Profit Gang',desc:'Finish with positive P&L',check:(acc,stats)=>stats.pnl>0},
+  {id:'whale',icon:'🐳',name:'Whale',desc:'Place a single bet of 100+',check:(acc,stats)=>stats.maxBet>=100},
+  {id:'all_in',icon:'🎰',name:'All In',desc:'Bet your entire balance',check:(acc,stats)=>stats.wentAllIn},
+  {id:'market_maker',icon:'🏪',name:'Market Maker',desc:'Create 5+ markets',check:(acc,stats)=>stats.mkts>=5},
+  {id:'lucky_streak',icon:'🍀',name:'Lucky Streak',desc:'3 correct bets in a row',check:(acc,stats)=>stats.streak>=3},
+  {id:'early_adopter',icon:'⭐',name:'Early Adopter',desc:'One of the first 10 to activate',check:(acc,stats)=>stats.earlyAdopter},
+  {id:'personality',icon:'🎨',name:'Personality',desc:'Set handle, bio & photo',check:(acc,stats)=>acc.handle&&acc.bio&&acc.avatar},
+];
 
-// restore session
-(function(){ try{ const s=sessionStorage.getItem('dc100s'); if(s) session=JSON.parse(s); }catch(e){} })();
-function saveSession(){ try{ sessionStorage.setItem('dc100s',JSON.stringify(session)); }catch(e){} }
+function loadDB(){try{const r=localStorage.getItem(DB);return r?JSON.parse(r):null;}catch(e){return null;}}
+function saveDB(){try{localStorage.setItem(DB,JSON.stringify(S));}catch(e){}}
 
-// ── API ───────────────────────────────────────────────────
-async function apiCall(payload) {
-  if (session.token && !payload.token) payload.token = session.token;
-  const params = new URLSearchParams();
-  for (const [k,v] of Object.entries(payload)) params.append(k, v==null?'':String(v));
-  const res = await fetch(API_URL+'?'+params.toString());
-  const data = await res.json();
-  if (data.error==='Unauthorized') { doLogout(); return data; }
-  return data;
-}
-async function apiUpload(b64) {
-  const res = await fetch(API_URL+'?action=updateAvatar&beer='+encodeURIComponent(session.beer)+'&token='+encodeURIComponent(session.token), { method:'POST', headers:{'Content-Type':'text/plain'}, body:b64 });
-  return res.json();
-}
-
-// ── AUTH ──────────────────────────────────────────────────
-async function doLogin() {
-  const user=document.getElementById('login-user').value.trim();
-  const pass=document.getElementById('login-pass').value.trim();
-  const btn=document.getElementById('login-btn'), err=document.getElementById('login-error');
-  if(!user||!pass){err.textContent='Enter your beer name and password.';return;}
-  btn.disabled=true;btn.textContent='Signing in…';err.textContent='';
-  try{
-    const data=await fetch(API_URL+'?action=login&username='+encodeURIComponent(user)+'&password='+encodeURIComponent(pass)).then(r=>r.json());
-    if(data.ok){
-      session={name:data.name,beer:data.beer,token:data.token,isAdmin:data.isAdmin||false,balance:data.balance||0,totalWon:data.totalWon||0,totalLost:data.totalLost||0};
-      saveSession(); startApp();
-    } else err.textContent=data.error||'Login failed.';
-  }catch(e){err.textContent='Could not reach server. Try again.';}
-  btn.disabled=false;btn.textContent='Sign in';
+function initDB(){
+  const ex=loadDB();
+  if(ex){S=ex;return;}
+  S={accounts:{},ghostRoster:[],markets:[
+    {id:1,q:"Will someone fall asleep before midnight?",cat:"sleep",prob:72,vol:340,creator:"System",resolved:false,outcome:null,bets:[]},
+    {id:2,q:"Will the group order pizza instead of cooking?",cat:"food",prob:85,vol:220,creator:"System",resolved:false,outcome:null,bets:[]},
+    {id:3,q:"Will anyone text their ex this weekend?",cat:"social",prob:40,vol:510,creator:"System",resolved:true,outcome:true,bets:[]}
+  ],nextId:10,totalVol:1070,lastSync:null,admins:[]};
+  saveDB();
 }
 
-function startApp(){
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('topbar-name').textContent=session.beer;
-  if(session.isAdmin){ document.getElementById('create-wrap').style.display='block'; document.getElementById('admin-review-panel').style.display='block'; document.getElementById('all-suggestions-wrap').style.display='block'; }
-  updateDrunkDisplay(); loadLeaderboard(); loadMarketData();
+function hashPass(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return'h'+Math.abs(h).toString(36);}
+function isAdmin(key){return(S.admins||[]).includes(key);}
+
+function calcStats(key){
+  const acc=S.accounts[key];if(!acc)return{};
+  const bets=acc.bets||[];
+  const wins=bets.filter(b=>{const m=S.markets.find(x=>x.id===b.mktId);return m&&m.resolved&&m.outcome===b.side;}).length;
+  const mkts=S.markets.filter(m=>m.creator===acc.displayName).length;
+  let pnl=0,maxBet=0,wentAllIn=false;
+  bets.forEach(b=>{
+    if(b.amount>maxBet)maxBet=b.amount;
+    const m=S.markets.find(x=>x.id===b.mktId);
+    if(m&&m.resolved){if(m.outcome===b.side){const tw=m.bets.filter(x=>x.side===m.outcome).reduce((s,x)=>s+x.amount,0);const pot=m.bets.reduce((s,x)=>s+x.amount,0);pnl+=tw>0?Math.round(pot*(b.amount/tw))-b.amount:0;}else pnl-=b.amount;}
+  });
+  // streak
+  let streak=0,maxStreak=0;
+  bets.forEach(b=>{
+    const m=S.markets.find(x=>x.id===b.mktId);
+    if(m&&m.resolved){if(m.outcome===b.side){streak++;if(streak>maxStreak)maxStreak=streak;}else streak=0;}
+  });
+  // early adopter: first 10 activated
+  const activatedOrder=Object.entries(S.accounts).filter(([k,a])=>a.activated).sort((a,b)=>(a[1].activatedAt||0)-(b[1].activatedAt||0));
+  const earlyAdopter=activatedOrder.slice(0,10).some(([k])=>k===key);
+  return{bets:bets.length,wins,mkts,pnl,maxBet,wentAllIn,streak:maxStreak,earlyAdopter};
+}
+
+function getUnlockedAchievements(key){
+  const acc=S.accounts[key];if(!acc)return[];
+  const stats=calcStats(key);
+  return ACHIEVEMENTS.filter(a=>a.check(acc,stats)).map(a=>a.id);
+}
+
+function switchAuthTab(t){
+  document.getElementById('atab-login').classList.toggle('active',t==='login');
+  document.getElementById('atab-reg').classList.toggle('active',t==='register');
+  document.getElementById('login-form').classList.toggle('hidden',t!=='login');
+  document.getElementById('reg-form').classList.toggle('hidden',t!=='register');
+  document.getElementById('auth-err').textContent='';
+}
+function authErr(m){document.getElementById('auth-err').textContent=m;}
+function doLogin(){
+  const u=document.getElementById('l-user').value.trim();
+  const p=document.getElementById('l-pass').value;
+  if(!u||!p){authErr('Fill in both fields.');return;}
+  const acc=S.accounts[u.toLowerCase()];
+  if(!acc){authErr('Account not found.');return;}
+  if(acc.hash!==hashPass(p)){authErr('Wrong password.');return;}
+  loginAs(u.toLowerCase());
+}
+function doRegister(){
+  const u=document.getElementById('r-user').value.trim();
+  const p=document.getElementById('r-pass').value,p2=document.getElementById('r-pass2').value;
+  if(!u||!p||!p2){authErr('Fill in all fields.');return;}
+  if(u.length<2){authErr('Username too short.');return;}
+  if(p.length<4){authErr('Password too short (min 4).');return;}
+  if(p!==p2){authErr("Passwords don't match.");return;}
+  const key=u.toLowerCase();
+  if(S.accounts[key]){authErr('Username already taken.');return;}
+  S.accounts[key]={displayName:u,handle:'',bio:'',avatar:null,sheetName:'',hash:hashPass(p),balance:0,bets:[],activated:true,activatedAt:Date.now()};
+  saveDB();loginAs(key);
+}
+function loginAs(key){
+  currentUser=key;
+  const acc=S.accounts[key];
+  if(!acc.activated){acc.activated=true;acc.activatedAt=Date.now();}
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+  // Land on markets tab
+  switchTab('markets',document.getElementById('tab-btn-markets'));
+  render();
+  spawnBeers();
+  showToast('👋 Welcome back, '+acc.displayName+'! 🍺');
+  checkAchievementNotifs(key);
 }
 function doLogout(){
-  session={}; sessionStorage.removeItem('dc100s');
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-pass').value='';
-  document.getElementById('login-error').textContent='';
+  currentUser=null;closeModals();
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('l-pass').value='';
+  document.getElementById('auth-err').textContent='';
 }
-window.addEventListener('load',()=>{ if(session.token&&session.beer) startApp(); });
-function updateDrunkDisplay(){ document.getElementById('my-drunk').textContent=(session.balance||0).toLocaleString(); }
+function me(){return S.accounts[currentUser];}
 
-// ── TABS ──────────────────────────────────────────────────
-function switchTab(name,btn){
-  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  if(btn)btn.classList.add('active');
-  if(name==='market'||name==='mybets') loadMarketData();
-  if(name==='suggest') renderSuggestions();
-  if(name==='profile') populateMyProfile();
+function avHTML(key,size){
+  const acc=S.accounts[key];if(!acc)return'';
+  const sz=size||38,ts=Math.round(sz*0.35);
+  if(acc.avatar)return`<img src="${acc.avatar}" style="width:${sz}px;height:${sz}px;border-radius:50%;object-fit:cover;flex-shrink:0;display:block"/>`;
+  const h=Math.abs(key.split('').reduce((hh,c)=>((hh<<5)-hh)+c.charCodeAt(0)|0,0))%360;
+  return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:${ts}px;font-weight:700;flex-shrink:0;background:hsl(${h},40%,22%);color:hsl(${h},80%,72%)">${acc.displayName.slice(0,2).toUpperCase()}</div>`;
 }
-
-// ── PROFILE HELPERS ───────────────────────────────────────
-function getProfile(beer){ const l=(beer||'').toLowerCase(); return profiles.find(p=>(p.beerName||'').toLowerCase()===l)||{}; }
-function getBalance(beer){ const l=(beer||'').toLowerCase(); return balances.find(b=>(b.beername||'').toString().toLowerCase()===l)||{}; }
-function setAvatarEl(el,beer,url){
-  if(url&&(url.startsWith('http')||url.startsWith('data:'))){
-    el.innerHTML=`<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML='${(beer||'?').substring(0,2).toUpperCase()}'">`;
-  } else { el.innerHTML=''; el.textContent=(beer||'?').substring(0,2).toUpperCase(); }
-}
-function updateTopbarAvatar(){ setAvatarEl(document.getElementById('topbar-avatar'),session.beer,getProfile(session.beer).avatar); }
-
-// ── LEADERBOARD ───────────────────────────────────────────
-async function loadLeaderboard(){
-  try{
-    const data=await fetch(API_URL+'?action=getLeaderboard').then(r=>r.json());
-    if(!data.ok) throw new Error();
-    lbData=data.leaderboard.map(r=>({name:r.name,beer:r.beer,lg:r.lg,bal:r.count}));
-    const total=lbData.reduce((s,r)=>s+r.bal,0);
-    document.getElementById('stat-members').textContent=lbData.length;
-    document.getElementById('stat-total').textContent=total.toLocaleString();
-    document.getElementById('stat-active').textContent=lbData.filter(r=>r.bal>0).length;
-    renderLeaderboard();
-    document.getElementById('lb-updated').innerHTML='Updated <span style="color:var(--green)">'+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span>';
-  }catch(e){ document.getElementById('lb-tbody').innerHTML='<tr><td colspan="6" class="state-msg">⚠ Could not load leaderboard.</td></tr>'; }
-}
-function renderLeaderboard(){
-  const q=document.getElementById('lb-search').value.toLowerCase(), sort=document.getElementById('lb-sort').value;
-  let data=lbData.filter(r=>{ if(lbFilter==='active'&&r.bal===0)return false; if(q&&!r.name.toLowerCase().includes(q)&&!r.beer.toLowerCase().includes(q))return false; return true; });
-  data=[...data].sort((a,b)=>{ const aD=Number(getBalance(a.beer).balance)||0,bD=Number(getBalance(b.beer).balance)||0; if(sort==='bal_desc')return b.bal-a.bal; if(sort==='bal_asc')return a.bal-b.bal; if(sort==='name_asc')return a.name.localeCompare(b.name); if(sort==='beer_asc')return a.beer.localeCompare(b.beer); if(sort==='drunk_desc')return bD-aD; if(sort==='lg_asc')return a.lg.localeCompare(b.lg); return 0; });
-  const maxBal=Math.max(...lbData.map(r=>r.bal),1);
-  document.getElementById('lb-tbody').innerHTML=data.map((r,i)=>{
-    const p=getProfile(r.beer),bal=getBalance(r.beer),drunk=Number(bal.balance);
-    const rc=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
-    const top=r.bal>=maxBal*.5,pct=Math.round(r.bal/maxBal*100),bc=r.bal===0?'zero':top?'top':'';
-    const isMe=session.beer&&r.beer.toLowerCase()===session.beer.toLowerCase();
-    const avHtml=p.avatar&&(p.avatar.startsWith('http')||p.avatar.startsWith('data:'))
-      ?`<img src="${p.avatar}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;margin-right:8px;flex-shrink:0;" onerror="this.style.display='none'">`
-      :`<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:rgba(232,200,74,.1);font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);margin-right:8px;flex-shrink:0;">${(r.beer||'?').substring(0,2).toUpperCase()}</span>`;
-    return `<tr style="animation-delay:${Math.min(i*18,300)}ms${isMe?';background:rgba(232,200,74,.04)':''}">
-      <td class="rank ${rc}">${i+1}</td>
-      <td class="name-cell"><span style="display:inline-flex;align-items:center;">${avHtml}<span class="name-link" onclick="openProfileModal('${esc(r.beer)}')">${esc(r.name)}</span>${isMe?'<span style="font-family:DM Mono,monospace;font-size:10px;color:var(--gold);margin-left:6px">you</span>':''}</span></td>
-      <td class="hide-mobile"><span class="beer-pill">${esc(r.beer)}</span></td>
-      <td class="lg-tag hide-mobile">${esc(r.lg)}</td>
-      <td><div class="balance-cell"><div class="bar-track"><div class="bar-fill ${bc}" style="width:${pct}%"></div></div><span class="balance-num ${top?'top':''}">${r.bal}</span></div></td>
-      <td style="text-align:right;font-family:'DM Mono',monospace;font-size:13px;color:var(--green)">${isNaN(drunk)?'—':drunk.toLocaleString()}</td>
-    </tr>`;
-  }).join('')||'<tr><td colspan="6" class="state-msg">No results.</td></tr>';
-  document.getElementById('lb-count').textContent=data.length+' account'+(data.length!==1?'s':'');
-}
-function setLbFilter(btn){ document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); lbFilter=btn.dataset.filter; renderLeaderboard(); }
-
-// ── MARKET DATA ───────────────────────────────────────────
-async function loadMarketData(){
-  try{
-    const data=await apiCall({action:'getData'});
-    if(!data.ok)return;
-    markets=data.markets||[];bets=data.bets||[];profiles=data.profiles||[];balances=data.balances||[];
-    suggestions=data.suggestions||[];comments=data.comments||[];likes=data.likes||[];
-    document.getElementById('stat-won').textContent=(data.totalWon||0).toLocaleString();
-    document.getElementById('stat-lost').textContent=(data.totalLost||0).toLocaleString();
-    // update pending badge
-    const pending=suggestions.filter(s=>(s.status||s.Status||'').toString()==='pending').length;
-    const badge=document.getElementById('badge-suggest');
-    if(pending>0&&session.isAdmin){ badge.textContent=pending; badge.classList.add('show'); } else badge.classList.remove('show');
-    renderMarkets();renderFMStats();renderFMLB();renderMyBets();
-    updateTopbarAvatar(); if(lbData.length)renderLeaderboard();
-  }catch(e){ document.getElementById('markets-list').innerHTML='<div class="state-msg">⚠ Could not load data.</div>'; }
-}
-function renderFMStats(){
-  const vol=bets.reduce((s,b)=>s+(parseInt(b.amount)||0),0);
-  document.getElementById('fm-open').textContent=markets.filter(m=>m.status==='open').length;
-  document.getElementById('fm-volume').textContent=vol.toLocaleString();
-  document.getElementById('fm-bets').textContent=bets.length;
-  document.getElementById('fm-resolved').textContent=markets.filter(m=>m.status==='resolved').length;
-}
-function getProb(m){const y=parseFloat(m.yesPool)||0,n=parseFloat(m.noPool)||0;return(y+n)===0?50:Math.round(y/(y+n)*100);}
-function catClass(c){return 'cat-'+(c||'other');}
-function catEmoji(c){return{chug:'🍺',social:'💬',food:'🍔',sleep:'😴'}[c]||'•';}
-
-function renderMarkets(){
-  const open=markets.filter(m=>m.status==='open'), res=markets.filter(m=>m.status==='resolved');
-  document.getElementById('markets-list').innerHTML=open.length?open.map(marketCard).join(''):'<div class="state-msg" style="padding:30px">No open markets yet.</div>';
-  document.getElementById('resolved-list').innerHTML=res.length?res.map(marketCard).join(''):'<div style="color:var(--muted);font-size:13px;font-family:DM Mono,monospace;padding:10px 0">None yet.</div>';
+function avHTMLGhost(name,size){
+  const sz=size||38,ts=Math.round(sz*0.35);
+  const h=Math.abs(name.split('').reduce((hh,c)=>((hh<<5)-hh)+c.charCodeAt(0)|0,0))%360;
+  return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:${ts}px;font-weight:700;flex-shrink:0;background:hsl(${h},35%,18%);color:hsl(${h},50%,55%);border:1px dashed hsl(${h},40%,35%)">${name.slice(0,2).toUpperCase()}</div>`;
 }
 
-function marketCard(m){
-  const prob=getProb(m);
-  const total=(parseFloat(m.yesPool)||0)+(parseFloat(m.noPool)||0);
-  const mBets=bets.filter(b=>b.marketId===m.id).length;
-  const resolved=m.status==='resolved';
-  const myBet=bets.find(b=>b.marketId===m.id&&session.beer&&(b.user||'').toLowerCase()===session.beer.toLowerCase());
-  const mLikes=likes.filter(l=>(l.marketId||l.marketid||'').toString()===m.id);
-  const iLiked=mLikes.some(l=>(l.user||'').toLowerCase()===(session.beer||'').toLowerCase());
-  const mComments=comments.filter(c=>(c.marketId||c.marketid||'').toString()===m.id);
-  const winnerBadge=resolved?`<span class="winner-badge winner-${m.winner}" style="margin-left:8px">${m.winner.toUpperCase()} won</span>`:'';
-  const myBetTag=myBet?`<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);margin-left:8px">you bet ${myBet.side.toUpperCase()}</span>`:'';
-  const resolveRow=session.isAdmin&&!resolved?`<div style="display:flex;gap:8px;margin-top:12px"><button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','yes')">Resolve YES ✓</button><button class="resolve-btn" onclick="resolveMarket('${esc(m.id)}','no')">Resolve NO ✗</button></div>`:'';
-  const betSection=!resolved?`
-    <div class="bet-btns">
-      <button class="bet-btn yes${myBet&&myBet.side==='yes'?' selected':''}" onclick="selectBet('${esc(m.id)}','yes',this)"><span class="bet-btn-label">YES</span><span class="bet-btn-price">${prob}¢</span></button>
-      <button class="bet-btn no${myBet&&myBet.side==='no'?' selected':''}"  onclick="selectBet('${esc(m.id)}','no',this)"><span class="bet-btn-label">NO</span><span class="bet-btn-price">${100-prob}¢</span></button>
-    </div>
-    <div class="bet-form" id="betform-${esc(m.id)}">
-      <div class="bet-form-row">
-        <label>Betting as</label><span class="bet-user-tag">${esc(session.beer||'')}</span>
-        <label>Balance</label><span class="bet-balance-tag">${(session.balance||0).toLocaleString()} $drunk</span>
-        <label>Amount</label><input type="number" id="betamt-${esc(m.id)}" value="50" min="1" max="${session.balance||0}">
-        <button class="confirm-btn" onclick="placeBet('${esc(m.id)}')">Bet</button>
-        <button class="cancel-btn"  onclick="cancelBet('${esc(m.id)}')">×</button>
+function updateHeader(){
+  const acc=me();
+  document.getElementById('hdr-bal').textContent=acc.balance+' $DRUNK';
+  document.getElementById('hdr-name').textContent=acc.handle?('@'+acc.handle):acc.displayName;
+  document.getElementById('hdr-av-wrap').innerHTML=avHTML(currentUser,28);
+}
+function render(){
+  updateHeader();
+  document.getElementById('s-bal').textContent=me().balance;
+  document.getElementById('s-open').textContent=S.markets.filter(m=>!m.resolved).length;
+  document.getElementById('s-vol').textContent=S.totalVol;
+  renderMarkets();
+  if(S.lastSync)document.getElementById('sync-last-time').textContent='Last synced: '+S.lastSync;
+  saveDB();
+}
+
+function tagLabel(cat){return{sleep:'😴 Sleep',drinks:'🍺 Drinks',food:'🍔 Food',social:'💬 Social',misc:'⚡ Misc'}[cat]||cat;}
+
+function mktHTML(m){
+  const p=Math.round(m.prob);
+  if(!m.resolved){
+    return`<div class="market-card open-market">
+      <div class="market-header">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="market-tag tag-${m.cat}">${tagLabel(m.cat)}</span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="resolve-btn" onclick="event.stopPropagation();openResolve(${m.id})">Resolve</button>
+          <div><div class="odds-val">${p}%</div><div class="odds-lbl">Yes</div></div>
+        </div>
       </div>
-    </div>`:'';
-
-  // comments HTML
-  const commentsHtml=mComments.map(c=>{
-    const cp=getProfile(c.user||c.User||'');
-    const avUrl=cp.avatar||'';
-    const avHtml=avUrl&&avUrl.startsWith('http')?`<img src="${avUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`:(c.user||'?').substring(0,2).toUpperCase();
-    const ts=c.timestamp||c.Timestamp||'';
-    const timeStr=ts?new Date(ts).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
-    return `<div class="comment-row">
-      <div class="comment-avatar">${avHtml}</div>
-      <div class="comment-body">
-        <div class="comment-author" onclick="openProfileModal('${esc(String(c.user||''))}')">${esc(String(c.user||''))}</div>
-        <div class="comment-text">${esc(String(c.text||c.Text||''))}</div>
-        <div class="comment-time">${timeStr}</div>
+      <div class="market-q">${esc(m.q)}</div>
+      <div class="prob-bar" style="margin-top:10px"><div class="prob-fill prob-fill-open" style="width:${p}%"></div></div>
+      <div class="mkt-footer"><span>${m.bets.length} bet${m.bets.length!==1?'s':''} · by ${esc(m.creator)}</span><span class="vol-badge">${m.vol} $DRUNK</span></div>
+      <div class="bet-row">
+        <button class="bet-btn btn-yes" onclick="openBet(${m.id},true)">YES ${p}¢</button>
+        <button class="bet-btn btn-no" onclick="openBet(${m.id},false)">NO ${100-p}¢</button>
       </div>
     </div>`;
-  }).join('');
-
-  return `<div class="market-card${resolved?' resolved':''}" id="mc-${esc(m.id)}">
-    <span class="market-cat ${catClass(m.category)}">${catEmoji(m.category)} ${(m.category||'other').toUpperCase()}</span>
-    <div class="market-header">
-      <div><div class="market-question">${esc(m.question)}</div><div class="market-meta">${mBets} bet${mBets!==1?'s':''} · ${total.toLocaleString()} $drunk${winnerBadge}${myBetTag}</div></div>
-      ${!resolved?`<div class="market-right"><div class="market-prob${prob<40?' low':''}">${prob}%</div><div class="market-prob-label">YES</div></div>`:''}
-    </div>
-    ${!resolved?`<div class="prob-bar"><div class="prob-bar-fill" style="width:${prob}%"></div></div>`:''}
-    ${betSection}${resolveRow}
-    <div class="market-social">
-      <button class="like-btn${iLiked?' liked':''}" onclick="toggleLike('${esc(m.id)}',this)">
-        <span style="font-size:15px">${iLiked?'❤️':'🤍'}</span><span class="like-count">${mLikes.length}</span>
-      </button>
-      <button class="comment-toggle-btn" onclick="toggleComments('${esc(m.id)}')">
-        <span style="font-size:15px">💬</span><span>${mComments.length} comment${mComments.length!==1?'s':''}</span>
-      </button>
-    </div>
-    <div class="comments-section" id="comments-${esc(m.id)}">
-      ${commentsHtml}
-      <div class="comment-input-row">
-        <input type="text" id="cmtinput-${esc(m.id)}" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')postComment('${esc(m.id)}')">
-        <button class="comment-send-btn" onclick="postComment('${esc(m.id)}')">Send</button>
+  } else {
+    const cls=m.outcome?'res-yes':'res-no';
+    const fillCls=m.outcome?'prob-fill-yes':'prob-fill-no';
+    const badge=m.outcome?'closed-yes':'closed-no';
+    const label=m.outcome?'✓ YES':'✗ NO';
+    return`<div class="market-card ${cls}" style="opacity:0.75">
+      <div class="closed-overlay ${badge}">${label}</div>
+      <div class="market-header" style="padding-right:60px">
+        <span class="market-tag tag-${m.cat}">${tagLabel(m.cat)}</span>
       </div>
-    </div>
-  </div>`;
-}
-
-function toggleComments(mid){
-  const el=document.getElementById('comments-'+mid);
-  if(el) el.classList.toggle('open');
-}
-
-async function toggleLike(mid,btn){
-  try{
-    const res=await apiCall({action:'toggleLike',marketId:mid});
-    if(res.ok){ await loadMarketData(); }
-  }catch(e){}
-}
-
-async function postComment(mid){
-  const inp=document.getElementById('cmtinput-'+mid);
-  const text=(inp?.value||'').trim();
-  if(!text)return;
-  try{
-    const res=await apiCall({action:'addComment',marketId:mid,text});
-    if(res.ok){ inp.value=''; await loadMarketData(); document.getElementById('comments-'+mid)?.classList.add('open'); }
-  }catch(e){}
-}
-
-function selectBet(mid,side,btn){
-  const form=document.getElementById('betform-'+mid),card=document.getElementById('mc-'+mid);
-  const already=activeBet.mid===mid&&activeBet.side===side&&form.classList.contains('open');
-  card.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
-  if(already){form.classList.remove('open');activeBet={};}
-  else{btn.classList.add('selected');form.classList.add('open');activeBet={mid,side};}
-}
-function cancelBet(mid){
-  const f=document.getElementById('betform-'+mid);if(f)f.classList.remove('open');
-  const c=document.getElementById('mc-'+mid);if(c)c.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
-  activeBet={};
-}
-async function placeBet(mid){
-  const amt=parseInt(document.getElementById('betamt-'+mid).value);
-  if(!amt||amt<1){alert('Enter a valid amount!');return;}
-  if(amt>(session.balance||0)){alert('Not enough $drunk!');return;}
-  try{
-    const res=await apiCall({action:'placeBet',marketId:mid,side:activeBet.side,amount:amt});
-    if(!res.ok){alert(res.error||'Could not place bet.');return;}
-    session.balance=res.newBalance; saveSession(); updateDrunkDisplay(); cancelBet(mid); await loadMarketData();
-  }catch(e){alert('Could not place bet.');}
-}
-async function resolveMarket(mid,winner){
-  if(!confirm('Resolve as '+winner.toUpperCase()+'?'))return;
-  try{ const res=await apiCall({action:'resolveMarket',marketId:mid,winner}); if(!res.ok){alert(res.error);return;} await loadMarketData(); }catch(e){alert('Could not resolve.');}
-}
-function toggleCreate(){document.getElementById('create-form').classList.toggle('open');document.getElementById('new-q').value='';}
-async function createMarket(){
-  const q=document.getElementById('new-q').value.trim(),cat=document.getElementById('new-cat').value;
-  if(!q){alert('Enter a question!');return;}
-  try{ await apiCall({action:'createMarket',id:'mkt_'+Date.now(),question:q,category:cat}); toggleCreate(); await loadMarketData(); }catch(e){alert('Could not create.');}
-}
-
-function renderFMLB(){
-  if(!balances.length){document.getElementById('fm-lb-body').innerHTML='<tr><td colspan="5" class="state-msg" style="padding:30px">No data yet.</td></tr>';return;}
-  const sorted=[...balances].sort((a,b)=>(Number(b.balance)||0)-(Number(a.balance)||0));
-  document.getElementById('fm-lb-body').innerHTML=sorted.map((r,i)=>`<tr>
-    <td class="rank ${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}">${i+1}</td>
-    <td style="font-weight:500"><span class="name-link" onclick="openProfileModal('${esc(String(r.beername))}')">${esc(String(r.beername))}</span></td>
-    <td style="font-family:'DM Mono',monospace;color:var(--green)">${(Number(r.balance)||0).toLocaleString()}</td>
-    <td style="font-family:'DM Mono',monospace;color:var(--gold)">${(Number(r.totalwon)||0).toLocaleString()}</td>
-    <td style="font-family:'DM Mono',monospace;color:var(--red)">${(Number(r.totallost)||0).toLocaleString()}</td>
-  </tr>`).join('');
-}
-
-function renderMyBets(){
-  if(!session.beer)return;
-  const myBets=bets.filter(b=>(b.user||'').toLowerCase()===session.beer.toLowerCase());
-  if(!myBets.length){document.getElementById('mybets-list').innerHTML='<div class="mybets-empty">You haven\'t placed any bets yet.</div>';return;}
-  document.getElementById('mybets-list').innerHTML=myBets.map(b=>{
-    const m=markets.find(x=>x.id===b.marketId);if(!m)return'';
-    const resolved=m.status==='resolved',won=resolved&&m.winner===b.side;
-    const badge=resolved?`<span class="winner-badge ${won?'winner-yes':'winner-no'}">${won?'WON':'LOST'}</span>`:`<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">OPEN</span>`;
-    return `<div class="market-card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div><div class="market-question" style="font-size:15px">${esc(m.question)}</div><div class="market-meta" style="margin-top:6px">Bet <strong style="color:${b.side==='yes'?'var(--green)':'var(--red)'}">${(b.side||'').toUpperCase()}</strong> · <span style="color:var(--gold);font-family:'DM Mono',monospace">${parseInt(b.amount).toLocaleString()} $drunk</span></div></div>${badge}</div></div>`;
-  }).join('');
-}
-
-// ── SUGGESTIONS ───────────────────────────────────────────
-async function submitSuggestion(){
-  const q=document.getElementById('sug-q').value.trim(), cat=document.getElementById('sug-cat').value;
-  if(!q){showMsg('sug-msg','Enter a question!','err');return;}
-  try{
-    const res=await apiCall({action:'suggestMarket',question:q,category:cat});
-    if(res.ok){ showMsg('sug-msg','Suggestion submitted! 🎉','ok'); document.getElementById('sug-q').value=''; await loadMarketData(); renderSuggestions(); }
-    else showMsg('sug-msg',res.error||'Failed.','err');
-  }catch(e){showMsg('sug-msg','Could not reach server.','err');}
-}
-
-function renderSuggestions(){
-  const mySugs=suggestions.filter(s=>(s.suggestedBy||s.suggestedby||'').toString().toLowerCase()===session.beer.toLowerCase());
-  document.getElementById('my-suggestions').innerHTML=mySugs.length
-    ?mySugs.map(sugCard).join('')
-    :'<div style="color:var(--muted);font-family:DM Mono,monospace;font-size:13px;padding:10px 0">You haven\'t suggested any markets yet.</div>';
-
-  if(session.isAdmin){
-    const pending=suggestions.filter(s=>(s.status||'').toString()==='pending');
-    document.getElementById('pending-suggestions').innerHTML=pending.length
-      ?pending.map(s=>sugCard(s,true)).join('')
-      :'<div style="color:var(--muted);font-family:DM Mono,monospace;font-size:13px;padding:10px 0">No pending suggestions.</div>';
-    document.getElementById('all-suggestions').innerHTML=suggestions.length
-      ?suggestions.map(s=>sugCard(s,true)).join('')
-      :'<div style="color:var(--muted);font-family:DM Mono,monospace;font-size:13px;padding:10px 0">No suggestions yet.</div>';
+      <div class="market-q resolved-q">${esc(m.q)}</div>
+      <div class="prob-bar" style="margin-top:10px"><div class="prob-fill ${fillCls}" style="width:${p}%"></div></div>
+      <div class="mkt-footer"><span>${m.bets.length} bet${m.bets.length!==1?'s':''} · by ${esc(m.creator)}</span><span class="vol-badge">${m.vol} $DRUNK</span></div>
+    </div>`;
   }
 }
 
-function sugCard(s, adminView){
-  const status=(s.status||'pending').toString();
-  const cat=(s.category||'other').toString();
-  const by=(s.suggestedBy||s.suggestedby||'').toString();
-  const comment=(s.adminComment||s.admincomment||'').toString();
-  const id=(s.id||'').toString();
-  const adminActions=adminView&&status==='pending'?`
-    <div class="sug-admin-actions">
-      <button class="approve-btn" onclick="approveSuggestion('${esc(id)}')">✓ Approve & create market</button>
-      <input type="text" class="reject-comment-input" id="rjcmt-${esc(id)}" placeholder="Optional rejection reason…">
-      <button class="reject-btn" onclick="rejectSuggestion('${esc(id)}')">✗ Reject</button>
-    </div>`:''
-  ;
-  return `<div class="sug-card ${status}">
-    <span class="sug-status ${status}">${status==='pending'?'⏳ Pending':status==='approved'?'✓ Approved':'✗ Rejected'}</span>
-    <span class="market-cat ${catClass(cat)}" style="margin-left:8px">${catEmoji(cat)} ${cat.toUpperCase()}</span>
-    <div class="sug-question">${esc(s.question||'')}</div>
-    <div class="sug-meta">Suggested by <span class="name-link" onclick="openProfileModal('${esc(by)}')">${esc(by)}</span></div>
-    ${comment?`<div class="sug-comment">Admin: "${esc(comment)}"</div>`:''}
-    ${adminActions}
-  </div>`;
+function renderMarkets(){
+  const open=S.markets.filter(m=>!m.resolved);
+  const res=S.markets.filter(m=>m.resolved);
+  document.getElementById('open-count').textContent=open.length;
+  document.getElementById('markets-list').innerHTML=open.length?open.map(mktHTML).join(''):'<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">No open markets. Create one!</div></div>';
+  const closedDiv=document.getElementById('closed-divider');
+  if(res.length){closedDiv.classList.remove('hidden');document.getElementById('resolved-list').innerHTML=res.map(mktHTML).join('');}
+  else{closedDiv.classList.add('hidden');document.getElementById('resolved-list').innerHTML='';}
 }
 
-async function approveSuggestion(id){
-  if(!confirm('Approve this suggestion and create the market?'))return;
-  try{ const res=await apiCall({action:'approveMarket',suggestionId:id}); if(res.ok){await loadMarketData();renderSuggestions();}else alert(res.error); }catch(e){alert('Failed.');}
-}
-async function rejectSuggestion(id){
-  const comment=(document.getElementById('rjcmt-'+id)?.value||'').trim();
-  try{ const res=await apiCall({action:'rejectMarket',suggestionId:id,comment}); if(res.ok){await loadMarketData();renderSuggestions();}else alert(res.error); }catch(e){alert('Failed.');}
+function renderPortfolio(){
+  const bets=me().bets||[];
+  const current=bets.filter(b=>{const m=S.markets.find(x=>x.id===b.mktId);return m&&!m.resolved;});
+  const previous=bets.filter(b=>{const m=S.markets.find(x=>x.id===b.mktId);return m&&m.resolved;});
+  document.getElementById('current-bets-count').textContent=current.length;
+  document.getElementById('prev-bets-count').textContent=previous.length;
+
+  function betCard(b,isOpen){
+    const m=S.markets.find(x=>x.id===b.mktId);if(!m)return'';
+    const sc=b.side?'c-yes':'c-no',sl=b.side?'YES':'NO';
+    let pnl='',pnlCol='var(--muted)',cardClass='open-bet',statusHtml=`<span class="pos-status status-open">Open</span>`;
+    if(!isOpen&&m.resolved){
+      if(m.outcome===b.side){const tw=m.bets.filter(x=>x.side===m.outcome).reduce((s,x)=>s+x.amount,0);const pot=m.bets.reduce((s,x)=>s+x.amount,0);const w=tw>0?Math.round(pot*(b.amount/tw)):0;pnl='+'+(w-b.amount)+' $DRUNK';pnlCol='var(--yes)';cardClass='won-bet';statusHtml=`<span class="pos-status status-won">Won</span>`;}
+      else{pnl='-'+b.amount+' $DRUNK';pnlCol='var(--no)';cardClass='lost-bet';statusHtml=`<span class="pos-status status-lost">Lost</span>`;}
+    }
+    return`<div class="pos-card ${cardClass}">
+      <div class="pos-q">${esc(m.q)}</div>
+      <div class="pos-meta">
+        <span class="${sc}">● ${sl}</span>
+        <span>${b.amount} $DRUNK</span>
+        ${pnl?`<span style="color:${pnlCol};font-weight:700">${pnl}</span>`:''}
+        ${statusHtml}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('current-bets-list').innerHTML=current.length?current.map(b=>betCard(b,true)).join(''):'<div style="text-align:center;padding:20px 0;color:var(--muted);font-size:13px">No open bets yet.</div>';
+  document.getElementById('prev-bets-list').innerHTML=previous.length?[...previous].reverse().map(b=>betCard(b,false)).join(''):'<div style="text-align:center;padding:20px 0;color:var(--muted);font-size:13px">No resolved bets yet.</div>';
 }
 
-// ── PROFILE MODAL ─────────────────────────────────────────
-function openProfileModal(beer){
-  const lbRow=lbData.find(r=>r.beer.toLowerCase()===beer.toLowerCase())||{};
-  const p=getProfile(beer),bal=getBalance(beer);
-  const userBets=bets.filter(b=>(b.user||'').toLowerCase()===beer.toLowerCase());
-  setAvatarEl(document.getElementById('modal-avatar'),beer,p.avatar);
-  document.getElementById('modal-real-name').textContent=lbRow.name||beer;
-  document.getElementById('modal-beer-name').textContent='🍺 '+beer;
-  document.getElementById('modal-lg').textContent=lbRow.lg?'📍 '+lbRow.lg:'';
-  document.getElementById('modal-chugs').textContent=lbRow.bal!==undefined?lbRow.bal:'—';
-  document.getElementById('modal-drunk').textContent=bal.balance!==undefined?(Number(bal.balance)||0).toLocaleString():'—';
-  document.getElementById('modal-bet-count').textContent=userBets.length;
-  const bioEl=document.getElementById('modal-bio');
-  if(p.bio){bioEl.textContent=p.bio;bioEl.classList.remove('empty');}else{bioEl.textContent='No bio yet.';bioEl.classList.add('empty');}
-  document.getElementById('modal-bets').innerHTML=userBets.length
-    ?userBets.map(b=>{ const m=markets.find(x=>x.id===b.marketId);if(!m)return''; const resolved=m.status==='resolved',won=resolved&&m.winner===b.side; const outcome=resolved?(won?'<span class="bet-outcome won">WON</span>':'<span class="bet-outcome lost">LOST</span>'):'<span class="bet-outcome open">open</span>'; return `<div class="modal-bet-row"><div class="modal-bet-q">${esc(m.question)}</div><div class="modal-bet-right"><span class="bet-side ${b.side}">${(b.side||'').toUpperCase()}</span><span class="bet-amt">${parseInt(b.amount).toLocaleString()}</span>${outcome}</div></div>`; }).join('')
-    :'<div style="color:var(--muted);font-family:DM Mono,monospace;font-size:13px;padding:10px 0">No bets yet.</div>';
-  document.getElementById('profile-modal').classList.add('open');
-  document.body.style.overflow='hidden';
+function renderLeaderboard(){
+  const entries=Object.entries(S.accounts).sort((a,b)=>b[1].balance-a[1].balance);
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('lb-list').innerHTML=entries.map(([key,acc],i)=>{
+    const isMe=key===currentUser;
+    const st=calcStats(key);
+    const rank=i<3?medals[i]:`#${i+1}`;
+    const unlocked=getUnlockedAchievements(key);
+    const achHtml=unlocked.slice(0,4).map(id=>{const a=ACHIEVEMENTS.find(x=>x.id===id);return a?`<span class="ach-tiny" title="${a.name}">${a.icon}</span>`:''}).join('');
+    const adminBadge=isAdmin(key)?`<span class="admin-badge">👑 Admin</span>`:'';
+    return`<div class="lb-row${isMe?' me':''}" onclick="openViewProfile('${key}')">
+      <div class="lb-rank ${i<3?'top':''}">${rank}</div>
+      ${avHTML(key,38)}
+      <div class="lb-info">
+        <div class="lb-name-row"><span class="lb-name">${esc(acc.displayName)}</span>${adminBadge}${isMe?'<span style="font-size:11px;color:var(--accent)">(you)</span>':''}</div>
+        ${acc.handle?`<div class="lb-handle">@${esc(acc.handle)}</div>`:`<div class="lb-sub">${st.bets} bets · ${st.wins} wins</div>`}
+        ${achHtml?`<div style="margin-top:3px">${achHtml}</div>`:''}
+      </div>
+      <div class="lb-bal">${acc.balance} 🍺</div>
+    </div>`;
+  }).join('');
 }
-function closeProfileModal(){document.getElementById('profile-modal').classList.remove('open');document.body.style.overflow='';}
-function closeModal(e){if(e.target===document.getElementById('profile-modal'))closeProfileModal();}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProfileModal();});
 
-// ── MY PROFILE TAB ────────────────────────────────────────
-function populateMyProfile(){
-  if(!session.beer)return;
-  const p=getProfile(session.beer);
-  document.getElementById('my-name-display').textContent=session.name+' · '+session.beer;
-  document.getElementById('my-bio').value=p.bio||'';
-  setAvatarEl(document.getElementById('my-avatar'),session.beer,p.avatar);
+function buildRosterEntries(){
+  const entries=[];
+  Object.entries(S.accounts).forEach(([key,acc])=>{entries.push({key,name:acc.displayName,handle:acc.handle,balance:acc.balance,activated:true,sheetName:acc.sheetName||acc.displayName});});
+  (S.ghostRoster||[]).forEach(g=>{
+    const linked=Object.values(S.accounts).some(a=>(a.sheetName||a.displayName).toLowerCase()===g.sheetName.toLowerCase());
+    if(!linked)entries.push({key:null,name:g.sheetName,handle:'',balance:g.balance,activated:false});
+  });
+  return entries;
 }
+function setFilter(f,el){rosterFilter=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderRoster();}
+function renderRoster(){
+  const entries=buildRosterEntries();
+  const activated=entries.filter(e=>e.activated).length,pending=entries.filter(e=>!e.activated).length;
+  document.getElementById('r-total').textContent=entries.length;
+  document.getElementById('r-active').textContent=activated;
+  document.getElementById('r-pending').textContent=pending;
+  let filtered=rosterFilter==='active'?entries.filter(e=>e.activated):rosterFilter==='pending'?entries.filter(e=>!e.activated):entries;
+  filtered.sort((a,b)=>b.balance-a.balance);
+  if(!filtered.length){document.getElementById('members-list').innerHTML='<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-text">No members yet.</div></div>';return;}
+  document.getElementById('members-list').innerHTML=filtered.map(e=>{
+    const isMe=e.key===currentUser;
+    const av=e.activated?avHTML(e.key,38):avHTMLGhost(e.name,38);
+    const actBadge=e.activated?`<span class="act-badge act-yes">● active</span>`:`<span class="act-badge act-no">○ pending</span>`;
+    const adminBadge=e.key&&isAdmin(e.key)?`<span class="admin-badge" style="margin-left:4px">👑</span>`:'';
+    const click=e.activated&&e.key?`openViewProfile('${e.key}')`:`void(0)`;
+    return`<div class="member-row${isMe?' me':''}" onclick="${click}" style="${!e.activated?'cursor:default':''}">
+      ${av}
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px"><span class="member-name">${esc(e.name)}</span>${adminBadge}${isMe?'<span style="font-size:11px;color:var(--accent)">(you)</span>':''}</div>
+        ${e.handle?`<div class="member-sub">@${esc(e.handle)}</div>`:e.activated?'':'<div class="member-sub">awaiting login</div>'}
+      </div>
+      <div class="member-bal">${e.balance} 🍺</div>
+      ${actBadge}
+    </div>`;
+  }).join('');
+}
+
+function achGridHTML(key){
+  const unlocked=getUnlockedAchievements(key);
+  return ACHIEVEMENTS.map(a=>{
+    const on=unlocked.includes(a.id);
+    return`<div class="ach-chip ${on?'unlocked':'locked'}" title="${on?'Unlocked!':'Locked'}">
+      <span class="ach-icon">${a.icon}</span>
+      <div><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function switchTab(t,el){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  ['markets','portfolio','leaderboard','members','sync'].forEach(n=>document.getElementById('tab-'+n).classList.toggle('hidden',n!==t));
+  if(t==='portfolio')renderPortfolio();
+  if(t==='leaderboard')renderLeaderboard();
+  if(t==='members')renderRoster();
+}
+
+function openMyProfile(){
+  const acc=me();const st=calcStats(currentUser);
+  document.getElementById('my-display-name').textContent=acc.displayName;
+  document.getElementById('my-handle').textContent=acc.handle?('@'+acc.handle):'No handle yet';
+  document.getElementById('my-bal').textContent=acc.balance+' $DRUNK';
+  document.getElementById('my-bio').textContent=acc.bio||'No bio yet.';
+  document.getElementById('my-s-bets').textContent=st.bets;
+  document.getElementById('my-s-wins').textContent=st.wins;
+  document.getElementById('my-s-mkts').textContent=st.mkts;
+  document.getElementById('edit-dn').value=acc.displayName;
+  document.getElementById('edit-handle').value=acc.handle||'';
+  document.getElementById('edit-sheetname').value=acc.sheetName||'';
+  document.getElementById('edit-bio').value=acc.bio||'';
+  const adminBadge=document.getElementById('my-admin-badge');
+  isAdmin(currentUser)?adminBadge.classList.remove('hidden'):adminBadge.classList.add('hidden');
+  const unlocked=getUnlockedAchievements(currentUser);
+  document.getElementById('my-ach-row').innerHTML=unlocked.map(id=>{const a=ACHIEVEMENTS.find(x=>x.id===id);return a?`<span class="ach-tiny" title="${a.name}: ${a.desc}">${a.icon}</span>`:''}).join('');
+  document.getElementById('my-achievements-grid').innerHTML=achGridHTML(currentUser);
+  const wrap=document.getElementById('my-av-display');
+  if(acc.avatar)wrap.innerHTML=`<img src="${acc.avatar}" class="prof-av"/>`;
+  else{const h=Math.abs(currentUser.split('').reduce((hh,c)=>((hh<<5)-hh)+c.charCodeAt(0)|0,0))%360;wrap.innerHTML=`<div class="prof-av-text" style="background:hsl(${h},40%,22%);color:hsl(${h},80%,72%)">${acc.displayName.slice(0,2).toUpperCase()}</div>`;}
+  document.getElementById('myProfileModal').classList.add('open');
+}
+
+function openViewProfile(key){
+  if(key===currentUser){openMyProfile();return;}
+  const acc=S.accounts[key];if(!acc||!acc.activated)return;
+  const st=calcStats(key);
+  document.getElementById('view-name').textContent=acc.displayName;
+  document.getElementById('view-handle').textContent=acc.handle?('@'+acc.handle):'';
+  document.getElementById('view-bal').textContent=acc.balance+' $DRUNK';
+  document.getElementById('view-bio').textContent=acc.bio||'';
+  document.getElementById('view-s-bets').textContent=st.bets;
+  document.getElementById('view-s-wins').textContent=st.wins;
+  document.getElementById('view-s-mkts').textContent=st.mkts;
+  const pEl=document.getElementById('view-s-pnl');
+  pEl.textContent=(st.pnl>=0?'+':'')+st.pnl;
+  pEl.style.color=st.pnl>0?'var(--yes)':st.pnl<0?'var(--no)':'var(--muted)';
+  const adminBadge=document.getElementById('view-admin-badge');
+  isAdmin(key)?adminBadge.classList.remove('hidden'):adminBadge.classList.add('hidden');
+  const unlocked=getUnlockedAchievements(key);
+  document.getElementById('view-ach-row').innerHTML=unlocked.map(id=>{const a=ACHIEVEMENTS.find(x=>x.id===id);return a?`<span class="ach-tiny" title="${a.name}: ${a.desc}">${a.icon}</span>`:''}).join('');
+  document.getElementById('view-achievements-grid').innerHTML=achGridHTML(key);
+  const avWrap=document.getElementById('view-av-display');
+  if(acc.avatar)avWrap.innerHTML=`<img src="${acc.avatar}" class="prof-av"/>`;
+  else{const h=Math.abs(key.split('').reduce((hh,c)=>((hh<<5)-hh)+c.charCodeAt(0)|0,0))%360;avWrap.innerHTML=`<div class="prof-av-text" style="background:hsl(${h},40%,22%);color:hsl(${h},80%,72%)">${acc.displayName.slice(0,2).toUpperCase()}</div>`;}
+  const bets=acc.bets||[];
+  const histEl=document.getElementById('view-bet-history');
+  if(!bets.length){histEl.innerHTML='<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">No bets placed yet.</div>';}
+  else{
+    const res=bets.filter(b=>{const m=S.markets.find(x=>x.id===b.mktId);return m&&m.resolved;});
+    const wr=res.length?Math.round((st.wins/res.length)*100):0;
+    let html=`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px"><span>Win rate</span><span style="color:var(--yes);font-family:'DM Mono',monospace">${wr}%</span></div><div class="win-rate-bar"><div class="win-rate-fill" style="width:${wr}%"></div></div></div>`;
+    [...bets].reverse().slice(0,12).forEach(b=>{
+      const m=S.markets.find(x=>x.id===b.mktId);if(!m)return;
+      let ps=m.resolved?'':' (open)',pc='var(--muted)';
+      if(m.resolved){if(m.outcome===b.side){const tw=m.bets.filter(x=>x.side===m.outcome).reduce((s,x)=>s+x.amount,0);const pot=m.bets.reduce((s,x)=>s+x.amount,0);const w=tw>0?Math.round(pot*(b.amount/tw)):0;ps='+'+(w-b.amount);pc='var(--yes)';}else{ps='-'+b.amount;pc='var(--no)';}}
+      html+=`<div class="bh-item"><span class="bh-side ${b.side?'bh-yes':'bh-no'}">${b.side?'YES':'NO'}</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;line-height:1.3">${esc(m.q)}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;color:var(--muted);font-family:'DM Mono',monospace">${b.amount} $DRUNK</div><div style="font-size:12px;font-family:'DM Mono',monospace;color:${pc}">${ps}</div></div></div>`;
+    });
+    if(bets.length>12)html+=`<div style="text-align:center;padding:10px 0;font-size:12px;color:var(--muted)">${bets.length-12} more not shown</div>`;
+    histEl.innerHTML=html;
+  }
+  document.getElementById('viewProfileModal').classList.add('open');
+}
+
+function triggerAvatarUpload(){document.getElementById('avatar-input').click();}
 function handleAvatarUpload(e){
   const file=e.target.files[0];if(!file)return;
-  if(file.size>500*1024){alert('Image must be under 500KB.');return;}
   const reader=new FileReader();
-  reader.onload=ev=>{ const b64=ev.target.result; const avEl=document.getElementById('my-avatar'); avEl.innerHTML=`<img src="${b64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`; avEl._pending=b64; };
+  reader.onload=ev=>{me().avatar=ev.target.result;saveDB();document.getElementById('my-av-display').innerHTML=`<img src="${ev.target.result}" class="prof-av"/>`;updateHeader();showToast('📸 Photo updated!');};
   reader.readAsDataURL(file);
 }
-async function saveProfile(){
-  const bio=document.getElementById('my-bio').value.trim();
-  const avEl=document.getElementById('my-avatar'), avatar=avEl._pending||null;
-  showMsg('profile-msg','Saving…','');
-  try{
-    const bioRes=await apiCall({action:'updateBio',bio});
-    if(!bioRes.ok){showMsg('profile-msg',bioRes.error||'Bio save failed.','err');return;}
-    if(avatar){ const avRes=await apiUpload(avatar); if(!avRes.ok){showMsg('profile-msg',avRes.error||'Avatar save failed.','err');return;} avEl._pending=null; if(avRes.url)setAvatarEl(avEl,session.beer,avRes.url); }
-    showMsg('profile-msg','Profile saved!','ok'); await loadMarketData();
-  }catch(e){showMsg('profile-msg','Could not reach server.','err');}
-}
-async function changePassword(){
-  const oldPw=document.getElementById('pw-old').value.trim(), newPw=document.getElementById('pw-new').value.trim(), conf=document.getElementById('pw-confirm').value.trim();
-  if(!oldPw||!newPw||!conf){showMsg('pw-msg','Fill in all fields.','err');return;}
-  if(newPw!==conf){showMsg('pw-msg','Passwords do not match.','err');return;}
-  if(newPw.length<4){showMsg('pw-msg','Min 4 characters.','err');return;}
-  try{ const data=await apiCall({action:'changePassword',oldPw,newPw}); if(data.ok){showMsg('pw-msg','Password changed!','ok');['pw-old','pw-new','pw-confirm'].forEach(id=>document.getElementById(id).value='');}else showMsg('pw-msg',data.error||'Failed.','err'); }catch(e){showMsg('pw-msg','Could not reach server.','err');}
+function saveProfile(){
+  const acc=me();
+  const dn=document.getElementById('edit-dn').value.trim();
+  let handle=document.getElementById('edit-handle').value.trim().replace(/^@/,'').replace(/\s+/g,'').toLowerCase();
+  const sn=document.getElementById('edit-sheetname').value.trim();
+  const bio=document.getElementById('edit-bio').value.trim();
+  if(!dn){showToast('⚠️ Display name cannot be empty.');return;}
+  if(handle.length>20){showToast('⚠️ Handle max 20 chars.');return;}
+  if(handle&&!/^[a-z0-9_]+$/.test(handle)){showToast('⚠️ Handle: letters, numbers, _ only.');return;}
+  acc.displayName=dn;acc.handle=handle;acc.bio=bio;acc.sheetName=sn;
+  saveDB();closeModals();render();showToast('✅ Profile saved!');
+  checkAchievementNotifs(currentUser);
 }
 
-function showMsg(id,text,type){const el=document.getElementById(id);el.textContent=text;el.className='form-msg '+type;}
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function checkAchievementNotifs(key){
+  const acc=S.accounts[key];if(!acc)return;
+  const prev=acc.prevAchievements||[];
+  const now=getUnlockedAchievements(key);
+  const newOnes=now.filter(id=>!prev.includes(id));
+  if(newOnes.length){
+    const a=ACHIEVEMENTS.find(x=>x.id===newOnes[0]);
+    if(a)setTimeout(()=>showToast(`🏅 Achievement unlocked: ${a.icon} ${a.name}!`),600);
+  }
+  acc.prevAchievements=now;
+  saveDB();
+}
+
+/* ── MARKETS ── */
+function openCreate(){document.getElementById('createModal').classList.add('open');}
+function createMarket(){
+  const q=document.getElementById('new-q').value.trim();
+  const cat=document.getElementById('new-cat').value;
+  const prob=Math.min(95,Math.max(5,parseInt(document.getElementById('new-prob').value)||50));
+  if(!q){showToast('⚠️ Write a question first!');return;}
+  S.markets.unshift({id:S.nextId++,q,cat,prob,vol:0,creator:me().displayName,resolved:false,outcome:null,bets:[]});
+  closeModals();render();showToast('🎉 Market created!');document.getElementById('new-q').value='';
+}
+function openBet(id,side){
+  betMktId=id;betSide=side;
+  const m=S.markets.find(x=>x.id===id);
+  document.getElementById('bet-title').textContent='Bet '+(side?'YES':'NO')+' 🎯';
+  document.getElementById('bet-q').textContent=m.q;
+  document.getElementById('bet-amt').value='';
+  document.getElementById('pay-odds').textContent=side?m.prob+'¢':(100-m.prob)+'¢';
+  document.getElementById('pay-bet').textContent='0 $DRUNK';document.getElementById('pay-win').textContent='0 $DRUNK';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('betModal').classList.add('open');
+}
+function pickAmt(n,el){document.getElementById('bet-amt').value=n;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');calcPay();}
+function calcPay(){
+  const m=S.markets.find(x=>x.id===betMktId);if(!m)return;
+  const amt=parseInt(document.getElementById('bet-amt').value)||0;
+  const odds=betSide?(m.prob/100):((100-m.prob)/100);
+  document.getElementById('pay-bet').textContent=amt+' $DRUNK';
+  document.getElementById('pay-win').textContent=(amt>0?Math.round(amt/odds):0)+' $DRUNK';
+}
+function confirmBet(){
+  const m=S.markets.find(x=>x.id===betMktId);
+  const amt=parseInt(document.getElementById('bet-amt').value)||0;
+  const acc=me();
+  if(amt<1){showToast('⚠️ Enter an amount!');return;}
+  if(acc.balance<amt){showToast('💸 Not enough $DRUNK!');return;}
+  acc.balance-=amt;
+  m.bets.push({user:currentUser,side:betSide,amount:amt});
+  m.vol+=amt;S.totalVol+=amt;
+  const impact=(amt/(m.vol+80))*(betSide?1:-1)*14;
+  m.prob=Math.min(95,Math.max(5,Math.round(m.prob+impact)));
+  if(!acc.bets)acc.bets=[];
+  acc.bets.push({mktId:m.id,side:betSide,amount:amt});
+  closeModals();render();showToast(`🎲 ${amt} $DRUNK on ${betSide?'YES':'NO'}!`);
+  checkAchievementNotifs(currentUser);
+}
+function openResolve(id){resolveMktId=id;document.getElementById('res-q').textContent=S.markets.find(x=>x.id===id).q;document.getElementById('resolveModal').classList.add('open');}
+function resolveMarket(outcome){
+  const m=S.markets.find(x=>x.id===resolveMktId);
+  m.resolved=true;m.outcome=outcome;
+  const winners=m.bets.filter(b=>b.side===outcome);
+  const pot=m.bets.reduce((s,b)=>s+b.amount,0);
+  const tw=winners.reduce((s,b)=>s+b.amount,0);
+  const paid=[];
+  winners.forEach(b=>{
+    const w=Math.round(pot*(tw>0?b.amount/tw:0));
+    if(S.accounts[b.user]){S.accounts[b.user].balance+=w;paid.push(S.accounts[b.user].displayName+' +'+w);}
+  });
+  closeModals();render();
+  showToast((outcome?'✅ YES wins! ':'❌ NO wins! ')+(paid.length?paid.slice(0,2).join(', '):'No winners.'));
+  winners.forEach(b=>{if(S.accounts[b.user])checkAchievementNotifs(b.user);});
+}
+
+/* ── XLSX SYNC ── */
+function handleXlsx(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{try{processWorkbook(XLSX.read(ev.target.result,{type:'array'}));}catch(err){showToast('❌ Could not read file: '+err.message);}};
+  reader.readAsArrayBuffer(file);e.target.value='';
+}
+function processWorkbook(wb){
+  const sheetName=wb.SheetNames.find(n=>{const l=n.toLowerCase().replace(/\s/g,'');return l.includes('chuget')||l.includes('list');})
+    ||wb.SheetNames.find(n=>n.toLowerCase().includes('leader'))
+    ||wb.SheetNames.find(n=>n.toLowerCase().includes('raw'))
+    ||wb.SheetNames[0];
+  const ws=wb.Sheets[sheetName];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+  let headerRow=0;
+  for(let i=0;i<Math.min(5,rows.length);i++){const r=rows[i];if(r.slice(0,10).join('|').toLowerCase().match(/person|name/)){headerRow=i;break;}}
+  const isRaw=sheetName.toLowerCase().includes('raw');
+  const nameCol=isRaw?1:2,valCol=isRaw?2:4,phoneCol=8;
+  const totals={};
+  for(let i=headerRow+1;i<rows.length;i++){
+    const row=rows[i];
+    const name=String(row[nameCol]||'').trim();
+    const val=Number(row[valCol]||0);
+    const phone=String(row[phoneCol]||'').trim();
+    if(!name||['name','person'].includes(name.toLowerCase()))continue;
+    if(!totals[name])totals[name]={balance:0,phone:''};
+    totals[name].balance+=val;
+    if(phone&&!totals[name].phone)totals[name].phone=phone;
+  }
+  if(!Object.keys(totals).length){showToast('❌ No data found in: '+sheetName);return;}
+  const sheetToKey={};
+  Object.entries(S.accounts).forEach(([key,acc])=>{const sn=(acc.sheetName||acc.displayName||'').trim().toLowerCase();if(sn)sheetToKey[sn]=key;});
+  const results={matched:[],newlyCreated:[]};
+  const newGhost=[];
+  Object.entries(totals).forEach(([sName,data])=>{
+    const lower=sName.toLowerCase();
+    const existingKey=sheetToKey[lower];
+    if(existingKey){S.accounts[existingKey].balance=data.balance;if(!S.accounts[existingKey].sheetName)S.accounts[existingKey].sheetName=sName;results.matched.push({sheetName:sName,key:existingKey,balance:data.balance});}
+    else{
+      const pw=data.phone||sName.split(' ')[0].toLowerCase()+'123';
+      const key=sName.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12)+'_'+Math.floor(Math.random()*900+100);
+      S.accounts[key]={displayName:sName,handle:'',bio:'',avatar:null,sheetName:sName,hash:hashPass(pw),balance:data.balance,bets:[],activated:false,phone:data.phone};
+      newGhost.push({sheetName:sName,balance:data.balance});
+      results.newlyCreated.push({sheetName:sName,key,balance:data.balance,pw,hasPhone:!!data.phone});
+    }
+  });
+  S.ghostRoster=newGhost;S.lastSync=new Date().toLocaleString();
+  saveDB();renderSyncResults(results,sheetName);render();
+  showToast(`✅ Synced "${sheetName}"! ${results.matched.length} updated, ${results.newlyCreated.length} created`);
+}
+function renderSyncResults(r,sheetName){
+  let html=`<div style="font-size:12px;color:var(--muted);margin-bottom:16px;padding:10px 12px;background:var(--surface2);border-radius:8px">Sheet: <strong style="color:var(--text)">${esc(sheetName)}</strong></div>`;
+  if(r.matched.length){html+=`<div class="section-title" style="margin-top:0">✅ ${r.matched.length} updated</div>`;html+=r.matched.map(x=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="font-weight:700">${esc(S.accounts[x.key].displayName)}</span><span style="font-family:'DM Mono',monospace;color:var(--gold)">${x.balance} 🍺</span></div>`).join('');}
+  if(r.newlyCreated.length){html+=`<div class="section-title" style="margin-top:20px">🆕 ${r.newlyCreated.length} created (pending)</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;background:rgba(232,160,32,0.07);border-radius:8px;padding:10px 12px;border:1px solid rgba(232,160,32,0.15)">Password = phone number from sheet${r.newlyCreated.some(x=>!x.hasPhone)?' (fallback: firstname123 when no phone)':''}.</div>`;html+=r.newlyCreated.map(x=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px"><div><span style="font-weight:700">${esc(x.sheetName)}</span>${!x.hasPhone?'<span style="font-size:11px;color:var(--muted);margin-left:6px">(no phone)</span>':''}</div><span style="font-family:'DM Mono',monospace;color:var(--gold)">${x.balance} 🍺</span></div>`).join('');}
+  document.getElementById('sync-results').innerHTML=html;
+}
+
+/* ── BEER FLOATS ── */
+function spawnBeers(){
+  const container=document.getElementById('app-screen');
+  const emojis=['🍺','🍺','🍺','🍻'];
+  for(let i=0;i<5;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='beer-float';
+      el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      el.style.left=Math.random()*90+'%';
+      el.style.bottom='0';
+      el.style.animationDuration=(4+Math.random()*4)+'s';
+      el.style.fontSize=(20+Math.random()*20)+'px';
+      container.appendChild(el);
+      setTimeout(()=>el.remove(),8000);
+    },i*300);
+  }
+}
+
+function closeModals(){document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('open'));}
+document.querySelectorAll('.overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)closeModals();});});
+[['l-pass','doLogin'],['r-pass2','doRegister']].forEach(([id,fn])=>{document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')window[fn]();});});
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+initDB();
+document.getElementById('sync-results').innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Upload the spreadsheet to sync $DRUNK balances.</div></div>';
 </script>
-</body>
-</html>
