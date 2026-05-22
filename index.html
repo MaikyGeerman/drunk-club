@@ -376,6 +376,341 @@
   .social-amount { font-family:'DM Mono',monospace; font-size:12px; }
   .yes-amt { color:var(--green); }
   .no-amt  { color:var(--red); }
+
+  /* ================================================================
+     SLOT MACHINE TAB
+     ================================================================ */
+  .slot-wrap {
+    max-width: 500px;
+    margin: 0 auto;
+    padding-bottom: 60px;
+  }
+  .slot-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .slot-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: .04em;
+    line-height: 1;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(232,200,74,.4);
+  }
+  .slot-header p {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  /* free spin badge */
+  .free-spin-badge {
+    display: inline-block;
+    background: rgba(76,175,125,.15);
+    border: 1px solid rgba(76,175,125,.4);
+    color: var(--green);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 100px;
+    margin-top: 10px;
+  }
+  /* cabinet */
+  .slot-cabinet {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 28px 24px 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .slot-cabinet::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(232,200,74,.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  /* reels container */
+  .slot-reels {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .slot-reel-outer {
+    width: 96px;
+    height: 100px;
+    background: var(--bg3);
+    border: 2px solid var(--border2);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 4px 12px rgba(0,0,0,.4);
+  }
+  /* win glow on reel */
+  .slot-reel-outer.win-glow {
+    border-color: var(--gold);
+    box-shadow: inset 0 4px 12px rgba(0,0,0,.4), 0 0 18px rgba(232,200,74,.5);
+    animation: reelPulse .4s ease infinite alternate;
+  }
+  @keyframes reelPulse {
+    from { box-shadow: inset 0 4px 12px rgba(0,0,0,.4), 0 0 10px rgba(232,200,74,.3); }
+    to   { box-shadow: inset 0 4px 12px rgba(0,0,0,.4), 0 0 28px rgba(232,200,74,.7); }
+  }
+  .slot-reel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0s;
+    /* JS will set transform: translateY() to animate spin */
+  }
+  .slot-symbol {
+    width: 96px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  /* shine line across reels */
+  .slot-shine {
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    height: 2px;
+    background: rgba(232,200,74,.25);
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  /* top/bottom fade masks */
+  .slot-reel-outer::before,
+  .slot-reel-outer::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 28px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .slot-reel-outer::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--bg3), transparent);
+  }
+  .slot-reel-outer::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg3), transparent);
+  }
+  /* result message */
+  .slot-result {
+    text-align: center;
+    min-height: 52px;
+    margin-bottom: 16px;
+  }
+  .slot-result-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: .06em;
+    line-height: 1.1;
+  }
+  .slot-result-title.win  { color: var(--gold); text-shadow: 0 0 20px rgba(232,200,74,.5); }
+  .slot-result-title.lose { color: var(--muted); }
+  .slot-result-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  /* bet controls */
+  .slot-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .slot-bet-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .slot-bet-chips {
+    display: flex;
+    gap: 6px;
+  }
+  .slot-chip {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .slot-chip:hover, .slot-chip.active {
+    background: rgba(232,200,74,.12);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .slot-spin-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--gold);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: .08em;
+    color: #0d0d0d;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .slot-spin-btn:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+  .slot-spin-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .slot-spin-btn.free {
+    background: var(--green);
+    box-shadow: 0 0 20px rgba(76,175,125,.3);
+  }
+  /* payout table */
+  .payout-table {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .payout-table-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 16px 8px;
+  }
+  .payout-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .payout-row:first-of-type { border-top: none; }
+  .payout-symbols { font-size: 20px; letter-spacing: 2px; }
+  .payout-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    flex: 1;
+    padding: 0 12px;
+  }
+  .payout-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .payout-val.jackpot { color: var(--gold); }
+  .payout-val.win     { color: var(--green); }
+  .payout-val.lose    { color: var(--red); }
+  /* history */
+  .slot-history {
+    margin-top: 20px;
+  }
+  .slot-history-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .spin-history-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .spin-history-row:last-child { border-bottom: none; }
+  .spin-symbols { font-size: 18px; letter-spacing: 2px; }
+  .spin-pnl { font-family: 'DM Mono', monospace; font-size: 12px; margin-left: auto; }
+  .spin-pnl.pos { color: var(--green); }
+  .spin-pnl.neg { color: var(--red); }
+  /* JACKPOT / WATER overlays */
+  .slot-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    background: rgba(0,0,0,.85);
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+  }
+  .slot-overlay.show { display: flex; }
+  .slot-overlay-emoji { font-size: 80px; animation: popIn .4s cubic-bezier(.175,.885,.32,1.275); }
+  .slot-overlay-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px,10vw,80px);
+    letter-spacing: .06em;
+    text-align: center;
+    animation: popIn .5s .1s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  .slot-overlay-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    letter-spacing: .1em;
+    color: var(--muted);
+    text-align: center;
+    animation: popIn .5s .2s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  .slot-overlay-close {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 12px;
+    animation: fadeIn 1s .8s both;
+  }
+  @keyframes popIn {
+    from { opacity:0; transform:scale(.4) rotate(-8deg); }
+    to   { opacity:1; transform:scale(1) rotate(0deg); }
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  /* confetti bits */
+  .confetti-bit {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 700;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
 </style>
 </head>
 <body>
@@ -466,6 +801,7 @@
     <button class="tab-btn"        data-tab="leaderboard" onclick="switchTab('leaderboard',this)">🏆 Leaderboard</button>
     <button class="tab-btn" data-tab="mybets"      onclick="switchTab('mybets',this)">🎯 My Bets</button>
     <button class="tab-btn" data-tab="suggest"     onclick="switchTab('suggest',this)">💡 Suggest Bets<span class="tab-badge" id="badge-suggest"></span></button>
+    <button class="tab-btn" data-tab="slots" onclick="switchTab('slots',this)">🎰 Slots</button>
     <button class="tab-btn" data-tab="profile"     onclick="switchTab('profile',this)">👤 Profile</button>
   </div>
 
@@ -598,6 +934,71 @@
     </div>
   </div>
 
+
+  <!-- ================================================================
+       SLOT MACHINE TAB
+       ================================================================ -->
+  <div id="tab-slots" class="tab-pane">
+    <div class="slot-wrap">
+
+      <div class="slot-header">
+        <h2>🎰 DC100 Slots</h2>
+        <p>Spin to win $drunk</p>
+        <div id="free-spin-notice"></div>
+      </div>
+
+      <div class="slot-cabinet">
+        <div class="slot-reels" id="slot-reels">
+          <div class="slot-reel-outer" id="reel-0">
+            <div class="slot-reel" id="reel-strip-0"></div>
+            <div class="slot-shine"></div>
+          </div>
+          <div class="slot-reel-outer" id="reel-1">
+            <div class="slot-reel" id="reel-strip-1"></div>
+            <div class="slot-shine"></div>
+          </div>
+          <div class="slot-reel-outer" id="reel-2">
+            <div class="slot-reel" id="reel-strip-2"></div>
+            <div class="slot-shine"></div>
+          </div>
+        </div>
+
+        <div class="slot-result" id="slot-result">
+          <div class="slot-result-title lose" style="font-size:18px;font-family:'DM Mono',monospace;letter-spacing:.1em">Press SPIN to play</div>
+        </div>
+
+        <div class="slot-controls">
+          <span class="slot-bet-label">Bet</span>
+          <div class="slot-bet-chips">
+            <div class="slot-chip active" data-bet="5"  onclick="slotSetBet(5,this)">5</div>
+            <div class="slot-chip"        data-bet="10" onclick="slotSetBet(10,this)">10</div>
+            <div class="slot-chip"        data-bet="25" onclick="slotSetBet(25,this)">25</div>
+            <div class="slot-chip"        data-bet="50" onclick="slotSetBet(50,this)">50</div>
+          </div>
+          <span class="slot-bet-label" id="slot-bal-label" style="color:var(--gold)"></span>
+        </div>
+
+        <button class="slot-spin-btn" id="slot-spin-btn" onclick="slotSpin()">SPIN</button>
+      </div>
+
+      <div class="payout-table">
+        <div class="payout-table-title">Paytable — match all 3</div>
+        <div class="payout-row"><span class="payout-symbols">🍺🍺🍺</span><span class="payout-desc">JACKPOT</span><span class="payout-val jackpot">+100 $drunk</span></div>
+        <div class="payout-row"><span class="payout-symbols">🥊🥊🥊</span><span class="payout-desc">Fighter</span><span class="payout-val win">+40 $drunk</span></div>
+        <div class="payout-row"><span class="payout-symbols">🍋🍋🍋</span><span class="payout-desc">Lemon</span><span class="payout-val win">+20 $drunk</span></div>
+        <div class="payout-row"><span class="payout-symbols">🎯🎯🎯</span><span class="payout-desc">Bullseye</span><span class="payout-val win">+12 $drunk</span></div>
+        <div class="payout-row"><span class="payout-symbols">🍕🍕🍕</span><span class="payout-desc">Pizza</span><span class="payout-val win">+6 $drunk</span></div>
+        <div class="payout-row"><span class="payout-symbols">💧💧💧</span><span class="payout-desc">Hydration check</span><span class="payout-val lose">special popup</span></div>
+        <div class="payout-row" style="border-top:1px solid var(--border2)"><span class="payout-symbols" style="font-size:14px">any two</span><span class="payout-desc">Two of a kind</span><span class="payout-val win">bet returned</span></div>
+      </div>
+
+      <div class="slot-history" id="slot-history-wrap">
+        <div class="slot-history-title">Recent spins</div>
+        <div id="slot-history"></div>
+      </div>
+
+    </div>
+  </div>
 </div>
 </div>
 
@@ -702,6 +1103,7 @@ function switchTab(name,btn){
   if(name==='market'||name==='mybets') loadMarketDataIfStale();
   if(name==='suggest') renderSuggestions();
   if(name==='profile') populateMyProfile();
+  if(name==='slots')   initSlotTab();
 }
 
 // ── PROFILE HELPERS ───────────────────────────────────────
@@ -1434,9 +1836,345 @@ function debounceRenderLB() {
   _lbDebounce = setTimeout(renderLeaderboard, 180);
 }
 
+
+// ================================================================
+//  SLOT MACHINE
+//  Symbols, odds, spin logic, free daily spin, history
+// ================================================================
+
+// Symbol definitions — 6 tiers
+// weight = how many copies go in the reel drum (higher = more common)
+const SLOT_SYMBOLS = [
+  { sym:'💧', name:'Water',    tier:6, weight:2  },  // rarest special
+  { sym:'🍺', name:'Beer',     tier:5, weight:3  },  // jackpot — rare
+  { sym:'🥊', name:'Fighter',  tier:4, weight:5  },  // 2nd prize
+  { sym:'🍋', name:'Lemon',    tier:3, weight:8  },  // 3rd prize
+  { sym:'🎯', name:'Bullseye', tier:2, weight:12 },  // 4th prize
+  { sym:'🍕', name:'Pizza',    tier:1, weight:18 },  // most common
+];
+
+// Payout table — what you win/lose for 3-of-a-kind (multiplier of base BET)
+// Special values: 'jackpot' = flat +100, 'water' = special popup, 0 = just lose
+const SLOT_PAYOUTS = {
+  '💧': 'water',
+  '🍺': 'jackpot',
+  '🥊': 40,
+  '🍋': 20,
+  '🎯': 12,
+  '🍕': 6,
+};
+
+// Build weighted reel drum (the virtual strip of symbols)
+function buildDrum() {
+  const drum = [];
+  SLOT_SYMBOLS.forEach(s => {
+    for(let i = 0; i < s.weight; i++) drum.push(s.sym);
+  });
+  // Shuffle
+  for(let i = drum.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [drum[i], drum[j]] = [drum[j], drum[i]];
+  }
+  return drum;
+}
+
+let slotBet      = 5;
+let slotSpinning = false;
+let slotHistory  = JSON.parse(localStorage.getItem('dc100_slot_history') || '[]');
+const SLOT_DAILY_KEY = 'dc100_free_spin_'; // + YYYY-MM-DD + beer name
+
+function slotTodayKey() {
+  const d = new Date();
+  const dateStr = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+  return SLOT_DAILY_KEY + dateStr + '_' + (session.beer||'');
+}
+
+function slotHasFreeSpin() {
+  return !localStorage.getItem(slotTodayKey());
+}
+
+function slotUseFreeSpin() {
+  localStorage.setItem(slotTodayKey(), '1');
+}
+
+function slotSetBet(amt, el) {
+  slotBet = amt;
+  document.querySelectorAll('.slot-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function initSlotTab() {
+  // Build initial reel strips (show random symbols)
+  for(let r = 0; r < 3; r++) {
+    const strip = document.getElementById('reel-strip-'+r);
+    const drum  = buildDrum();
+    strip.innerHTML = '';
+    // Show 3 symbols per reel (we'll translate to center the middle one)
+    for(let i = 0; i < 3; i++) {
+      const div = document.createElement('div');
+      div.className = 'slot-symbol';
+      div.textContent = drum[Math.floor(Math.random() * drum.length)];
+      strip.appendChild(div);
+    }
+    // Center on middle symbol (translateY = -100px to show index 1)
+    strip.style.transform = 'translateY(-100px)';
+    strip.style.transition = 'none';
+  }
+  updateSlotBalance();
+  renderSlotHistory();
+
+  // Free spin notice
+  const notice = document.getElementById('free-spin-notice');
+  if(slotHasFreeSpin()) {
+    notice.innerHTML = '<div class="free-spin-badge">🎁 Free spin available today!</div>';
+    const btn = document.getElementById('slot-spin-btn');
+    btn.classList.add('free');
+    btn.textContent = 'FREE SPIN';
+  } else {
+    notice.innerHTML = '';
+    const btn = document.getElementById('slot-spin-btn');
+    btn.classList.remove('free');
+    btn.textContent = 'SPIN';
+  }
+}
+
+function updateSlotBalance() {
+  document.getElementById('slot-bal-label').textContent = (session.balance||0) + ' $drunk';
+}
+
+// Main spin function
+async function slotSpin() {
+  if(slotSpinning) return;
+
+  const isFree = slotHasFreeSpin();
+  const cost   = isFree ? 0 : slotBet;
+
+  if(!isFree && (session.balance||0) < slotBet) {
+    showToast('💸 Not enough $drunk to spin!');
+    return;
+  }
+
+  slotSpinning = true;
+  const btn = document.getElementById('slot-spin-btn');
+  btn.disabled = true;
+
+  // Deduct bet immediately
+  if(!isFree) {
+    session.balance = (session.balance||0) - cost;
+    saveSession();
+    updateDrunkDisplay();
+    updateSlotBalance();
+  }
+  if(isFree) slotUseFreeSpin();
+
+  // Clear win glows
+  for(let r = 0; r < 3; r++) {
+    document.getElementById('reel-'+r).classList.remove('win-glow');
+  }
+  document.getElementById('slot-result').innerHTML = '';
+
+  // Generate outcomes
+  const drums   = [buildDrum(), buildDrum(), buildDrum()];
+  const results = drums.map(d => d[Math.floor(Math.random() * d.length)]);
+
+  // Animate each reel with staggered delay
+  const spinPromises = results.map((result, r) => spinReel(r, result, r * 320));
+  await Promise.all(spinPromises);
+
+  // Evaluate result
+  const [a, b, c] = results;
+  let pnl = -cost; // default: lose the bet
+  let resultHtml = '';
+  let overlayType = null;
+
+  if(a === b && b === c) {
+    // 3 of a kind!
+    const payout = SLOT_PAYOUTS[a];
+    for(let r = 0; r < 3; r++) document.getElementById('reel-'+r).classList.add('win-glow');
+
+    if(payout === 'jackpot') {
+      pnl = 100; // flat jackpot
+      session.balance = (session.balance||0) + pnl + (isFree?0:cost); // get bet back too
+      overlayType = 'jackpot';
+      resultHtml = `<div class="slot-result-title win">JACKPOT! 🍺</div><div class="slot-result-sub">+100 $drunk</div>`;
+      spawnConfetti();
+    } else if(payout === 'water') {
+      pnl = 0 - cost;
+      overlayType = 'water';
+      resultHtml = `<div class="slot-result-title" style="color:#5ab4e8">DRINK WATER 💧</div><div class="slot-result-sub">No payout. Stay hydrated.</div>`;
+    } else {
+      // numeric payout
+      pnl = payout - cost;
+      session.balance = (session.balance||0) + payout + (isFree?0:cost);
+      if(payout >= 20) {
+        overlayType = 'win';
+        document.getElementById('overlay-win-emoji').textContent = a;
+        document.getElementById('overlay-win-title').textContent = 'BIG WIN!';
+        document.getElementById('overlay-win-sub').textContent   = `${a}${a}${a} — +${payout} $drunk`;
+        spawnConfetti();
+      }
+      resultHtml = `<div class="slot-result-title win">WIN! +${payout} $drunk</div><div class="slot-result-sub">${a} ${a} ${a}</div>`;
+    }
+  } else if(a===b || b===c || a===c) {
+    // Two of a kind — get bet back
+    const matchSym = a===b ? a : (b===c ? b : a);
+    pnl = 0;
+    session.balance = (session.balance||0) + cost;
+    resultHtml = `<div class="slot-result-title" style="color:var(--gold);font-size:22px">Two ${matchSym} — bet returned</div><div class="slot-result-sub">0 net</div>`;
+  } else {
+    // No match
+    resultHtml = `<div class="slot-result-title lose">No match</div><div class="slot-result-sub">${a} ${b} ${c} — ${isFree?'free spin':'−'+cost+' $drunk'}</div>`;
+  }
+
+  saveSession();
+  updateDrunkDisplay();
+  updateSlotBalance();
+  document.getElementById('slot-result').innerHTML = resultHtml;
+
+  // Add to history
+  slotHistory.unshift({ syms:results, pnl: isFree && pnl<0 ? 0 : pnl, free:isFree });
+  if(slotHistory.length > 20) slotHistory = slotHistory.slice(0,20);
+  localStorage.setItem('dc100_slot_history', JSON.stringify(slotHistory));
+  renderSlotHistory();
+
+  // Update free spin button state
+  const btnEl = document.getElementById('slot-spin-btn');
+  btnEl.disabled  = false;
+  btnEl.classList.remove('free');
+  btnEl.textContent = 'SPIN';
+  slotSpinning = false;
+
+  // Show overlay after short delay
+  if(overlayType) {
+    setTimeout(() => {
+      document.getElementById('overlay-'+overlayType).classList.add('show');
+    }, 400);
+  }
+}
+
+// Animate one reel spinning and landing on `result`
+function spinReel(reelIdx, result, delay) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const strip = document.getElementById('reel-strip-'+reelIdx);
+      const outer = document.getElementById('reel-'+reelIdx);
+
+      // Build a tall drum of random symbols ending with `result`
+      const drum = buildDrum();
+      const spinCount = 20 + Math.floor(Math.random() * 8); // how many symbols scroll past
+      const symbols   = [];
+      for(let i = 0; i < spinCount; i++) {
+        symbols.push(drum[i % drum.length]);
+      }
+      symbols.push(result); // land on result
+
+      // Put 1 dummy above + result strip + 1 dummy below for centering
+      strip.innerHTML = '';
+      const allSyms = ['❓', ...symbols, '❓'];
+      allSyms.forEach(s => {
+        const div = document.createElement('div');
+        div.className  = 'slot-symbol';
+        div.textContent = s;
+        strip.appendChild(div);
+      });
+
+      // Start from top (index 0 visible = first dummy)
+      strip.style.transition = 'none';
+      strip.style.transform  = 'translateY(0px)';
+
+      // Force reflow then animate
+      void strip.offsetHeight;
+
+      const targetIdx = allSyms.length - 2; // result is second to last
+      const targetY   = -(targetIdx * 100) + 0; // center it
+
+      // Quick spin speed, slow down near end
+      const duration = 600 + spinCount * 28;
+      strip.style.transition = `transform ${duration}ms cubic-bezier(0.15, 0.85, 0.35, 1.0)`;
+      strip.style.transform  = `translateY(${targetY}px)`;
+
+      setTimeout(() => {
+        // Snap to clean center
+        strip.innerHTML = '';
+        ['', result, ''].forEach(s => {
+          const div = document.createElement('div');
+          div.className   = 'slot-symbol';
+          div.textContent = s || result;
+          strip.appendChild(div);
+        });
+        strip.style.transition = 'none';
+        strip.style.transform  = 'translateY(-100px)';
+        resolve();
+      }, duration + 60);
+    }, delay);
+  });
+}
+
+function closeSlotOverlay(type) {
+  document.getElementById('overlay-'+type).classList.remove('show');
+}
+
+function renderSlotHistory() {
+  const el = document.getElementById('slot-history');
+  if(!el) return;
+  if(!slotHistory.length) { el.innerHTML = '<div style="color:var(--muted);font-family:DM Mono,monospace;font-size:12px;padding:6px 0">No spins yet.</div>'; return; }
+  el.innerHTML = slotHistory.slice(0,10).map(h => {
+    const pnl     = h.pnl || 0;
+    const pnlStr  = pnl > 0 ? '+'+pnl : pnl === 0 ? '±0' : String(pnl);
+    const cls     = pnl > 0 ? 'pos' : pnl < 0 ? 'neg' : '';
+    return `<div class="spin-history-row">
+      <span class="spin-symbols">${(h.syms||[]).join('')}</span>
+      ${h.free ? '<span style="font-family:DM Mono,monospace;font-size:10px;color:var(--green)">FREE</span>' : ''}
+      <span class="spin-pnl ${cls}">${pnlStr} $drunk</span>
+    </div>`;
+  }).join('');
+}
+
+// Confetti burst
+function spawnConfetti() {
+  const colors = ['#e8c84a','#4caf7d','#e05555','#9b6dff','#5ab4e8','#fff'];
+  for(let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const el  = document.createElement('div');
+      el.className = 'confetti-bit';
+      el.style.left = Math.random()*100+'vw';
+      el.style.top  = '-10px';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDuration = (1.5+Math.random()*2)+'s';
+      el.style.animationDelay   = (Math.random()*0.5)+'s';
+      el.style.width = el.style.height = (6+Math.random()*8)+'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, Math.random()*400);
+  }
+}
+
 </script>
 
 <!-- [ADDED] Toast notification element -->
 <div class="toast" id="toast"></div>
+
+<!-- JACKPOT overlay -->
+<div class="slot-overlay" id="overlay-jackpot" onclick="closeSlotOverlay('jackpot')">
+  <div class="slot-overlay-emoji">🍺</div>
+  <div class="slot-overlay-title" style="color:var(--gold)">JACKPOT!</div>
+  <div class="slot-overlay-sub">THREE BEERS! +100 $drunk<br>You absolute legend 🏆</div>
+  <div class="slot-overlay-close">tap anywhere to continue</div>
+</div>
+<!-- WATER overlay -->
+<div class="slot-overlay" id="overlay-water" onclick="closeSlotOverlay('water')">
+  <div class="slot-overlay-emoji">💧</div>
+  <div class="slot-overlay-title" style="color:#5ab4e8">DRINK SOME<br>WATER!</div>
+  <div class="slot-overlay-sub">Your body is 60% water.<br>Respect that.</div>
+  <div class="slot-overlay-close">tap anywhere to continue</div>
+</div>
+<!-- Big win overlay -->
+<div class="slot-overlay" id="overlay-win" onclick="closeSlotOverlay('win')">
+  <div class="slot-overlay-emoji" id="overlay-win-emoji">🏆</div>
+  <div class="slot-overlay-title" style="color:var(--green)" id="overlay-win-title">BIG WIN!</div>
+  <div class="slot-overlay-sub" id="overlay-win-sub"></div>
+  <div class="slot-overlay-close">tap anywhere to continue</div>
+</div>
+
 </body>
 </html>
