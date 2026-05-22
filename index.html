@@ -474,7 +474,7 @@
     <div class="controls">
       <div class="search-wrap">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="lb-search" placeholder="Search name or beer…" oninput="renderLeaderboard()">
+        <input type="text" id="lb-search" placeholder="Search name or beer…" oninput="debounceRenderLB()">
       </div>
       <select id="lb-sort" onchange="renderLeaderboard()">
         <option value="bal_desc">Chugs ↓</option><option value="bal_asc">Chugs ↑</option>
@@ -630,33 +630,51 @@ async function apiUpload(b64) {
 
 // ── AUTH ──────────────────────────────────────────────────
 async function doLogin() {
-  const user=document.getElementById('login-user').value.trim();
-  const pass=document.getElementById('login-pass').value.trim();
-  const btn=document.getElementById('login-btn'), err=document.getElementById('login-error');
-  if(!user||!pass){err.textContent='Enter your beer name and password.';return;}
-  btn.disabled=true;btn.textContent='Signing in…';err.textContent='';
-  try{
-    const data=await fetch(API_URL+'?action=login&username='+encodeURIComponent(user)+'&password='+encodeURIComponent(pass)).then(r=>r.json());
-    if(data.ok){
-      session={name:data.name,beer:data.beer,token:data.token,isAdmin:data.isAdmin||false,balance:data.balance||0,totalWon:data.totalWon||0,totalLost:data.totalLost||0};
-      saveSession(); startApp();
-    } else err.textContent=data.error||'Login failed.';
-  }catch(e){err.textContent='Could not reach server. Try again.';}
-  btn.disabled=false;btn.textContent='Sign in';
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value.trim();
+  const err  = document.getElementById('login-error');
+  if(!user||!pass){ err.textContent='Enter your beer name and password.'; return; }
+  err.textContent = '';
+
+  // Immediately hide login and show the beer loader filling up
+  document.getElementById('login-screen').style.display = 'none';
+  startBeerLoader();
+
+  try {
+    const data = await fetch(
+      API_URL+'?action=login&username='+encodeURIComponent(user)+'&password='+encodeURIComponent(pass)
+    ).then(r => r.json());
+
+    if(data.ok) {
+      session = {name:data.name,beer:data.beer,token:data.token,isAdmin:data.isAdmin||false,
+                 balance:data.balance||0,totalWon:data.totalWon||0,totalLost:data.totalLost||0};
+      saveSession();
+      startApp(); // continues loading data, then finishes beer
+    } else {
+      // Login failed — abort beer loader and go back to login
+      abortBeerLoader(data.error||'Login failed.');
+    }
+  } catch(e) {
+    abortBeerLoader('Could not reach server. Try again.');
+  }
 }
 
 function startApp(){
-  document.getElementById('login-screen').style.display='none';
-  // show beer loader while data loads
-  startBeerLoader();
+  // login screen already hidden + beer already filling (from doLogin or auto-login)
   document.getElementById('topbar-name').textContent=session.beer;
-  if(session.isAdmin){ document.getElementById('create-wrap').style.display='block'; document.getElementById('admin-review-panel').style.display='block'; document.getElementById('all-suggestions-wrap').style.display='block'; }
+  if(session.isAdmin){
+    document.getElementById('create-wrap').style.display='block';
+    document.getElementById('admin-review-panel').style.display='block';
+    document.getElementById('all-suggestions-wrap').style.display='block';
+  }
   updateDrunkDisplay();
-  // load both in parallel, show app when both done
+  // load leaderboard + market data in parallel for speed
   Promise.all([loadMarketData(), loadLeaderboard()]).then(() => {
     document.getElementById('app').style.display='block';
     finishBeerLoader();
     spawnBeers();
+  }).catch(() => {
+    abortBeerLoader('Failed to load data. Please refresh.');
   });
 }
 function doLogout(){
@@ -666,7 +684,13 @@ function doLogout(){
   document.getElementById('login-pass').value='';
   document.getElementById('login-error').textContent='';
 }
-window.addEventListener('load',()=>{ if(session.token&&session.beer) startApp(); });
+window.addEventListener('load', () => {
+  if(session.token && session.beer) {
+    document.getElementById('login-screen').style.display = 'none';
+    startBeerLoader();
+    startApp();
+  }
+});
 function updateDrunkDisplay(){ document.getElementById('my-drunk').textContent=(session.balance||0).toLocaleString(); }
 
 // ── TABS ──────────────────────────────────────────────────
@@ -675,7 +699,7 @@ function switchTab(name,btn){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   if(btn)btn.classList.add('active');
-  if(name==='market'||name==='mybets') loadMarketData();
+  if(name==='market'||name==='mybets') loadMarketDataIfStale();
   if(name==='suggest') renderSuggestions();
   if(name==='profile') populateMyProfile();
 }
@@ -743,6 +767,7 @@ async function loadMarketData(){
     const pending=suggestions.filter(s=>(s.status||s.Status||'').toString()==='pending').length;
     const badge=document.getElementById('badge-suggest');
     if(pending>0&&session.isAdmin){ badge.textContent=pending; badge.classList.add('show'); } else badge.classList.remove('show');
+    _lastFetch = Date.now();
     renderMarkets();renderFMStats();renderFMLB();renderMyBets();
     // auto-refresh whichever tab is currently visible
     const activeTab = document.querySelector('.tab-btn.active');
@@ -754,22 +779,32 @@ async function loadMarketData(){
   }catch(e){ document.getElementById('markets-list').innerHTML='<div class="state-msg">⚠ Could not load data.</div>'; }
 }
 function renderFMStats(){
-  const vol=bets.reduce((s,b)=>s+(parseInt(b.amount)||0),0);
+  // only count bets on currently OPEN markets for volume
+  const openMarketIds = new Set(markets.filter(m=>m.status==='open').map(m=>m.id));
+  const vol = bets.filter(b=>openMarketIds.has(b.marketId)).reduce((s,b)=>s+(parseInt(b.amount)||0),0);
   document.getElementById('fm-open').textContent=markets.filter(m=>m.status==='open').length;
   document.getElementById('fm-volume').textContent=vol.toLocaleString();
-  document.getElementById('fm-bets').textContent=bets.length;
+  document.getElementById('fm-bets').textContent=bets.filter(b=>openMarketIds.has(b.marketId)).length;
   document.getElementById('fm-resolved').textContent=markets.filter(m=>m.status==='resolved').length;
 }
 function getProb(m){const y=parseFloat(m.yesPool)||0,n=parseFloat(m.noPool)||0;return(y+n)===0?50:Math.round(y/(y+n)*100);}
 function catClass(c){return 'cat-'+(c||'other');}
 function catEmoji(c){return{chug:'🍺',social:'💬',food:'🍔',sleep:'😴'}[c]||'•';}
 
+let _showAllResolved = false;
 function renderMarkets(){
-  const open=markets.filter(m=>m.status==='open'), res=markets.filter(m=>m.status==='resolved');
-  document.getElementById('markets-list').innerHTML=open.length?open.map(marketCard).join(''):'<div class="state-msg" style="padding:30px">No open markets yet.</div>';
-  document.getElementById('resolved-list').innerHTML=res.length?res.map(marketCard).join(''):'<div style="color:var(--muted);font-size:13px;font-family:DM Mono,monospace;padding:10px 0">None yet.</div>';
+  const open = markets.filter(m=>m.status==='open');
+  const res  = markets.filter(m=>m.status==='resolved');
+  document.getElementById('markets-list').innerHTML = open.length
+    ? open.map(marketCard).join('')
+    : '<div class="state-msg" style="padding:30px">No open markets yet.</div>';
+  // Only show 5 resolved by default for speed; user can expand
+  const showRes = _showAllResolved ? res : res.slice(0,5);
+  const moreBtn = (!_showAllResolved && res.length > 5)
+    ? `<button onclick="_showAllResolved=true;renderMarkets()" style="width:100%;margin-top:8px;padding:12px;background:none;border:1px dashed var(--border2);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;">Show ${res.length-5} more resolved markets</button>`
+    : '';
+  document.getElementById('resolved-list').innerHTML = showRes.map(marketCard).join('') + moreBtn;
 }
-
 function marketCard(m){
   const prob=getProb(m);
   const total=(parseFloat(m.yesPool)||0)+(parseFloat(m.noPool)||0);
@@ -1342,6 +1377,61 @@ async function guardedAction(key, fn) {
 function toggleSocialPanel(id) {
   const el = document.getElementById(id);
   if(el) el.classList.toggle('open');
+}
+
+
+// Abort the beer loader on login failure — fade it out and show login again
+function abortBeerLoader(errorMsg) {
+  clearInterval(_beerInterval);
+  const loader = document.getElementById('beer-loader');
+  const fill   = document.getElementById('beer-fill');
+  // drain the beer back down visually
+  fill.style.transition = 'height 0.5s ease';
+  fill.style.height = '0%';
+  document.getElementById('beer-pct').textContent = '';
+  document.getElementById('beer-sub').textContent = errorMsg;
+  document.getElementById('beer-sub').style.color = 'var(--red)';
+  setTimeout(() => {
+    loader.style.opacity = '0';
+    loader.style.transition = 'opacity 0.35s ease';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      loader.style.opacity = '1';
+      loader.style.transition = '';
+      fill.style.transition = 'height 0.08s linear';
+      document.getElementById('beer-sub').style.color = '';
+      // show login again with error
+      const loginScreen = document.getElementById('login-screen');
+      loginScreen.style.display = 'flex';
+      document.getElementById('login-error').textContent = errorMsg;
+      document.getElementById('login-pass').value = '';
+    }, 380);
+  }, 700);
+}
+
+
+// ── PERFORMANCE: DATA CACHE ───────────────────────────────
+// Avoid hitting the server on every tab switch.
+// Data is considered stale after CACHE_TTL milliseconds.
+const CACHE_TTL = 60000; // 60 seconds
+let _lastFetch = 0;
+
+async function loadMarketDataIfStale() {
+  if(Date.now() - _lastFetch > CACHE_TTL) {
+    await loadMarketData();
+  } else {
+    // data is fresh — just re-render the current tab
+    renderMarkets(); renderFMStats(); renderFMLB(); renderMyBets();
+    if(lbData.length) renderLeaderboard();
+  }
+}
+
+
+// Debounce leaderboard search so it doesn't re-render on every keystroke
+let _lbDebounce = null;
+function debounceRenderLB() {
+  clearTimeout(_lbDebounce);
+  _lbDebounce = setTimeout(renderLeaderboard, 180);
 }
 
 </script>
